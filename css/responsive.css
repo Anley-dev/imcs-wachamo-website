@@ -1,55 +1,89 @@
 cat << 'EOF' > css/responsive.css
 /* ==========================================================================
-   IMCS Wachemo - Complete Mobile Responsive Stylesheet Override
+   IMCS Wachemo - Comprehensive Layout Breakpoint Fixes
    ========================================================================== */
 
 @media screen and (max-width: 768px) {
-    /* Prevent elements from leaking horizontally and causing a white gap */
+    
+    /* 1. FORCE VIEWPORT BOX CONTAINMENT (Kills the horizontal white space completely) */
     html, body {
-        width: 100%;
-        overflow-x: hidden;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
-    /* Mobile Navigation Drawer System */
+    .container, .hero-section, .about-preview, footer {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 2. DROP-DOWN NAVIGATION OVERHAUL */
     .nav-menu {
-        position: fixed;
-        top: -100vh;
-        left: 0;
-        flex-direction: column;
-        background-color: var(--surface);
-        width: 100%;
-        height: auto;
-        padding: 40px 0;
-        transition: all 0.4s ease-in-out;
-        gap: 24px;
-        border-bottom: 2px solid var(--primary);
+        position: fixed !important;
+        top: -100vh !important; /* Kept hidden high above the viewport */
+        left: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        background-color: #0F172A !important; /* Premium dark background */
+        flex-direction: column !important;
+        padding: 30px 0 !important;
+        gap: 20px !important;
+        transition: all 0.4s ease-in-out !important;
+        border-bottom: 3px solid #FACC15 !important; /* Gold boundary highlight */
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+        z-index: 999 !important;
+        display: flex !important;
     }
 
+    /* Active utility state triggered via JavaScript click listener */
     .nav-menu.active {
-        top: 80px;
+        top: 70px !important; /* Drops down perfectly right under the logo navbar line */
     }
 
+    .nav-menu li {
+        width: 100% !important;
+        text-align: center !important;
+    }
+
+    .nav-links {
+        display: block !important;
+        padding: 10px 0 !important;
+        font-size: 1.1rem !important;
+        color: #FFFFFF !important;
+    }
+
+    /* Ensure hamburger toggle icons are clearly structured on the right */
     .menu-toggle {
-        display: block;
+        display: block !important;
+        cursor: pointer !important;
     }
 
-    .menu-toggle .bar {
-        display: block;
-        width: 25px;
-        height: 3px;
-        margin: 5px auto;
-        transition: var(--transition);
-        background-color: var(--text-main);
+    /* 3. VERTICAL COLUMN STACKING (Fixes Mission, Vision & Core Values alignment) */
+    .about-grid, .values-grid, .footer-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important; /* Forces layout to stack items vertically */
+        width: 100% !important;
+        gap: 30px !important;
     }
 
-    .menu-toggle.is-active .bar:nth-child(2) { opacity: 0; }
-    .menu-toggle.is-active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-    .menu-toggle.is-active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    .about-card {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+    }
 
-    /* Hero Unit Scaling */
+    /* Hero header copy text scaling */
     .hero-title {
-        font-size: 2rem;
+        font-size: 2.2rem !important;
+        line-height: 1.3 !important;
     }
+}
+EOF
 
     .hero-description {
         font-size: 1rem;
