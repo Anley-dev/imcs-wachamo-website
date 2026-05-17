@@ -1,3 +1,4 @@
+cat << 'EOF' > js/auth.js
 // IMCS Wachemo - Client Side Authentication Processor & Configuration
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
@@ -8,12 +9,12 @@ import {
     signOut
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// 1. Core Firebase Configuration Matrix
+// 1. Core Firebase Configuration Matrix (Aligned IDs)
 const firebaseConfig = {
     apiKey: "AIzaSyDSlXqHHVNYcx8WTb66RvJazDaMCl3l6B8",
-    authDomain: "imcs-wachemo.firebaseapp.com",
-    projectId: "imcs-wachemo",
-    storageBucket: "imcs-wachemo.firebasestorage.app",
+    authDomain: "imcs-wachamo-website.firebaseapp.com", // 👈 Swapped to match your screenshot
+    projectId: "imcs-wachamo-website",                 // 👈 Swapped to match your screenshot
+    storageBucket: "imcs-wachamo-website.appspot.com",   // 👈 Swapped to match your screenshot
     messagingSenderId: "437248834008",
     appId: "1:437248834008:web:cf328836ff7981d927daad"
 };
@@ -122,3 +123,5 @@ function handleAuthError(error, context) {
             alert(`${context} failed: ${error.message}`);
     }
 }
+EOF
+
