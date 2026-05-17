@@ -1,15 +1,24 @@
 cat << 'EOF' > js/app.js
-const menu = document.querySelector('#mobile-menu');
-const menuLinks = document.querySelector('.nav-menu');
+// Global Application & Mobile Navigation Controller
+document.addEventListener("DOMContentLoaded", () => {
+    const mobileMenuBtn = document.getElementById("mobile-menu");
+    const navMenuLinks = document.querySelector(".nav-menu");
 
-menu.addEventListener('click', () => {
-    menu.classList.toggle('is-active');
-    menuLinks.classList.toggle('active');
+    if (mobileMenuBtn && navMenuLinks) {
+        mobileMenuBtn.addEventListener("click", () => {
+            // Toggle active classes to animate the hamburger icon and drop down the menu
+            mobileMenuBtn.classList.toggle("active");
+            navMenuLinks.classList.toggle("active");
+        });
+
+        // Close menu cleanly when a user clicks any navigation link
+        document.querySelectorAll(".nav-links").forEach(link => {
+            link.addEventListener("click", () => {
+                mobileMenuBtn.classList.remove("active");
+                navMenuLinks.classList.remove("active");
+            });
+        });
+    }
 });
-
-document.querySelectorAll('.nav-links').forEach(n => n.addEventListener('click', () => {
-    menu.classList.remove('is-active');
-    menuLinks.classList.remove('active');
-}));
 EOF
 
