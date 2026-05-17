@@ -57,6 +57,37 @@ EOF
         grid-template-columns: 1fr;
         gap: 24px;
     }
+
+    /* Paste the new Event styles right here! */
+    /* Handle event cards switching from inline row to stack on mobile */
+    .event-item {
+        flex-direction: column;
+    }
+    
+    .event-date-tag {
+        flex-direction: row;
+        gap: 12px;
+        padding: 12px;
+        min-width: 100%;
+    }
+    
+    .event-date-tag .day {
+        font-size: 1.5rem;
+    }
+
+    .countdown-display {
+        gap: 12px;
+    }
+
+    .time-block {
+        padding: 10px;
+        min-width: 70px;
+    }
+
+    .time-block span {
+        font-size: 1.5rem;
+    }
+} /* This is the closing bracket for the entire mobile media query */
     
     /* Reposition the footers grid matrix */
     .footer-container {
