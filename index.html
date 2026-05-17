@@ -15,26 +15,24 @@ cat << 'EOF' > index.html
 <body>
 
     <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <i class="fas fa-cross cross-icon"></i> IMCS <span>Wachemo</span>
-            </a>
-            <div class="menu-toggle" id="mobile-menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
-            <ul class="nav-menu">
-                <li><a href="index.html" class="nav-links active">Home</a></li>
-                <li><a href="about.html" class="nav-links">About</a></li>
-                <li><a href="events.html" class="nav-links">Events</a></li>
-                <li><a href="gallery.html" class="nav-links">Gallery</a></li>
-                <li><a href="contact.html" class="nav-links">Contact</a></li>
-                <li><a href="login.html" class="nav-btn">Login</a></li>
-            </ul>
+  <nav class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="nav-logo"><i class="fas fa-cross"></i> IMCS <span>Wachemo</span></a>
+        
+        <ul class="nav-menu">
+            <li><a href="index.html" class="nav-links">Home</a></li>
+            <li><a href="#about" class="nav-links">About</a></li>
+            <li><a href="#events" class="nav-links">Events</a></li>
+            <li><a href="login.html" class="nav-btn">Login</a></li>
+        </ul>
+        
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- HERO SECTION -->
     <header class="hero-section">
@@ -52,14 +50,14 @@ cat << 'EOF' > index.html
         </div>
     </header>
     <!-- ABOUT PREVIEW SECTION -->
-    <section class="about-preview">
+        <section class="about-preview">
         <div class="container">
             <div class="section-header">
                 <span class="section-subtitle">Who We Are</span>
                 <h2 class="section-title">Living the Faith on Campus</h2>
                 <p class="section-desc">IMCS Pax Romana Wachemo is a community of young Catholic intellectuals striving to integrate deep spiritual life with high academic excellence.</p>
             </div>
-            
+
             <div class="about-grid">
                 <div class="about-card">
                     <div class="card-icon"><i class="fas fa-cross"></i></div>
@@ -79,6 +77,7 @@ cat << 'EOF' > index.html
             </div>
         </div>
     </section>
+
 
     <!-- GLOBAL FOOTER -->
     <footer class="main-footer">
@@ -116,7 +115,7 @@ cat << 'EOF' > index.html
             <p>&copy; 2026 IMCS Wachemo. Built with dedication using zero-cost cloud frameworks.</p>
         </div>
     </footer>
-
+    <script src="js/main.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
