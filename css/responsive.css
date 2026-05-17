@@ -51,4 +51,17 @@ cat << 'EOF' > css/responsive.css
     }
 }
 EOF
+@media screen and (max-width: 768px) {
+    /* Stack the About blocks cleanly on small viewports */
+    .about-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    /* Reposition the footers grid matrix */
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+}
 
