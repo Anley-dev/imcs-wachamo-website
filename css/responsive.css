@@ -56,6 +56,21 @@ EOF
     .about-grid {
         grid-template-columns: 1fr;
         gap: 24px;
+
+    /* Scale gallery columns smoothly downward on small viewports */
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .gallery-item {
+        height: 200px;
+    }
+
+    .close-lightbox {
+        top: 20px;
+        right: 25px;
+    }
     }
 
     /* Paste the new Event styles right here! */
