@@ -1,0 +1,54 @@
+cat << 'EOF' > css/responsive.css
+@media screen and (max-width: 768px) {
+    .nav-menu {
+        position: fixed;
+        top: -100vh;
+        left: 0;
+        flex-direction: column;
+        background-color: var(--surface);
+        width: 100%;
+        height: auto;
+        padding: 40px 0;
+        transition: all 0.4s ease-in-out;
+        gap: 24px;
+        border-bottom: 2px solid var(--primary);
+    }
+
+    .nav-menu.active {
+        top: 80px;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .menu-toggle .bar {
+        display: block;
+        width: 25px;
+        height: 3px;
+        margin: 5px auto;
+        transition: var(--transition);
+        background-color: var(--text-main);
+    }
+
+    .menu-toggle.is-active .bar:nth-child(2) { opacity: 0; }
+    .menu-toggle.is-active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .menu-toggle.is-active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+    }
+
+    .hero-cta {
+        flex-direction: column;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+}
+EOF
+

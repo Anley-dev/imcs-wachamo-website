@@ -1,0 +1,59 @@
+cat << 'EOF' > index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMCS Wachemo | International Movement of Catholic Students</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-cross cross-icon"></i> IMCS <span>Wachemo</span>
+            </a>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-links active">Home</a></li>
+                <li><a href="about.html" class="nav-links">About</a></li>
+                <li><a href="events.html" class="nav-links">Events</a></li>
+                <li><a href="gallery.html" class="nav-links">Gallery</a></li>
+                <li><a href="contact.html" class="nav-links">Contact</a></li>
+                <li><a href="login.html" class="nav-btn">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <span class="hero-subtitle">Welcome to IMCS Pax Romana</span>
+            <h1 class="hero-title">Empowering Catholic Students in Faith, Intellect, and Service</h1>
+            <p class="hero-description">
+                Join a vibrant community of students at Wachemo University dedicated to spiritual growth, leadership development, and global solidarity.
+            </p>
+            <div class="hero-cta">
+                <a href="register.html" class="btn btn-primary">Join Our Community</a>
+                <a href="about.html" class="btn btn-outline">Learn More</a>
+            </div>
+        </div>
+    </header>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
+EOF
+
