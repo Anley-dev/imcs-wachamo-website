@@ -1,5 +1,16 @@
 cat << 'EOF' > css/responsive.css
+/* ==========================================================================
+   IMCS Wachemo - Complete Mobile Responsive Stylesheet Override
+   ========================================================================== */
+
 @media screen and (max-width: 768px) {
+    /* Prevent elements from leaking horizontally and causing a white gap */
+    html, body {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Mobile Navigation Drawer System */
     .nav-menu {
         position: fixed;
         top: -100vh;
@@ -35,10 +46,11 @@ cat << 'EOF' > css/responsive.css
     .menu-toggle.is-active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
     .menu-toggle.is-active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
+    /* Hero Unit Scaling */
     .hero-title {
         font-size: 2rem;
     }
-    
+
     .hero-description {
         font-size: 1rem;
     }
@@ -49,20 +61,19 @@ cat << 'EOF' > css/responsive.css
         max-width: 300px;
         margin: 0 auto;
     }
-}
-EOF
-@media screen and (max-width: 768px) {
-    /* Stack the About blocks cleanly on small viewports */
-    .about-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
 
-    /* Scale gallery columns smoothly downward on small viewports */
+    /* Stack Content Blocks Vertically On Mobile */
+    .about-grid {
+        grid-template-columns: 1fr !important;
+        gap: 24px;
+    } /* FIXED: Added the missing bracket here */
+
+    /* Grid Layout for Image Media Assets */
     .gallery-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr) !important;
         gap: 12px;
     }
-    
+
     .gallery-item {
         height: 200px;
     }
@@ -71,9 +82,9 @@ EOF
         top: 20px;
         right: 25px;
     }
-    }
+}
+EOF
 
-    /* Paste the new Event styles right here! */
     /* Handle event cards switching from inline row to stack on mobile */
     .event-item {
         flex-direction: column;
