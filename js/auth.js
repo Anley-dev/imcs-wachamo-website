@@ -1,18 +1,33 @@
-// IMCS Wachemo - Client Side Authentication Processor
-import { 
-    createUserWithEmailAndPassword, 
+// IMCS Wachemo - Client Side Authentication Processor & Configuration
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     onAuthStateChanged,
-    signOut 
+    signOut
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { auth } from "/imcs-wachamo-website/js/firebase.js";
+
+// 1. Core Firebase Configuration Matrix
+const firebaseConfig = {
+    apiKey: "AIzaSyDSlXqHHVNYcx8WTb66RvJazDaMCl3l6B8",
+    authDomain: "imcs-wachemo.firebaseapp.com",
+    projectId: "imcs-wachemo",
+    storageBucket: "imcs-wachemo.firebasestorage.app",
+    messagingSenderId: "437248834008",
+    appId: "1:437248834008:web:cf328836ff7981d927daad"
+};
+
+// Initialize Firebase Instance directly within the module scope
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("register-form");
     const loginForm = document.getElementById("login-form");
 
     // ==========================================
-    // 1. REGISTRATION CONTROLLER
+    // 2. REGISTRATION CONTROLLER
     // ==========================================
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
@@ -38,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // 2. LOGIN CONTROLLER
+    // 3. LOGIN CONTROLLER
     // ==========================================
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
@@ -47,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const password = document.getElementById("login-password").value;
 
             try {
-                // Submit sign-in request to Firebase
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 console.log("Session authenticated successfully:", userCredential.user.uid);
                 alert("Authentication verified successfully! Redirecting to home page...");
@@ -59,19 +73,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // 3. GLOBAL SESSION STATE WATCHER
+    // 4. GLOBAL SESSION STATE WATCHER
     // ==========================================
     onAuthStateChanged(auth, (user) => {
         const loginBtn = document.querySelector(".nav-btn");
-        
+
         if (user) {
-            // User is signed in -> Change "Login" button to a dynamic "Logout" link
             if (loginBtn) {
                 loginBtn.textContent = "Logout";
                 loginBtn.setAttribute("href", "#");
                 loginBtn.classList.add("logout-active-btn");
-                
-                // Attach a single structural sign-out listener
+
                 loginBtn.onclick = async (e) => {
                     e.preventDefault();
                     if (confirm("Are you sure you want to log out of your session?")) {
@@ -82,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
             }
         } else {
-            // User is signed out -> Ensure button defaults back to standard Login form state
             if (loginBtn) {
                 loginBtn.textContent = "Login";
                 loginBtn.setAttribute("href", "login.html");
@@ -93,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Centralized error diagnostic helper
 function handleAuthError(error, context) {
     console.error(`${context} Framework Error:`, error.code, error.message);
     switch (error.code) {
@@ -112,4 +122,3 @@ function handleAuthError(error, context) {
             alert(`${context} failed: ${error.message}`);
     }
 }
-
