@@ -1,4 +1,4 @@
-cat << 'EOF' > js/auth.js
+
 // IMCS Wachemo - Client Side Authentication Processor & Configuration
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
@@ -124,5 +124,4 @@ function handleAuthError(error, context) {
             alert(`${context} failed: ${error.message}`);
     }
 }
-EOF
 
