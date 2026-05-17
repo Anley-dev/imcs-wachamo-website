@@ -752,3 +752,15 @@ EOF
     font-weight: 600;
 }
 
+/* --- Active Session Logged In Style --- */
+.logout-active-btn {
+    background-color: transparent !important;
+    border: 1px solid #EF4444 !important;
+    color: #EF4444 !important;
+}
+
+.logout-active-btn:hover {
+    background-color: #EF4444 !important;
+    color: #FFFFFF !important;
+}
+
