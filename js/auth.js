@@ -5,14 +5,15 @@ import {
     onAuthStateChanged,
     signOut 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { auth } from "./firebase.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { auth, db } from "./firebase.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("register-form");
     const loginForm = document.getElementById("login-form");
 
     // ==========================================
-    // 1. REGISTRATION CONTROLLER
+    // 1. REGISTRATION CONTROLLER (UPDATED FOR FIRESTORE PROVISIONING)
     // ==========================================
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
@@ -27,8 +28,21 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
+                // 1. Create the user credential inside Firebase Authentication
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                console.log("Account created successfully:", userCredential.user.uid);
+                const user = userCredential.user;
+                console.log("Auth account created successfully:", user.uid);
+
+                // 2. Provision companion profile document inside Firestore 'users' collection
+                // Default rule assigns 'member'. You can manually switch your specific UID to 'admin' in the Firebase Console!
+                await setDoc(doc(db, "users", user.uid), {
+                    displayName: name,
+                    email: email,
+                    role: "member", // Default security baseline tier
+                    registeredAt: new Date().toISOString()
+                });
+                console.log("Firestore user document mapped safely for UID:", user.uid);
+
                 alert(`Welcome to IMCS Pax Romana Wachemo, ${name}! Your account has been registered.`);
                 window.location.href = "login.html";
             } catch (error) {
@@ -47,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const password = document.getElementById("login-password").value;
 
             try {
-                // Submit sign-in request to Firebase
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 console.log("Session authenticated successfully:", userCredential.user.uid);
                 alert("Authentication verified successfully! Redirecting to home page...");
@@ -65,13 +78,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const loginBtn = document.querySelector(".nav-btn");
         
         if (user) {
-            // User is signed in -> Change "Login" button to a dynamic "Logout" link
             if (loginBtn) {
                 loginBtn.textContent = "Logout";
                 loginBtn.setAttribute("href", "#");
                 loginBtn.classList.add("logout-active-btn");
                 
-                // Attach a single structural sign-out listener
                 loginBtn.onclick = async (e) => {
                     e.preventDefault();
                     if (confirm("Are you sure you want to log out of your session?")) {
@@ -82,7 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
             }
         } else {
-            // User is signed out -> Ensure button defaults back to standard Login form state
             if (loginBtn) {
                 loginBtn.textContent = "Login";
                 loginBtn.setAttribute("href", "login.html");
@@ -93,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Centralized error diagnostic helper
 function handleAuthError(error, context) {
     console.error(`${context} Framework Error:`, error.code, error.message);
     switch (error.code) {
