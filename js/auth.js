@@ -5,7 +5,7 @@ import {
     onAuthStateChanged,
     signOut 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { auth } from "./firebase.js";
+import { auth } from "/imcs-wachamo-website/js/firebase.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("register-form");
