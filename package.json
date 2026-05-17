@@ -1,0 +1,26 @@
+{
+  "name": "imcs-wachamo-website",
+  "version": "1.0.0",
+  "description": "Official website for the International Movement of Catholic Students at Wachamo University.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anley-dev/imcs-wachamo-website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Anley-dev/imcs-wachamo-website/issues"
+  },
+  "homepage": "https://github.com/Anley-dev/imcs-wachamo-website#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.4.0",
+    "globals": "^17.6.0"
+  }
+}
