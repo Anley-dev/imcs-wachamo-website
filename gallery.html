@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | IMCS Wachemo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-cross cross-icon"></i> IMCS <span>Wachemo</span>
+            </a>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-links">Home</a></li>
+                <li><a href="about.html" class="nav-links">About</a></li>
+                <li><a href="events.html" class="nav-links">Events</a></li>
+                <li><a href="gallery.html" class="nav-links active">Gallery</a></li>
+                <li><a href="contact.html" class="nav-links">Contact</a></li>
+                <li><a href="login.html" class="nav-btn">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- INNER HEADER -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Community Gallery</h1>
+            <p>Capturing beautiful moments of faith, community fellowships, and outreach programs at Wachemo University.</p>
+        </div>
+    </header>
+
+    <!-- MEDIA GRID SYSTEM -->
+    <section class="gallery-section">
+        <div class="container">
+            <div class="gallery-grid">
+                
+                <!-- Media Item 1 -->
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1544427928-c49cdfb81944?auto=format&fit=crop&q=80&w=600" alt="Sunday Eucharistic Celebration">
+                    <div class="item-overlay">
+                        <div class="overlay-text">
+                            <h3>Sunday Liturgy</h3>
+                            <p>Campus Chapel Fellowship</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Item 2 -->
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?auto=format&fit=crop&q=80&w=600" alt="Youth Choir Practice">
+                    <div class="item-overlay">
+                        <div class="overlay-text">
+                            <h3>Choir Ministry</h3>
+                            <p>Vespers Preparation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Item 3 -->
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&q=80&w=600" alt="Intellectual Forum Session">
+                    <div class="item-overlay">
+                        <div class="overlay-text">
+                            <h3>Intellectual Forum</h3>
+                            <p>Faith & Reason Debate</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Item 4 -->
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&q=80&w=600" alt="Charity Outreach Mission">
+                    <div class="item-overlay">
+                        <div class="overlay-text">
+                            <h3>Hospital Charity</h3>
+                            <p>Living the Gospel</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Item 5 -->
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80&w=600" alt="Welcoming Freshmen Students">
+                    <div class="item-overlay">
+                        <div class="overlay-text">
+                            <h3>Orientation Night</h3>
+                            <p>Welcoming Freshmen</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Item 6 -->
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=600" alt="Executive Leaders Council">
+                    <div class="item-overlay">
+                        <div class="overlay-text">
+                            <h3>Leaders Summit</h3>
+                            <p>Planning the Academic Year</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- LIGHTBOX MODAL CONTAINER -->
+    <div class="lightbox-modal" id="lightbox">
+        <span class="close-lightbox">&times;</span>
+        <img class="lightbox-content" id="lightbox-img" src="" alt="Expanded View">
+        <div id="lightbox-caption"></div>
+    </div>
+
+    <!-- GLOBAL FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 IMCS Wachemo. Built with dedication using zero-cost cloud frameworks.</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/gallery.js"></script>
+</body>
+</html>
+
