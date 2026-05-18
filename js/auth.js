@@ -1,8 +1,8 @@
-cat << 'EOF' > js/auth.js
-// IMCS Wachemo - Client Side Authentication Processor & Configuration
-// Updated: May 2026 - Firebase v12.13.0 + Best Practices
+// IMCS Wachemo - Firebase Authentication
+// Updated: May 2026
 
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
 import {
     getAuth,
     createUserWithEmailAndPassword,
@@ -12,125 +12,119 @@ import {
     updateProfile
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-// Firebase Configuration
+// ==================== NEW FIREBASE CONFIG ====================
 const firebaseConfig = {
-    apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
-    authDomain: "imcs-wachamo.firebaseapp.com",
-    projectId: "imcs-wachamo",
-    storageBucket: "imcs-wachamo.firebasestorage.app",
-    messagingSenderId: "445125483030",
-    appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
+    apiKey: "AIzaSyDSlXqHHVNYcx8WTb66RvJazDaMCl3l6B8",
+    authDomain: "imcs-wachemo.firebaseapp.com",
+    projectId: "imcs-wachemo",
+    storageBucket: "imcs-wachemo.firebasestorage.app",
+    messagingSenderId: "437248834008",
+    appId: "1:437248834008:web:cf328836ff7981d927daad",
+    measurementId: "G-DNBVMCHXDN"
 };
 
-// Initialize Firebase (singleton pattern)
+// Initialize Firebase (singleton pattern - prevents multiple instances)
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const analytics = getAnalytics(app);
 const auth = getAuth(app);
 
-// Optional: Set language (you can make it dynamic based on user preference)
 auth.languageCode = 'en';
 
 document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("register-form");
     const loginForm = document.getElementById("login-form");
 
-    // ==========================================
-    // REGISTRATION CONTROLLER
-    // ==========================================
+    // ====================== REGISTRATION ======================
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const name = document.getElementById("reg-name").value.trim();
-            const email = document.getElementById("reg-email").value.trim();
-            const password = document.getElementById("reg-password").value;
+            const name = document.getElementById("reg-name")?.value.trim();
+            const email = document.getElementById("reg-email")?.value.trim();
+            const password = document.getElementById("reg-password")?.value;
             const confirmPassword = document.getElementById("reg-confirm-password")?.value;
 
-            // Client-side validation
-            if (!name) {
-                alert("Please enter your full name.");
-                return;
-            }
-            if (password.length < 8) {
-                alert("Password must be at least 8 characters long.");
-                return;
-            }
-            if (password !== confirmPassword) {
-                alert("Passwords do not match. Please check and try again.");
-                return;
-            }
+            clearErrors();
+
+            if (!name) return showError("reg-name", "Full name is required");
+            if (!email) return showError("reg-email", "Email is required");
+            if (password.length < 8) return showError("reg-password", "Password must be at least 8 characters long");
+            if (password !== confirmPassword) return showError("reg-confirm-password", "Passwords do not match");
+
+            const submitBtn = registerForm.querySelector("button[type='submit']");
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Creating Account...";
 
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 
-                // Save display name to Firebase Auth
-                await updateProfile(userCredential.user, {
-                    displayName: name
-                });
+                await updateProfile(userCredential.user, { displayName: name });
 
-                console.log("Account created successfully:", userCredential.user.uid);
-                alert(`Welcome to IMCS Wachemo, ${name}! Your account has been created successfully.`);
-                
-                // Redirect to login page
+                alert(`✅ Welcome ${name}! Your account has been created successfully.`);
                 window.location.href = "login.html";
+
             } catch (error) {
                 handleAuthError(error, "Registration");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
             }
         });
     }
 
-    // ==========================================
-    // LOGIN CONTROLLER
-    // ==========================================
+    // ====================== LOGIN ======================
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const email = document.getElementById("login-email").value.trim();
-            const password = document.getElementById("login-password").value;
+            const email = document.getElementById("login-email")?.value.trim();
+            const password = document.getElementById("login-password")?.value;
+
+            clearErrors();
+
+            if (!email) return showError("login-email", "Email is required");
+            if (!password) return showError("login-password", "Password is required");
+
+            const submitBtn = loginForm.querySelector("button[type='submit']");
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Signing In...";
 
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log("Login successful:", userCredential.user.uid);
-                
-                alert("Authentication successful! Redirecting...");
+                await signInWithEmailAndPassword(auth, email, password);
                 window.location.href = "index.html";
             } catch (error) {
                 handleAuthError(error, "Login");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
             }
         });
     }
 
-    // ==========================================
-    // GLOBAL AUTH STATE LISTENER
-    // ==========================================
+    // ====================== AUTH STATE ======================
     onAuthStateChanged(auth, (user) => {
-        const navBtn = document.querySelector(".nav-btn");   // Adjust selector if needed
+        const navBtn = document.querySelector(".nav-btn");
 
         if (user) {
-            // User is signed in
             if (navBtn) {
                 navBtn.textContent = "Logout";
-                navBtn.setAttribute("href", "#");
+                navBtn.href = "#";
                 navBtn.classList.add("logout-active-btn");
 
                 navBtn.onclick = async (e) => {
                     e.preventDefault();
                     if (confirm("Are you sure you want to log out?")) {
-                        try {
-                            await signOut(auth);
-                            alert("You have been logged out successfully.");
-                            window.location.reload();
-                        } catch (err) {
-                            console.error("Logout error:", err);
-                        }
+                        await signOut(auth);
+                        window.location.reload();
                     }
                 };
             }
         } else {
-            // User is signed out
             if (navBtn) {
                 navBtn.textContent = "Login";
-                navBtn.setAttribute("href", "login.html");
+                navBtn.href = "login.html";
                 navBtn.classList.remove("logout-active-btn");
                 navBtn.onclick = null;
             }
@@ -138,32 +132,36 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Enhanced Error Handler
+// ====================== ERROR HANDLER ======================
 function handleAuthError(error, context) {
     console.error(`${context} Error:`, error.code, error.message);
 
+    let msg = "An unexpected error occurred.";
+
     switch (error.code) {
-        case "auth/email-already-in-use":
-            alert("Registration failed: This email is already registered.");
-            break;
-        case "auth/invalid-email":
-            alert("Please enter a valid email address.");
-            break;
+        case "auth/email-already-in-use": msg = "This email is already registered."; break;
+        case "auth/invalid-email": msg = "Please enter a valid email address."; break;
+        case "auth/weak-password": msg = "Password should be at least 8 characters."; break;
         case "auth/user-not-found":
         case "auth/wrong-password":
-        case "auth/invalid-credential":
-            alert("Login failed: Incorrect email or password.");
-            break;
-        case "auth/weak-password":
-            alert("Password is too weak. Please choose a stronger password.");
-            break;
-        case "auth/too-many-requests":
-            alert("Too many failed attempts. Please try again later.");
-            break;
-        default:
-            alert(`${context} failed: ${error.message}`);
+        case "auth/invalid-credential": msg = "Incorrect email or password."; break;
+        case "auth/too-many-requests": msg = "Too many attempts. Try again later."; break;
+        case "auth/network-request-failed": msg = "Network error. Please check your connection."; break;
+    }
+
+    alert(`❌ ${context} Failed: ${msg}`);
+}
+
+function showError(id, message) {
+    const field = document.getElementById(id);
+    if (field) {
+        field.classList.add("error");
+        alert(message);
     }
 }
 
-export { auth };   // Optional: export if needed in other modules
-EOF
+function clearErrors() {
+    document.querySelectorAll(".error").forEach(el => el.classList.remove("error"));
+}
+
+export { auth, app };
