@@ -115,15 +115,28 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function handleAuthError(error, context) {
-    let msg = "An unexpected error occurred.";
+    console.error(`${context} Error:`, error);   // ← This helps us debug
+
+    let msg = error.message || "An unexpected error occurred.";
+
     switch (error.code) {
-        case "auth/email-already-in-use": msg = "This email is already registered."; break;
-        case "auth/invalid-email": msg = "Please enter a valid email."; break;
-        case "auth/weak-password": msg = "Password should be stronger."; break;
-        case "auth/user-not-found":
-        case "auth/wrong-password": msg = "Incorrect email or password."; break;
-        case "auth/too-many-requests": msg = "Too many attempts. Try again later."; break;
+        case "auth/email-already-in-use":
+            msg = "This email is already registered. Try logging in instead.";
+            break;
+        case "auth/invalid-email":
+            msg = "Please enter a valid email address.";
+            break;
+        case "auth/weak-password":
+            msg = "Password is too weak. Use at least 8 characters with numbers and symbols.";
+            break;
+        case "auth/operation-not-allowed":
+            msg = "Registration is currently disabled. Contact admin.";
+            break;
+        case "auth/too-many-requests":
+            msg = "Too many attempts. Please wait a few minutes and try again.";
+            break;
     }
+
     alert(`❌ ${context} Failed: ${msg}`);
 }
 
