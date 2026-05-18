@@ -1,0 +1,65 @@
+cat << 'EOF' > dashboard.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMCS Wachemo | Member Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <script type="module" src="js/guard.js"></script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-cross cross-icon"></i> IMCS <span>Wachemo</span>
+            </a>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-links">Home</a></li>
+                <li><a href="dashboard.html" class="nav-links active">Dashboard</a></li>
+                <li><a href="events.html" class="nav-links">Events</a></li>
+                <li><a href="gallery.html" class="nav-links">Gallery</a></li>
+                <li><a href="#" class="nav-btn logout-active-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container" style="padding: 120px 20px; max-width: 1200px; margin: 0 auto;">
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <h1 style="color: #1a365d; margin-bottom: 10px;">Welcome Back, IMCS Member! 👋</h1>
+            <p style="color: #64748b; margin-bottom: 30px;">Wachemo University Pax Romana Campus Portal.</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div style="border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; background: #f8fafc;">
+                    <i class="fas fa-calendar-check" style="font-size: 24px; color: #2563eb; margin-bottom: 10px;"></i>
+                    <h3>Spiritual Programs</h3>
+                    <p style="font-size: 14px; color: #64748b; margin-top: 5px;">Access Mass schedules, choir practice logs, and localized fellowship timelines.</p>
+                </div>
+                <div style="border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; background: #f8fafc;">
+                    <i class="fas fa-book-open" style="font-size: 24px; color: #16a34a; margin-bottom: 10px;"></i>
+                    <h3>Intellect & Formations</h3>
+                    <p style="font-size: 14px; color: #64748b; margin-top: 5px;">Download educational resources, seminar modules, and study circle files.</p>
+                </div>
+                <div style="border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; background: #f8fafc;">
+                    <i class="fas fa-bullhorn" style="font-size: 24px; color: #ea580c; margin-bottom: 10px;"></i>
+                    <h3>Announcements</h3>
+                    <p style="font-size: 14px; color: #64748b; margin-top: 5px;">Stay up to date with executive council decisions and general notices.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/auth.js"></script>
+</body>
+</html>
+EOF
+
