@@ -1,20 +1,28 @@
-cat << 'EOF' > js/app.js
-// IMCS Wachemo - Global UI Interactions
+
+// IMCS Wachemo - Fail-Safe Mobile Menu Engine
 document.addEventListener("DOMContentLoaded", () => {
-    // Using querySelector to perfectly match your CSS .menu-toggle class
-    const menuToggle = document.querySelector(".menu-toggle");
+    // Select by either ID or Class to completely bypass structural mismatches
+    const menuToggle = document.getElementById("mobile-menu") || document.querySelector(".menu-toggle");
     const navMenu = document.querySelector(".nav-menu");
 
-    // 📱 Mobile Hamburger Menu Toggle
     if (menuToggle && navMenu) {
+        console.log("Mobile menu DOM bindings successful.");
+        
         menuToggle.addEventListener("click", (e) => {
             e.preventDefault();
+            e.stopPropagation();
+            
+            // Toggle classes for animations and visibility state
             menuToggle.classList.toggle("is-active");
             navMenu.classList.toggle("active");
+            
+            console.log("Menu toggled. Active state:", navMenu.classList.contains("active"));
         });
+    } else {
+        console.error("Layout Error: Navigation DOM elements missing.", { menuToggle, navMenu });
     }
 
-    // 🔒 Close mobile menu if a link is clicked
+    // Auto-collapse mobile drawer upon clicking individual option links
     const navLinks = document.querySelectorAll(".nav-links, .nav-menu a");
     navLinks.forEach(link => {
         link.addEventListener("click", () => {
@@ -22,18 +30,4 @@ document.addEventListener("DOMContentLoaded", () => {
             if (navMenu) navMenu.classList.remove("active");
         });
     });
-
-    // ✨ Sticky Navbar on Scroll
-    const navbar = document.querySelector(".navbar");
-    window.addEventListener("scroll", () => {
-        if (navbar) {
-            if (window.scrollY > 50) {
-                navbar.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
-            } else {
-                navbar.style.boxShadow = "none";
-            }
-        }
-    });
 });
-EOF
-
