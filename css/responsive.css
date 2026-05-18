@@ -1,138 +1,104 @@
 cat << 'EOF' > css/responsive.css
-/* ==========================================================================
-   IMCS WACHEMO - MASTER MOBILE RESPONSIVE FRAMEWORK
-   ========================================================================== */
+/* 📱 Complete Responsive Overhaul for IMCS Wachemo */
+
+/* Prevent horizontal page scaling and blank side spaces globally */
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 @media screen and (max-width: 768px) {
-    /* Navbar Core Alignment */
-    .nav-container {
-        position: relative;
-        justify-content: space-between;
-        width: 100%;
-        padding: 0 20px;
+    /* 1. Reset Global Layout Containers */
+    .container, .footer-container, .nav-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 20px !important;
+        box-sizing: border-box;
     }
 
-    /* Mobile Drawer Setup */
-    .nav-menu {
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        top: -100vh;
-        left: 0;
-        width: 100%;
-        height: auto;
-        padding: 40px 0;
-        transition: all 0.4s ease-in-out;
-        gap: 24px;
-        background-color: #1a365d;
-        border-bottom: 2px solid var(--primary, #2563eb);
-        z-index: 999;
-    }
-
-    .nav-menu.active {
-        top: 70px;
-    }
-
-    .nav-menu li {
-        width: 100%;
-        text-align: center;
-    }
-
-    .nav-links, .nav-btn {
-        display: block;
-        padding: 10px 0;
-        font-size: 1.2rem;
-    }
-
-    /* Burger Menu Icon Bars */
+    /* 2. Mobile Menu System Drawer */
     .menu-toggle {
         display: block !important;
         cursor: pointer;
     }
-
-    .menu-toggle .bar {
-        display: block;
-        width: 25px;
-        height: 3px;
-        margin: 5px auto;
-        transition: all 0.3s ease;
-        background-color: white;
-    }
-
-    .menu-toggle.is-active .bar:nth-child(2) { opacity: 0; }
-    .menu-toggle.is-active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-    .menu-toggle.is-active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-
-    /* Hero Typography Controls */
-    .hero-title {
-        font-size: 2rem;
-    }
-
-    .hero-description {
-        font-size: 1rem;
-    }
-
-    .hero-cta {
+    
+    .nav-menu {
+        position: fixed;
+        top: 60px;
+        left: -100%;
         flex-direction: column;
+        background: #1a365d;
         width: 100%;
-        max-width: 300px;
-        margin: 0 auto;
-        gap: 12px;
+        height: calc(100vh - 60px);
+        text-align: center;
+        transition: 0.3s ease;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        padding: 40px 0;
+        z-index: 999;
+        display: flex !important;
     }
 
-    /* Structural Grid Collapses */
-    .about-grid {
-        grid-template-columns: 1fr !important;
-        gap: 24px;
+    .nav-menu.active {
+        left: 0;
     }
 
-    .gallery-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 12px;
+    .nav-links {
+        padding: 15px 0;
+        width: 100%;
+        display: block;
+        color: white !important;
     }
 
-    .gallery-item {
-        height: 200px;
+    /* 3. Hero Layout Normalization */
+    .hero-section {
+        padding: 100px 20px 60px !important;
+        width: 100% !important;
+        box-sizing: border-box;
     }
-
-    .close-lightbox {
-        top: 20px;
-        right: 25px;
+    .hero-title {
+        font-size: 1.8rem !important;
+        line-height: 1.3 !important;
     }
-
-    /* Event Feed Controls */
-    .event-item {
+    .hero-cta {
+        display: flex;
         flex-direction: column;
+        gap: 15px;
+        width: 100%;
+    }
+    .hero-cta .btn {
+        width: 100% !important;
+        box-sizing: border-box;
+        text-align: center;
     }
 
-    .event-date-tag {
-        flex-direction: row;
-        gap: 12px;
-        padding: 12px;
-        min-width: 100%;
+    /* 4. Core Mission Grid Fix (Destroys the 3-column layout zoom bug) */
+    .about-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important; /* Forces cards to stack vertically */
+        gap: 25px !important;
+        width: 100% !important;
     }
 
-    .event-date-tag .day {
-        font-size: 1.5rem;
+    .about-card {
+        width: 100% !important;
+        box-sizing: border-box;
     }
 
-    .countdown-display {
-        gap: 12px;
-    }
-
-    .time-block {
-        padding: 10px;
-        min-width: 70px;
-    }
-
-    .time-block span {
-        font-size: 1.5rem;
-    }
-
-    /* Global Footer Stack */
+    /* 5. Footer Layout Stack Fix */
     .footer-container {
-        grid-template-columns: 1fr !important;
-        gap: 40px;
+        display: grid !important;
+        grid-template-columns: 1fr !important; /* Forces footer elements to stack vertically */
+        gap: 30px !important;
+        text-align: center;
+    }
+    .footer-socials {
+        justify-content: center;
+        display: flex;
+        gap: 15px;
     }
 }
 EOF
