@@ -1,25 +1,53 @@
 cat << 'EOF' > css/responsive.css
+/* ==========================================================================
+   IMCS WACHEMO - MASTER MOBILE RESPONSIVE FRAMEWORK
+   ========================================================================== */
+
 @media screen and (max-width: 768px) {
+    /* Navbar Core Alignment */
+    .nav-container {
+        position: relative;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0 20px;
+    }
+
+    /* Mobile Drawer Setup */
     .nav-menu {
+        display: flex;
+        flex-direction: column;
         position: fixed;
         top: -100vh;
         left: 0;
-        flex-direction: column;
-        background-color: var(--surface);
         width: 100%;
         height: auto;
         padding: 40px 0;
         transition: all 0.4s ease-in-out;
         gap: 24px;
-        border-bottom: 2px solid var(--primary);
+        background-color: #1a365d;
+        border-bottom: 2px solid var(--primary, #2563eb);
+        z-index: 999;
     }
 
     .nav-menu.active {
-        top: 80px;
+        top: 70px;
     }
 
-    .menu-toggle {
+    .nav-menu li {
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-links, .nav-btn {
         display: block;
+        padding: 10px 0;
+        font-size: 1.2rem;
+    }
+
+    /* Burger Menu Icon Bars */
+    .menu-toggle {
+        display: block !important;
+        cursor: pointer;
     }
 
     .menu-toggle .bar {
@@ -27,18 +55,19 @@ cat << 'EOF' > css/responsive.css
         width: 25px;
         height: 3px;
         margin: 5px auto;
-        transition: var(--transition);
-        background-color: var(--text-main);
+        transition: all 0.3s ease;
+        background-color: white;
     }
 
     .menu-toggle.is-active .bar:nth-child(2) { opacity: 0; }
     .menu-toggle.is-active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
     .menu-toggle.is-active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
+    /* Hero Typography Controls */
     .hero-title {
         font-size: 2rem;
     }
-    
+
     .hero-description {
         font-size: 1rem;
     }
@@ -48,21 +77,20 @@ cat << 'EOF' > css/responsive.css
         width: 100%;
         max-width: 300px;
         margin: 0 auto;
-    }
-}
-EOF
-@media screen and (max-width: 768px) {
-    /* Stack the About blocks cleanly on small viewports */
-    .about-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-
-    /* Scale gallery columns smoothly downward on small viewports */
-    .gallery-grid {
-        grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
-    
+
+    /* Structural Grid Collapses */
+    .about-grid {
+        grid-template-columns: 1fr !important;
+        gap: 24px;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px;
+    }
+
     .gallery-item {
         height: 200px;
     }
@@ -71,21 +99,19 @@ EOF
         top: 20px;
         right: 25px;
     }
-    }
 
-    /* Paste the new Event styles right here! */
-    /* Handle event cards switching from inline row to stack on mobile */
+    /* Event Feed Controls */
     .event-item {
         flex-direction: column;
     }
-    
+
     .event-date-tag {
         flex-direction: row;
         gap: 12px;
         padding: 12px;
         min-width: 100%;
     }
-    
+
     .event-date-tag .day {
         font-size: 1.5rem;
     }
@@ -102,12 +128,12 @@ EOF
     .time-block span {
         font-size: 1.5rem;
     }
-} /* This is the closing bracket for the entire mobile media query */
-    
-    /* Reposition the footers grid matrix */
+
+    /* Global Footer Stack */
     .footer-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
         gap: 40px;
     }
 }
+EOF
 
