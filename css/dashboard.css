@@ -1,0 +1,215 @@
+/* ==========================================================================
+   Design Tokens & System Architecture
+   ========================================================================== */
+:root {
+    --bg-surface: #f8fafc;
+    --bg-card: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    
+    --clr-primary: #1e3a8a;
+    --clr-accent: #3b82f6;
+    
+    --blue-base: #2563eb;
+    --blue-tint: #eff6ff;
+    --green-base: #16a34a;
+    --green-tint: #f0fdf4;
+    --orange-base: #ea580c;
+    --orange-tint: #fff7ed;
+    
+    --border-color: #e2e8f0;
+    --radius-lg: 16px;
+    --radius-md: 8px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05);
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+
+/* ==========================================================================
+   State Engine: Cryptographic Visibility Gates
+   ========================================================================== */
+.auth-gate-locked {
+    display: none !important;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.auth-gate-unlocked {
+    display: block !important;
+    opacity: 1;
+    visibility: visible;
+    animation: fadeInWorkspace 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeInWorkspace {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Workspace Infrastructure
+   ========================================================================== */
+.workspace-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 120px 24px 48px 24px;
+    box-sizing: border-box;
+}
+
+.workspace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    gap: 20px;
+}
+
+.workspace-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.025em;
+    margin: 0 0 6px 0;
+}
+
+.workspace-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* ==========================================================================
+   Dashboard Grid & Component Cards
+   ========================================================================== */
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 32px;
+}
+
+.app-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition-smooth);
+}
+
+.app-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: calc(var(--border-color) - #111); /* Subtle deepening */
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.bg-blue-tint   { background-color: var(--blue-tint); }
+.text-blue      { color: var(--blue-base); }
+.bg-green-tint  { background-color: var(--green-tint); }
+.text-green     { color: var(--green-base); }
+.bg-orange-tint { background-color: var(--orange-tint); }
+.text-orange    { color: var(--orange-base); }
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    color: #1e293b;
+}
+
+.card-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0 0 24px 0;
+}
+
+/* ==========================================================================
+   Reactive View Slots (Dynamic Sub-Items)
+   ========================================================================== */
+.data-view-engine {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 200px;
+}
+
+/* Node Elements (Rendered by client js) */
+.view-node {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    transition: var(--transition-smooth);
+}
+
+.view-node:hover {
+    background: #f1f5f9;
+    border-color: var(--border-color);
+}
+
+.node-meta h4 {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+}
+
+.node-meta span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   UX Additions: Skeleton Shaders
+   ========================================================================== */
+.skeleton-loader {
+    width: 100%;
+    height: 52px;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: skeletonShift 1.5s infinite linear;
+    border-radius: var(--radius-md);
+}
+
+@keyframes skeletonShift {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+    .workspace-header { flex-direction: column; align-items: flex-start; }
+    .app-grid { grid-template-columns: 1fr; }
+}
+
