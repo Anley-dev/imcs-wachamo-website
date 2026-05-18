@@ -1,24 +1,25 @@
-// IMCS Wachemo - Firebase Authentication
+cat << 'EOF' > js/auth.js
+// Upgraded to stable Firebase v12.13.0
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut,
-    updateProfile
+import { 
+    getAuth, 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword, 
+    onAuthStateChanged, 
+    signOut, 
+    updateProfile 
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-// === FIREBASE CONFIG (USE THIS) ===
 const firebaseConfig = {
-  apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
-  authDomain: "imcs-wachamo.firebaseapp.com",
-  projectId: "imcs-wachamo",
-  storageBucket: "imcs-wachamo.firebasestorage.app",
-  messagingSenderId: "445125483030",
-  appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
+    apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
+    authDomain: "imcs-wachamo.firebaseapp.com",
+    projectId: "imcs-wachamo",
+    storageBucket: "imcs-wachamo.firebasestorage.app",
+    messagingSenderId: "445125483030",
+    appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
 };
 
+// Initialize App instance safely
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 
@@ -26,6 +27,81 @@ document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("register-form");
     const loginForm = document.getElementById("login-form");
 
+    // 📝 REGISTRATION CONTROLLER
+    if (registerForm) {
+        registerForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const name = document.getElementById("register-name").value.trim();
+            const email = document.getElementById("register-email").value.trim();
+            const password = document.getElementById("register-password").value;
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                // Attach the user's name to their profile
+                await updateProfile(userCredential.user, { displayName: name });
+                alert("Account created successfully! Welcome to IMCS.");
+                window.location.href = "login.html";
+            } catch (error) {
+                alert("Registration Failed: " + error.message);
+            }
+        });
+    }
+
+    // 🔑 LOGIN CONTROLLER
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("login-email").value.trim();
+            const password = document.getElementById("login-password").value;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                alert("Login successful! Redirecting to your dashboard...");
+                window.location.href = "dashboard.html";
+            } catch (error) {
+                alert("Login Failed: " + error.message);
+            }
+        });
+    }
+});
+
+// 🔄 Dynamic Navbar UI Sync Listener
+onAuthStateChanged(auth, (user) => {
+    const dashboardLink = document.querySelector('a[href="dashboard.html"]');
+    const loginBtn = document.querySelector('.nav-btn');
+
+    if (user) {
+        // User is LOGGED IN: Show dashboard, turn Login button to Logout action handles
+        if (dashboardLink) dashboardLink.style.display = "block";
+        if (loginBtn) {
+            loginBtn.textContent = "Logout";
+            loginBtn.href = "#";
+            loginBtn.classList.add("logout-active-btn");
+        }
+    } else {
+        // User is LOGGED OUT: Hide dashboard link, show classic Login link
+        if (dashboardLink) dashboardLink.style.display = "none";
+        if (loginBtn) {
+            loginBtn.textContent = "Login";
+            loginBtn.href = "login.html";
+            loginBtn.classList.remove("logout-active-btn");
+        }
+    }
+});
+
+// 🚪 Global Logout Action Controller
+document.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("logout-active-btn")) {
+        e.preventDefault();
+        try {
+            await signOut(auth);
+            alert("You have logged out successfully.");
+            window.location.href = "index.html";
+        } catch (error) {
+            console.error("Logout Error:", error.message);
+        }
+    }
+});
     // Registration
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
@@ -81,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                window.location.href = "index.html";
+                window.location.href = "dashboard.html";
             } catch (error) {
                 handleAuthError(error, "Login");
             } finally {
