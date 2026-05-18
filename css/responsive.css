@@ -20,34 +20,56 @@ html, body {
         box-sizing: border-box;
     }
 
-    /* 2. Mobile Menu System Drawer */
+    .nav-container {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    /* 2. Mobile Menu System Drawer & Visible Bars */
     .menu-toggle {
         display: block !important;
         cursor: pointer;
+        z-index: 1000;
     }
-    
+
+    .menu-toggle .bar {
+        width: 25px;
+        height: 3px;
+        background-color: #ffffff !important; /* Makes the hamburger lines visible white */
+        margin: 5px auto;
+        display: block;
+        transition: all 0.3s ease-in-out;
+    }
+
     .nav-menu {
-        position: fixed;
+        position: fixed !important;
         top: 60px;
-        left: -100%;
-        flex-direction: column;
-        background: #1a365d;
-        width: 100%;
-        height: calc(100vh - 60px);
+        left: -100% !important;
+        flex-direction: column !important;
+        background: #1a365d !important;
+        width: 100% !important;
+        height: calc(100vh - 60px) !important;
         text-align: center;
-        transition: 0.3s ease;
-        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-        padding: 40px 0;
-        z-index: 999;
+        transition: 0.3s ease-in-out !important;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+        padding: 40px 0 !important;
+        z-index: 999 !important;
         display: flex !important;
     }
 
     .nav-menu.active {
-        left: 0;
+        left: 0 !important;
+    }
+
+    .nav-menu li {
+        margin: 15px 0 !important;
+        width: 100%;
     }
 
     .nav-links {
-        padding: 15px 0;
+        font-size: 1.2rem !important;
+        padding: 10px 0;
         width: 100%;
         display: block;
         color: white !important;
