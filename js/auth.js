@@ -23,13 +23,13 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0
 const auth = getAuth(app);
 
 // Protected Pages
-const protectedPages = ["profile.html", "events.html", "gallery.html", "admin.html", "dashboard.html"];
+const protectedPages = ["dashboard.html", "profile.html", "events.html", "gallery.html", "admin.html"];
 
 document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("register-form");
     const loginForm = document.getElementById("login-form");
 
-    // === REGISTRATION ===
+    // Registration
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -38,34 +38,33 @@ document.addEventListener("DOMContentLoaded", () => {
             const name = document.getElementById("reg-name")?.value.trim();
             const email = document.getElementById("reg-email")?.value.trim();
             const password = document.getElementById("reg-password")?.value;
-            const confirmPassword = document.getElementById("reg-confirm-password")?.value;
+            const confirm = document.getElementById("reg-confirm-password")?.value;
 
             if (!name) return showError("reg-name", "Full name is required");
             if (!email) return showError("reg-email", "Email is required");
             if (password.length < 8) return showError("reg-password", "Password must be at least 8 characters");
-            if (password !== confirmPassword) return showError("reg-confirm-password", "Passwords do not match");
+            if (password !== confirm) return showError("reg-confirm-password", "Passwords do not match");
 
-            const submitBtn = registerForm.querySelector("button");
-            const originalText = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = "Creating Account...";
+            const btn = registerForm.querySelector("button");
+            const text = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = "Creating...";
 
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                await updateProfile(userCredential.user, { displayName: name });
-                
-                alert(`✅ Welcome ${name}! Account created successfully.`);
+                const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(userCred.user, { displayName: name });
+                alert(`✅ Welcome ${name}!`);
                 window.location.href = "login.html";
             } catch (error) {
                 handleAuthError(error, "Registration");
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
+                btn.disabled = false;
+                btn.textContent = text;
             }
         });
     }
 
-    // === LOGIN ===
+    // Login
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -77,37 +76,36 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!email) return showError("login-email", "Email is required");
             if (!password) return showError("login-password", "Password is required");
 
-            const submitBtn = loginForm.querySelector("button");
-            const originalText = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = "Signing In...";
+            const btn = loginForm.querySelector("button");
+            const text = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = "Signing In...";
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                window.location.href = "index.html";   // or "dashboard.html"
+                window.location.href = "dashboard.html";
             } catch (error) {
                 handleAuthError(error, "Login");
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
+                btn.disabled = false;
+                btn.textContent = text;
             }
         });
     }
 });
 
-// === GLOBAL AUTH STATE LISTENER ===
+// Global Auth Listener
 onAuthStateChanged(auth, (user) => {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
-    const navBtn = document.querySelector(".nav-btn");
 
-    // Update Navbar
+    // Navbar handling (supports both .nav-btn and #logoutBtn)
+    const navBtn = document.querySelector(".nav-btn") || document.getElementById("logoutBtn");
     if (navBtn) {
         if (user) {
             navBtn.textContent = "Logout";
-            navBtn.href = "#";
             navBtn.onclick = async (e) => {
                 e.preventDefault();
-                if (confirm("Are you sure you want to logout?")) {
+                if (confirm("Logout?")) {
                     await signOut(auth);
                     window.location.href = "index.html";
                 }
@@ -115,11 +113,10 @@ onAuthStateChanged(auth, (user) => {
         } else {
             navBtn.textContent = "Login";
             navBtn.href = "login.html";
-            navBtn.onclick = null;
         }
     }
 
-    // Protect restricted pages
+    // Page Protection
     if (protectedPages.includes(currentPage) && !user) {
         alert("🔒 Please login to access this page.");
         window.location.href = "login.html";
@@ -127,22 +124,17 @@ onAuthStateChanged(auth, (user) => {
 });
 
 function handleAuthError(error, context) {
-    console.error(`${context} Error:`, error);
-    let msg = error.message || "An unexpected error occurred.";
-
-    switch (error.code) {
-        case "auth/email-already-in-use": msg = "This email is already registered."; break;
-        case "auth/invalid-email": msg = "Please enter a valid email."; break;
-        case "auth/weak-password": msg = "Password is too weak. Use at least 8 characters."; break;
-        case "auth/too-many-requests": msg = "Too many attempts. Try again later."; break;
-    }
+    console.error(error);
+    let msg = "An unexpected error occurred.";
+    if (error.code === "auth/invalid-credential") msg = "Invalid email or password.";
+    if (error.code === "auth/email-already-in-use") msg = "Email already registered.";
     alert(`❌ ${context} Failed: ${msg}`);
 }
 
-function showError(id, message) {
-    const field = document.getElementById(id);
-    if (field) field.classList.add("error");
-    alert(message);
+function showError(id, msg) {
+    const el = document.getElementById(id);
+    if (el) el.classList.add("error");
+    alert(msg);
 }
 
 function clearErrors() {
