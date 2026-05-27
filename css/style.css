@@ -1,4 +1,4 @@
-cat << 'EOF' > css/style.css
+
 :root {
     --primary: #1E3A8A;       
     --secondary: #FACC15;     
@@ -361,6 +361,11 @@ EOF
     color: var(--text-muted);
     font-size: 0.85rem;
 }
+/* Keeps member-only content completely hidden until Firebase confirms login */
+.structural-hide {
+    display: none !important;
+}
+
 /* --- Inner Page Common Header --- */
 .page-header {
     background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url('../images/header-bg.jpg') no-repeat center center/cover;
