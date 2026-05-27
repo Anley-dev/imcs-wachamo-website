@@ -1,5 +1,5 @@
 
-// IMCS Wachemo - Firebase Auth 
+// IMCS Wachemo - Firebase Auth (Fixed Protection)
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import {
     getAuth,
@@ -22,7 +22,6 @@ const firebaseConfig = {
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 
-// Protected Pages
 const protectedPages = ["dashboard.html", "profile.html", "events.html", "gallery.html", "admin.html"];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -94,11 +93,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Global Auth Listener
+// Improved Global Auth Listener with small delay
 onAuthStateChanged(auth, (user) => {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
-    // Navbar handling (supports both .nav-btn and #logoutBtn)
+    // Navbar
     const navBtn = document.querySelector(".nav-btn") || document.getElementById("logoutBtn");
     if (navBtn) {
         if (user) {
@@ -116,17 +115,21 @@ onAuthStateChanged(auth, (user) => {
         }
     }
 
-    // Page Protection
-    if (protectedPages.includes(currentPage) && !user) {
-        alert("🔒 Please login to access this page.");
-        window.location.href = "login.html";
-    }
+    // Protection with small delay to avoid race condition
+    setTimeout(() => {
+        if (protectedPages.includes(currentPage) && !user) {
+            alert("🔒 Please login to access this page.");
+            window.location.href = "login.html";
+        }
+    }, 800); // 800ms delay
 });
 
 function handleAuthError(error, context) {
     console.error(error);
     let msg = "An unexpected error occurred.";
-    if (error.code === "auth/invalid-credential") msg = "Invalid email or password.";
+    if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password") {
+        msg = "Invalid email or password.";
+    }
     if (error.code === "auth/email-already-in-use") msg = "Email already registered.";
     alert(`❌ ${context} Failed: ${msg}`);
 }
