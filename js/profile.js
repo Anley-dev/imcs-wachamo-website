@@ -1,57 +1,45 @@
-// IMCS Wachemo - Protected Space Session Guardian & Data Populator
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { auth } from "./firebase.js";
+// Profile Page - Firebase Integration
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+const auth = getAuth();
 
 document.addEventListener("DOMContentLoaded", () => {
     const loadingCard = document.getElementById("profile-loading-card");
     const mainCard = document.getElementById("profile-main-card");
-    
     const emailDisplay = document.getElementById("user-display-email");
     const uidDisplay = document.getElementById("user-display-uid");
     const signinDisplay = document.getElementById("user-display-signin");
     const logoutBtn = document.getElementById("profile-logout-btn");
 
-    // ==========================================
-    // SECURE SESSION HANDSHAKE WATCHER
-    // ==========================================
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            console.log("Access granted to UID:", user.uid);
+            // Show user data
+            emailDisplay.textContent = user.displayName || user.email || "IMCS Member";
+            uidDisplay.textContent = user.uid ? user.uid.substring(0, 12) + "..." : "---";
             
-            // Extract metadata fields straight from the user session token
-            emailDisplay.textContent = user.email;
-            uidDisplay.textContent = user.uid;
-            
-            // Format creation timestamp cleanly
-            const lastSignInTime = user.metadata.lastSignInTime 
+            const lastSignIn = user.metadata?.lastSignInTime 
                 ? new Date(user.metadata.lastSignInTime).toLocaleString() 
-                : "Current Active Session";
-            signinDisplay.textContent = lastSignInTime;
+                : "Just now";
+            signinDisplay.textContent = lastSignIn;
 
-            // Smoothly swap loading view with the verified private data template
-            loadingCard.classList.add("structural-hide");
+            // Show content
+            loadingCard.style.display = "none";
             mainCard.classList.remove("structural-hide");
         } else {
-            // Guard Triggered: No valid session cookie/token caught. Divert path back to terminal.
-            console.warn("Unauthorized intercept caught. Routing back to authentication terminal.");
             window.location.href = "login.html";
         }
     });
 
-    // ==========================================
-    // CONTEXTUAL SIGN-OUT PROCESSING BLOCK
-    // ==========================================
+    // Logout
     if (logoutBtn) {
         logoutBtn.addEventListener("click", async (e) => {
             e.preventDefault();
-            if (confirm("Are you sure you want to invalidate your secure token and exit your profile workspace?")) {
+            if (confirm("Are you sure you want to logout?")) {
                 try {
                     await signOut(auth);
-                    alert("Session closed successfully. Tokens invalidated.");
-                    window.location.href = "login.html";
+                    window.location.href = "index.html";
                 } catch (error) {
-                    console.error("Token clearing fault:", error);
-                    alert("Error processing session terminal sequence.");
+                    alert("Logout failed. Please try again.");
                 }
             }
         });
