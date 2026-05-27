@@ -1,71 +1,82 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | IMCS Wachemo</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
     <script type="module" src="js/auth.js"></script>
-    <style>
-        body { background: #f8f9fa; margin: 0; font-family: 'Inter', sans-serif; }
-        .workspace-container { padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .app-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-        .app-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    </style>
 </head>
 <body>
 
-    <nav class="app-navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-brand">
-                <i class="fas fa-cross"></i> IMCS <span class="brand-accent">Wachemo</span>
-            </a>
-            <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                <li><a href="events.html">Events</a></li>
-                <li><a href="gallery.html">Gallery</a></li>
-                <li><button id="logoutBtn" class="btn btn-logout">Logout</button></li>
-            </ul>
-        </div>
-    </nav>
+    <div id="protected-content">
 
-    <main class="workspace-container" id="main-content">
-        <h1>Welcome Back, <span id="user-name">Member</span> 👋</h1>
-        <p>Pax Romana Local Portal • Wachemo University Campus</p>
-
-        <div class="app-grid">
-            <div class="app-card">
-                <div class="card-header">
-                    <i class="fas fa-calendar-check fa-2x" style="color:#3b82f6;"></i>
-                    <h2>Spiritual Programs</h2>
-                </div>
-                <p>Real-time Mass schedules, choir practice, and fellowship timelines.</p>
-                <strong>Coming soon...</strong>
+        <nav class="app-navbar" aria-label="Main Navigation">
+            <div class="nav-container">
+                <a href="index.html" class="nav-brand">
+                    <i class="fas fa-cross brand-icon"></i>
+                    <span class="brand-text">IMCS <span class="brand-accent">Wachemo</span></span>
+                </a>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="gallery.html">Gallery</a></li>
+                    <li><button id="logoutBtn" class="btn btn-logout">Logout</button></li>
+                </ul>
             </div>
+        </nav>
 
-            <div class="app-card">
-                <div class="card-header">
-                    <i class="fas fa-book-open fa-2x" style="color:#10b981;"></i>
-                    <h2>Intellect & Formations</h2>
+        <main class="workspace-container">
+            <header class="workspace-header">
+                <div class="welcome-meta">
+                    <h1 class="workspace-title">Welcome Back, <span id="user-name">Member</span> 👋</h1>
+                    <p class="workspace-subtitle">Pax Romana Local Portal • Wachemo University Campus</p>
                 </div>
-                <p>Academic resources, seminar modules, and study materials.</p>
-                <strong>Coming soon...</strong>
-            </div>
+            </header>
 
-            <div class="app-card">
-                <div class="card-header">
-                    <i class="fas fa-bullhorn fa-2x" style="color:#f59e0b;"></i>
-                    <h2>Announcements</h2>
-                </div>
-                <p>Latest updates from the Executive Council.</p>
-                <strong>No announcements yet.</strong>
+            <div class="app-grid">
+                <section class="app-card">
+                    <header class="card-header">
+                        <div class="icon-wrapper bg-blue-tint">
+                            <i class="fas fa-calendar-check text-blue"></i>
+                        </div>
+                        <h2 class="card-title">Spiritual Programs</h2>
+                    </header>
+                    <p class="card-description">Real-time Mass schedules, choir practice, and fellowship timelines.</p>
+                    <p><strong>Coming soon...</strong></p>
+                </section>
+
+                <section class="app-card">
+                    <header class="card-header">
+                        <div class="icon-wrapper bg-green-tint">
+                            <i class="fas fa-book-open text-green"></i>
+                        </div>
+                        <h2 class="card-title">Intellect & Formations</h2>
+                    </header>
+                    <p class="card-description">Academic resources, seminar modules, and study materials.</p>
+                    <p><strong>Coming soon...</strong></p>
+                </section>
+
+                <section class="app-card">
+                    <header class="card-header">
+                        <div class="icon-wrapper bg-orange-tint">
+                            <i class="fas fa-bullhorn text-orange"></i>
+                        </div>
+                        <h2 class="card-title">Announcements</h2>
+                    </header>
+                    <p class="card-description">Latest updates from the Executive Council.</p>
+                    <p><strong>No announcements yet.</strong></p>
+                </section>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <script>
         import { onAuthStateChanged, getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
