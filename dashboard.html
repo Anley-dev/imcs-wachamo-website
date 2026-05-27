@@ -5,19 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | IMCS Wachemo</title>
-
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
-
     <script type="module" src="js/auth.js"></script>
 </head>
 <body>
 
     <div id="protected-content">
 
-        <nav class="app-navbar" aria-label="Main Navigation">
+        <nav class="app-navbar">
             <div class="nav-container">
                 <a href="index.html" class="nav-brand">
                     <i class="fas fa-cross brand-icon"></i>
@@ -79,19 +77,23 @@
     </div>
 
     <script>
-        import { onAuthStateChanged, getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+        import { onAuthStateChanged, getAuth } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
         const auth = getAuth();
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                const displayName = user.displayName || user.email.split('@')[0] || "Member";
-                document.getElementById("user-name").textContent = displayName;
+                const nameEl = document.getElementById("user-name");
+                // Prioritize displayName, fallback to email username
+                nameEl.textContent = user.displayName || 
+                                   (user.email ? user.email.split('@')[0] : "Member");
             } else {
                 window.location.href = "login.html";
             }
         });
 
+        // Logout
         document.getElementById("logoutBtn").addEventListener("click", async () => {
+            const { signOut } = await import("https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js");
             if (confirm("Logout from IMCS Wachemo?")) {
                 await signOut(auth);
                 window.location.href = "index.html";
