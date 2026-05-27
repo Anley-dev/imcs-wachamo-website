@@ -5,110 +5,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | IMCS Wachemo</title>
-
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
-
     <script type="module" src="js/auth.js"></script>
 </head>
 <body>
 
-    <!-- Protected Content Wrapper -->
-    <div id="protected-content" style="display: none;">
+    <nav class="app-navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <i class="fas fa-cross brand-icon"></i>
+                IMCS <span class="brand-accent">Wachemo</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><button id="logoutBtn" class="btn btn-logout">Logout</button></li>
+            </ul>
+        </div>
+    </nav>
 
-        <nav class="app-navbar" aria-label="Main Navigation">
-            <div class="nav-container">
-                <a href="index.html" class="nav-brand">
-                    <i class="fas fa-cross brand-icon" aria-hidden="true"></i>
-                    <span class="brand-text">IMCS <span class="brand-accent">Wachemo</span></span>
-                </a>
-                <button class="nav-toggle" id="mobile-menu" aria-expanded="false" aria-label="Toggle navigation menu">
-                    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-                </button>
-                <ul class="nav-menu" id="nav-menu-list">
-                    <li><a href="index.html" class="nav-item">Home</a></li>
-                    <li><a href="dashboard.html" class="nav-item active" aria-current="page">Dashboard</a></li>
-                    <li><a href="events.html" class="nav-item">Events</a></li>
-                    <li><a href="gallery.html" class="nav-item">Gallery</a></li>
-                    <li><button id="logoutBtn" class="btn btn-logout">Logout</button></li>
-                </ul>
+    <main class="workspace-container" id="main-content" style="display: none;">
+        <header class="workspace-header">
+            <div class="welcome-meta">
+                <h1>Welcome Back, <span id="user-name">Member</span> 👋</h1>
+                <p>Pax Romana Local Portal • Wachemo University Campus</p>
             </div>
-        </nav>
+        </header>
 
-        <main class="workspace-container">
-            <header class="workspace-header">
-                <div class="welcome-meta">
-                    <h1 class="workspace-title">Welcome Back, <span id="user-name">Member</span> <span class="wave-emoji">👋</span></h1>
-                    <p class="workspace-subtitle">Pax Romana Local Portal • Wachemo University Campus</p>
-                </div>
-            </header>
+        <div class="app-grid">
+            <section class="app-card">
+                <h2>Spiritual Programs</h2>
+                <p>Real-time Mass schedules, choir practice, and fellowship timelines.</p>
+                <p><strong>Coming soon...</strong></p>
+            </section>
 
-            <div class="app-grid">
+            <section class="app-card">
+                <h2>Intellect & Formations</h2>
+                <p>Academic resources, seminar modules, and study materials.</p>
+                <p><strong>Coming soon...</strong></p>
+            </section>
 
-                <section class="app-card" data-component="spiritual">
-                    <header class="card-header">
-                        <div class="icon-wrapper bg-blue-tint">
-                            <i class="fas fa-calendar-check text-blue" aria-hidden="true"></i>
-                        </div>
-                        <h2 class="card-title">Spiritual Programs</h2>
-                    </header>
-                    <p class="card-description">Real-time Mass schedules, choir practice, and fellowship timelines.</p>
-                    <div class="data-view-engine" id="spiritual-view-slot">
-                        <p>Coming soon...</p>
-                    </div>
-                </section>
-
-                <section class="app-card" data-component="formations">
-                    <header class="card-header">
-                        <div class="icon-wrapper bg-green-tint">
-                            <i class="fas fa-book-open text-green" aria-hidden="true"></i>
-                        </div>
-                        <h2 class="card-title">Intellect & Formations</h2>
-                    </header>
-                    <p class="card-description">Academic resources, seminar modules, and study materials.</p>
-                    <div class="data-view-engine" id="formations-view-slot">
-                        <p>Coming soon...</p>
-                    </div>
-                </section>
-
-                <section class="app-card" data-component="announcements">
-                    <header class="card-header">
-                        <div class="icon-wrapper bg-orange-tint">
-                            <i class="fas fa-bullhorn text-orange" aria-hidden="true"></i>
-                        </div>
-                        <h2 class="card-title">Announcements</h2>
-                    </header>
-                    <p class="card-description">Latest updates from the Executive Council.</p>
-                    <div class="data-view-engine" id="announcements-view-slot">
-                        <p>No announcements yet.</p>
-                    </div>
-                </section>
-
-            </div>
-        </main>
-    </div>
+            <section class="app-card">
+                <h2>Announcements</h2>
+                <p>Latest updates from the Executive Council.</p>
+                <p><strong>No announcements yet.</strong></p>
+            </section>
+        </div>
+    </main>
 
     <script>
         import { onAuthStateChanged, getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
         const auth = getAuth();
 
         onAuthStateChanged(auth, (user) => {
-            const protectedContent = document.getElementById("protected-content");
-
+            const mainContent = document.getElementById("main-content");
             if (user) {
-                protectedContent.style.display = "block";
+                mainContent.style.display = "block";
                 document.getElementById("user-name").textContent = user.displayName || user.email.split('@')[0];
             } else {
-                protectedContent.style.display = "none";
                 window.location.href = "login.html";
             }
         });
 
-        // Logout
         document.getElementById("logoutBtn").addEventListener("click", async () => {
-            if (confirm("Logout from IMCS Wachemo?")) {
+            if (confirm("Logout?")) {
                 await signOut(auth);
                 window.location.href = "index.html";
             }
@@ -116,3 +81,4 @@
     </script>
 </body>
 </html>
+
