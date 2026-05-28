@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,60 +8,45 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <script type="module" src="js/auth.js"></script>
 </head>
-<body class="profile-body">
+<body>
 
-    <!-- PROTECTED NAVBAR -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="nav-logo"><i class="fas fa-cross cross-icon"></i> IMCS <span>Wachemo</span></a>
-            <a href="#" id="profile-logout-btn" class="nav-btn dynamic-logout-style"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="index.html" class="nav-logo"><i class="fas fa-cross"></i> IMCS <span>Wachemo</span></a>
+            <a href="#" id="logout-btn" class="nav-btn">Logout</a>
         </div>
     </nav>
 
-    <!-- MAIN PROFILE DASHBOARD CONTAINER -->
-    <main class="profile-container">
-        <!-- Initial hidden state to prevent UI flashing during authentication handshake -->
-        <div id="profile-loading-card" class="profile-loading">
-            <i class="fas fa-circle-notch fa-spin"></i>
-            <p>Verifying secure session tokens...</p>
-        </div>
-
-        <div id="profile-main-card" class="profile-card structural-hide">
-            <div class="profile-header-block">
-                <div class="profile-avatar-wrapper">
-                    <i class="fas fa-user-graduate"></i>
-                </div>
-                <h2 id="user-display-email">Loading Member Identity...</h2>
-                <span class="status-badge"><i class="fas fa-shield-alt"></i> Active Member</span>
-            </div>
-
-            <hr class="profile-divider">
-
-            <div class="profile-details-grid">
-                <div class="detail-item">
-                    <label>Account Reference ID</label>
-                    <p id="user-display-uid">---</p>
-                </div>
-                <div class="detail-item">
-                    <label>Campus Hub Location</label>
-                    <p>Wachemo University Main Campus</p>
-                </div>
-                <div class="detail-item">
-                    <label>Session Established</label>
-                    <p id="user-display-signin">---</p>
-                </div>
-            </div>
-
-            <div class="profile-actions-wrapper">
-                <a href="index.html" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Return to Main Hub</a>
-            </div>
+    <main style="padding: 20px; max-width: 600px; margin: 0 auto;">
+        <h1>My Profile</h1>
+        <div id="profile-content">
+            <p><strong>Name:</strong> <span id="user-name">Loading...</span></p>
+            <p><strong>Email:</strong> <span id="user-email">Loading...</span></p>
         </div>
     </main>
 
-    <!-- CLIENT ROUTE GUARD CONTROLLER LINK -->
-    <script type="module" src="js/profile.js"></script>
+    <script>
+        import { onAuthStateChanged, getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+        const auth = getAuth();
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById("user-name").textContent = user.displayName || "Member";
+                document.getElementById("user-email").textContent = user.email;
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        document.getElementById("logout-btn").addEventListener("click", async () => {
+            if (confirm("Logout?")) {
+                await signOut(auth);
+                window.location.href = "index.html";
+            }
+        });
+    </script>
 </body>
 </html>
 
