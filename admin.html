@@ -10,14 +10,6 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <script type="module" src="js/auth.js"></script>
-    <style>
-        .post-form { background: white; padding: 25px; border-radius: 12px; margin-bottom: 30px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; }
-        .posts-list { margin-top: 30px; }
-        .post-item { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    </style>
 </head>
 <body>
 
@@ -39,22 +31,36 @@
         <h1>Admin Panel</h1>
         <p>Executive Council Control Center</p>
 
-        <!-- Create Post -->
-        <div class="post-form">
+        <!-- Post News -->
+        <div class="app-card">
             <h2>Post News / Announcements</h2>
-            <div class="form-group">
-                <label>Title</label>
-                <input type="text" id="post-title" placeholder="e.g. Monthly Spiritual Retreat">
-            </div>
-            <div class="form-group">
-                <label>Content</label>
-                <textarea id="post-content" rows="5" placeholder="Write announcement here..."></textarea>
-            </div>
-            <button onclick="publishPost()" class="btn btn-primary" style="background:#10b981; padding:12px 24px;">Publish Post</button>
+            <input type="text" id="post-title" placeholder="Post Title" style="width:100%; padding:12px; margin:10px 0; border-radius:8px;">
+            <textarea id="post-content" rows="4" placeholder="Write your announcement here..." style="width:100%; padding:12px; border-radius:8px;"></textarea>
+            <button onclick="publishPost()" style="background:#10b981; color:white; padding:12px 24px; border:none; border-radius:8px; margin-top:10px; cursor:pointer;">
+                Publish Post
+            </button>
+        </div>
+
+        <!-- Manage Members -->
+        <div class="app-card">
+            <h2>Manage Members</h2>
+            <p>View, approve, and manage registered members.</p>
+            <button onclick="alert('Member management coming soon!')" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">
+                View All Members
+            </button>
+        </div>
+
+        <!-- Events Management -->
+        <div class="app-card">
+            <h2>Events Management</h2>
+            <p>Create and manage upcoming events.</p>
+            <button onclick="alert('Events management coming soon!')" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">
+                Manage Events
+            </button>
         </div>
 
         <!-- Published Posts -->
-        <div class="posts-list">
+        <div class="app-card" style="margin-top:30px;">
             <h2>Published Posts</h2>
             <div id="posts-container">No posts yet.</div>
         </div>
@@ -75,53 +81,48 @@
             }
         });
 
-        // Publish Post
         function publishPost() {
             const title = document.getElementById("post-title").value.trim();
             const content = document.getElementById("post-content").value.trim();
 
             if (!title || !content) {
-                alert("Please fill both title and content.");
+                alert("Please fill Title and Content");
                 return;
             }
 
-            const posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
+            let posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
             posts.unshift({
-                id: Date.now(),
                 title: title,
                 content: content,
-                date: new Date().toLocaleDateString()
+                date: new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'})
             });
 
             localStorage.setItem("imcs_posts", JSON.stringify(posts));
-            alert("✅ Post published successfully!");
-            
-            // Clear form
+            alert("✅ Post Published Successfully!");
+
             document.getElementById("post-title").value = "";
             document.getElementById("post-content").value = "";
-            
             loadPosts();
         }
 
         function loadPosts() {
             const posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
             const container = document.getElementById("posts-container");
-            
+
             if (posts.length === 0) {
                 container.innerHTML = "<p>No posts published yet.</p>";
                 return;
             }
 
-            container.innerHTML = posts.map(post => `
-                <div class="post-item">
-                    <strong>${post.title}</strong>
-                    <small style="display:block; color:#666; margin:8px 0;">${post.date}</small>
-                    <p>${post.content}</p>
+            container.innerHTML = posts.map(p => `
+                <div style="background:white; padding:15px; margin:10px 0; border-radius:8px;">
+                    <strong>${p.title}</strong><br>
+                    <small>${p.date}</small><br><br>
+                    <p>${p.content}</p>
                 </div>
-            `).join("");
+            `).join('');
         }
 
-        // Load posts on page load
         window.onload = loadPosts;
     </script>
 </body>
