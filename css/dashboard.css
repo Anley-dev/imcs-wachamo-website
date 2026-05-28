@@ -319,26 +319,24 @@ body {
 /* Responsive Override  */
 @media (max-width: 768px) {
     .nav-container {
-        position: relative;
-    }
-    
-    /* Collapses list elements gracefully on mobile screens */
-    .nav-menu {
-        display: none; /* Toggle this class to 'flex' using JS when hamburger is clicked */
         flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--bg-card);
-        border-bottom: 1px solid var(--border-color);
-        padding: 16px 24px;
         gap: 12px;
-        align-items: stretch;
-        box-shadow: var(--shadow-lg);
+        padding: 12px 16px;
+        align-items: center;
     }
     
-    .nav-menu.is-active {
-        display: flex;
+    .nav-menu {
+        display: flex; /* Keeps the menu visible! */
+        flex-wrap: wrap; /* Wraps items cleanly if they run out of space */
+        justify-content: center;
+        gap: 4px;
+        width: 100%;
+    }
+
+    .nav-menu li a,
+    .nav-menu li button {
+        padding: 6px 12px; /* Marginally smaller padding so it fits screens nicely */
+        font-size: 0.85rem;
     }
 }
+
