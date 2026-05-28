@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/admin.js"></script>
 </head>
 <body>
 
@@ -34,12 +35,8 @@
         <!-- Post News -->
         <div class="app-card">
             <h2>Post News / Announcements</h2>
-            <div class="form-group">
-                <input type="text" id="post-title" placeholder="Post Title" required>
-            </div>
-            <div class="form-group">
-                <textarea id="post-content" rows="5" placeholder="Write announcement here..." required></textarea>
-            </div>
+            <input type="text" id="post-title" placeholder="Post Title" required>
+            <textarea id="post-content" rows="5" placeholder="Write announcement here..." required></textarea>
             <button onclick="publishPost()" class="btn btn-primary">Publish Post</button>
         </div>
 
@@ -48,7 +45,7 @@
             <h2>Manage Members</h2>
             <p>View and manage registered members.</p>
             <button onclick="viewMembers()" class="btn btn-secondary">View All Members</button>
-            <div id="members-list" style="margin-top: 15px;"></div>
+            <div id="members-list" style="margin-top:15px;"></div>
         </div>
 
         <!-- Events Management -->
@@ -65,75 +62,13 @@
         </div>
     </main>
 
-    <script type="module">
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-
-        const auth = getAuth();
-
-        onAuthStateChanged(auth, (user) => {
-            if (!user) window.location.href = "login.html";
-        });
-
-        document.getElementById("logoutBtn").addEventListener("click", async () => {
-            if (confirm("Logout?")) {
-                await signOut(auth);
-                window.location.href = "index.html";
-            }
-        });
-
-        // Publish Post
-        function publishPost() {
-            const title = document.getElementById("post-title").value.trim();
-            const content = document.getElementById("post-content").value.trim();
-
-            if (!title || !content) {
-                alert("Please fill both Title and Content");
-                return;
-            }
-
-            let posts = JSON.parse(localStorage.getItem("imcs_announcements") || "[]");
-            posts.unshift({
-                id: Date.now(),
-                title,
-                content,
-                date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-            });
-
-            localStorage.setItem("imcs_announcements", JSON.stringify(posts));
-            alert(" Post Published Successfully!");
-
-            document.getElementById("post-title").value = "";
-            document.getElementById("post-content").value = "";
-            loadPosts();
-        }
-
-        function loadPosts() {
-            const posts = JSON.parse(localStorage.getItem("imcs_announcements") || "[]");
-            const container = document.getElementById("posts-container");
-
-            if (posts.length === 0) {
-                container.innerHTML = "<p>No posts published yet.</p>";
-                return;
-            }
-
-            container.innerHTML = posts.map(post => `
-                <div style="background:#f8fafc; padding:20px; margin:12px 0; border-radius:12px;">
-                    <strong>${post.title}</strong><br>
-                    <small>${post.date}</small>
-                    <p style="margin-top:10px;">${post.content}</p>
-                </div>
-            `).join('');
-        }
-
+    <script>
         function viewMembers() {
             document.getElementById("members-list").innerHTML = `
                 <p><strong>Registered Members:</strong></p>
-                <ul><li>Anley Belay (Admin)</li><li>Other Members...</li></ul>
+                <ul><li>Anley Belay (Admin)</li></ul>
             `;
         }
-
-        // Load posts on page load
-        window.onload = loadPosts;
     </script>
 </body>
 </html>
