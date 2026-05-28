@@ -31,38 +31,21 @@
         <h1>Admin Panel</h1>
         <p>Executive Council Control Center</p>
 
-        <!-- Post News -->
         <div class="app-card">
             <h2>Post News / Announcements</h2>
-            <input type="text" id="post-title" placeholder="Post Title" style="width:100%; padding:12px; margin:10px 0; border-radius:8px;">
-            <textarea id="post-content" rows="4" placeholder="Write your announcement here..." style="width:100%; padding:12px; border-radius:8px;"></textarea>
-            <button onclick="publishPost()" style="background:#10b981; color:white; padding:12px 24px; border:none; border-radius:8px; margin-top:10px; cursor:pointer;">
-                Publish Post
+            <input type="text" id="post-title" placeholder="Post Title" style="width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:8px;">
+            <textarea id="post-content" rows="5" placeholder="Write announcement here..." style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;"></textarea>
+            <br><br>
+            <button onclick="publishPost()" style="background:#10b981; color:white; padding:14px 28px; border:none; border-radius:8px; font-size:1rem; cursor:pointer;">
+                ✅ Publish Post
             </button>
         </div>
 
-        <!-- Manage Members -->
-        <div class="app-card">
-            <h2>Manage Members</h2>
-            <p>View, approve, and manage registered members.</p>
-            <button onclick="alert('Member management coming soon!')" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">
-                View All Members
-            </button>
-        </div>
-
-        <!-- Events Management -->
-        <div class="app-card">
-            <h2>Events Management</h2>
-            <p>Create and manage upcoming events.</p>
-            <button onclick="alert('Events management coming soon!')" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">
-                Manage Events
-            </button>
-        </div>
-
-        <!-- Published Posts -->
         <div class="app-card" style="margin-top:30px;">
             <h2>Published Posts</h2>
-            <div id="posts-container">No posts yet.</div>
+            <div id="posts-container" style="min-height:100px;">
+                Loading posts...
+            </div>
         </div>
     </main>
 
@@ -86,7 +69,7 @@
             const content = document.getElementById("post-content").value.trim();
 
             if (!title || !content) {
-                alert("Please fill Title and Content");
+                alert("❌ Please fill both Title and Content");
                 return;
             }
 
@@ -94,14 +77,16 @@
             posts.unshift({
                 title: title,
                 content: content,
-                date: new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'})
+                date: new Date().toLocaleDateString()
             });
 
             localStorage.setItem("imcs_posts", JSON.stringify(posts));
             alert("✅ Post Published Successfully!");
 
+            // Clear form
             document.getElementById("post-title").value = "";
             document.getElementById("post-content").value = "";
+
             loadPosts();
         }
 
@@ -115,14 +100,15 @@
             }
 
             container.innerHTML = posts.map(p => `
-                <div style="background:white; padding:15px; margin:10px 0; border-radius:8px;">
-                    <strong>${p.title}</strong><br>
-                    <small>${p.date}</small><br><br>
-                    <p>${p.content}</p>
+                <div style="background:#f8fafc; padding:18px; margin:12px 0; border-radius:10px; border-left:4px solid #3b82f6;">
+                    <strong>${p.title}</strong> 
+                    <small style="color:#64748b;">(${p.date})</small>
+                    <p style="margin-top:8px;">${p.content}</p>
                 </div>
             `).join('');
         }
 
+        // Load posts when page loads
         window.onload = loadPosts;
     </script>
 </body>
