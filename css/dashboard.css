@@ -214,29 +214,30 @@ body {
 }
 /* Professional */
 .app-navbar {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-    color: white;
-    padding: 16px 0;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    background-color: var(--bg-card); /* Modern minimalist default (White surface) */
+    border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 1000;
+    backdrop-filter: blur(8px); /* Subtle premium glassmorphic feel if page scrolls beneath */
+    background-opacity: 0.95;
 }
 
 .nav-container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 16px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
 .nav-brand {
-    font-size: 1.6rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: white;
+    color: var(--clr-primary);
     text-decoration: none;
+    letter-spacing: -0.03em;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -245,72 +246,99 @@ body {
 .nav-menu {
     display: flex;
     list-style: none;
-    gap: 8px;
+    gap: 4px;
     margin: 0;
     padding: 0;
+    align-items: center;
 }
 
 .nav-menu li a,
-.nav-menu li button {
-    color: white;
+.nav-menu li button:not(.btn-logout) {
+    color: var(--text-secondary);
     text-decoration: none;
-    padding: 10px 18px;
-    border-radius: 8px;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
     font-weight: 500;
-    transition: all 0.3s ease;
+    font-size: 0.925rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-smooth);
 }
 
+/* Hover & Active System States */
 .nav-menu li a:hover,
-.nav-menu li button:hover {
-    background: rgba(255,255,255,0.25);
-    transform: translateY(-1px);
+.nav-menu li button:not(.btn-logout):hover {
+    color: var(--clr-accent);
+    background-color: var(--blue-tint);
 }
 
 .nav-menu li a.active {
-    background: rgba(255,255,255,0.35);
+    color: var(--blue-base);
+    background-color: var(--blue-tint);
     font-weight: 600;
 }
 
+/* Polished Call to Action Buttons */
 .btn-logout {
-    background: #ef4444;
-    border: none;
-    padding: 10px 22px;
-    border-radius: 8px;
-    color: white;
+    background-color: #fef2f2;
+    border: 1px solid #fee2e2;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    color: #ef4444;
     cursor: pointer;
     font-weight: 500;
+    font-size: 0.925rem;
+    transition: var(--transition-smooth);
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-    .nav-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .nav-menu {
-        margin-top: 12px;
-        flex-direction: column;
-        width: 100%;
-    }
+.btn-logout:hover {
+    background-color: #ef4444;
+    color: white;
+    border-color: #ef4444;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
 }
 
-/* Keep your existing card styles */
+/* 
+   Clean Component Bugfixes */
+.app-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    /* Fixed the broken calc color logic using native modern CSS mixing */
+    border-color: color-mix(in srgb, var(--border-color) 70%, #000); 
+}
+
+/* Corrected Workspace padding to account for the sticky top navigation */
 .workspace-container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 40px 24px;
+    padding: 48px 24px; 
+    box-sizing: border-box;
 }
 
-.app-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: 24px;
+/* Responsive Override  */
+@media (max-width: 768px) {
+    .nav-container {
+        position: relative;
+    }
+    
+    /* Collapses list elements gracefully on mobile screens */
+    .nav-menu {
+        display: none; /* Toggle this class to 'flex' using JS when hamburger is clicked */
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border-color);
+        padding: 16px 24px;
+        gap: 12px;
+        align-items: stretch;
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .nav-menu.is-active {
+        display: flex;
+    }
 }
-
-.app-card {
-    background: white;
-    border-radius: 16px;
-    padding: 28px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-}
-
