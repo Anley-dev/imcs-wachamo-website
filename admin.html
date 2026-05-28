@@ -10,6 +10,14 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <script type="module" src="js/auth.js"></script>
+    <style>
+        .post-form { background: white; padding: 25px; border-radius: 12px; margin-bottom: 30px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; }
+        .posts-list { margin-top: 30px; }
+        .post-item { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    </style>
 </head>
 <body>
 
@@ -29,26 +37,26 @@
 
     <main class="workspace-container">
         <h1>Admin Panel</h1>
-        <p style="color: #475569;">Executive Council Control Center</p>
+        <p>Executive Council Control Center</p>
 
-        <div class="app-grid">
-            <div class="app-card">
-                <h2>Post News / Announcements</h2>
-                <p>Manage and publish news for all members.</p>
-                <button class="btn btn-primary">Create New Post</button>
+        <!-- Create Post -->
+        <div class="post-form">
+            <h2>Post News / Announcements</h2>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="post-title" placeholder="e.g. Monthly Spiritual Retreat">
             </div>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea id="post-content" rows="5" placeholder="Write announcement here..."></textarea>
+            </div>
+            <button onclick="publishPost()" class="btn btn-primary" style="background:#10b981; padding:12px 24px;">Publish Post</button>
+        </div>
 
-            <div class="app-card">
-                <h2>Manage Members</h2>
-                <p>View, approve, and manage registered members.</p>
-                <button class="btn btn-primary">View All Members</button>
-            </div>
-
-            <div class="app-card">
-                <h2>Events Management</h2>
-                <p>Create and manage upcoming events.</p>
-                <button class="btn btn-primary">Manage Events</button>
-            </div>
+        <!-- Published Posts -->
+        <div class="posts-list">
+            <h2>Published Posts</h2>
+            <div id="posts-container">No posts yet.</div>
         </div>
     </main>
 
@@ -57,9 +65,7 @@
         const auth = getAuth();
 
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "login.html";
-            }
+            if (!user) window.location.href = "login.html";
         });
 
         document.getElementById("logoutBtn").addEventListener("click", async () => {
@@ -68,6 +74,55 @@
                 window.location.href = "index.html";
             }
         });
+
+        // Publish Post
+        function publishPost() {
+            const title = document.getElementById("post-title").value.trim();
+            const content = document.getElementById("post-content").value.trim();
+
+            if (!title || !content) {
+                alert("Please fill both title and content.");
+                return;
+            }
+
+            const posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
+            posts.unshift({
+                id: Date.now(),
+                title: title,
+                content: content,
+                date: new Date().toLocaleDateString()
+            });
+
+            localStorage.setItem("imcs_posts", JSON.stringify(posts));
+            alert("✅ Post published successfully!");
+            
+            // Clear form
+            document.getElementById("post-title").value = "";
+            document.getElementById("post-content").value = "";
+            
+            loadPosts();
+        }
+
+        function loadPosts() {
+            const posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
+            const container = document.getElementById("posts-container");
+            
+            if (posts.length === 0) {
+                container.innerHTML = "<p>No posts published yet.</p>";
+                return;
+            }
+
+            container.innerHTML = posts.map(post => `
+                <div class="post-item">
+                    <strong>${post.title}</strong>
+                    <small style="display:block; color:#666; margin:8px 0;">${post.date}</small>
+                    <p>${post.content}</p>
+                </div>
+            `).join("");
+        }
+
+        // Load posts on page load
+        window.onload = loadPosts;
     </script>
 </body>
 </html>
