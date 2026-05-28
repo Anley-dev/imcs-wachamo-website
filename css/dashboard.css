@@ -212,11 +212,11 @@ body {
     .workspace-header { flex-direction: column; align-items: flex-start; }
     .app-grid { grid-template-columns: 1fr; }
 }
-/* Professional Navbar*/
+/* Professional */
 .app-navbar {
     background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
     color: white;
-    padding: 14px 0;
+    padding: 16px 0;
     box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     position: sticky;
     top: 0;
@@ -226,26 +226,26 @@ body {
 .nav-container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
 .nav-brand {
-    font-size: 1.55rem;
+    font-size: 1.6rem;
     font-weight: 700;
     color: white;
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .nav-menu {
     display: flex;
     list-style: none;
-    gap: 6px;
+    gap: 8px;
     margin: 0;
     padding: 0;
 }
@@ -257,12 +257,13 @@ body {
     padding: 10px 18px;
     border-radius: 8px;
     font-weight: 500;
-    transition: all 0.25s ease;
+    transition: all 0.3s ease;
 }
 
 .nav-menu li a:hover,
 .nav-menu li button:hover {
     background: rgba(255,255,255,0.25);
+    transform: translateY(-1px);
 }
 
 .nav-menu li a.active {
@@ -273,14 +274,14 @@ body {
 .btn-logout {
     background: #ef4444;
     border: none;
-    padding: 10px 20px;
+    padding: 10px 22px;
     border-radius: 8px;
     color: white;
     cursor: pointer;
     font-weight: 500;
 }
 
-/* Mobile Menu */
+/* Mobile */
 @media (max-width: 768px) {
     .nav-container {
         flex-direction: column;
@@ -290,7 +291,26 @@ body {
         margin-top: 12px;
         flex-direction: column;
         width: 100%;
-        gap: 4px;
     }
+}
+
+/* Keep your existing card styles */
+.workspace-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 24px;
+}
+
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+}
+
+.app-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
