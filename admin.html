@@ -31,7 +31,7 @@
         <h1>Admin Panel</h1>
         <p>Executive Council Control Center</p>
 
-        <!-- Post News -->
+        <!-- 1. Post News -->
         <div class="app-card">
             <h2>Post News / Announcements</h2>
             <input type="text" id="post-title" placeholder="Post Title" style="width:100%; padding:12px; margin:10px 0;">
@@ -41,115 +41,123 @@
             </button>
         </div>
 
-        <!-- Manage Members -->
+        <!-- 2. Manage Members -->
         <div class="app-card">
             <h2>Manage Members</h2>
+            <p>View and manage registered members.</p>
             <button onclick="loadMembers()" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">
                 View All Members
             </button>
-            <div id="members-list" style="margin-top:20px;"></div>
+            <div id="members-list" style="margin-top:15px;"></div>
         </div>
 
-        <!-- Events Management -->
+        <!-- 3. Events Management -->
         <div class="app-card">
             <h2>Events Management</h2>
-            <p>Create and manage upcoming events</p>
-            <button onclick="alert('Events Management module coming soon')" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">
+            <p>Create and manage upcoming events.</p>
+            <button onclick="manageEvents()" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">
                 Manage Events
             </button>
         </div>
 
-        <!-- Published Posts -->
+        <!-- Published Posts with Edit & Delete -->
         <div class="app-card">
             <h2>Published Posts</h2>
-            <div id="posts-container">Loading posts...</div>
+            <div id="posts-container">No posts yet.</div>
         </div>
     </main>
 
-    <script type="module">
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+    <script>
+        let currentEditId = null;
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
-            authDomain: "imcs-wachamo.firebaseapp.com",
-            projectId: "imcs-wachamo",
-            storageBucket: "imcs-wachamo.firebasestorage.app",
-            messagingSenderId: "445125483030",
-            appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth();
-
-        onAuthStateChanged(auth, (user) => {
-            if (!user) window.location.href = "login.html";
-        });
-
-        document.getElementById("logoutBtn").addEventListener("click", async () => {
-            if (confirm("Logout?")) {
-                await signOut(auth);
-                window.location.href = "index.html";
-            }
-        });
-
-        // Publish Post
-        async function publishPost() {
+        function publishPost() {
             const title = document.getElementById("post-title").value.trim();
             const content = document.getElementById("post-content").value.trim();
 
             if (!title || !content) return alert("Please fill title and content");
 
-            try {
-                await addDoc(collection(db, "announcements"), {
+            let posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
+
+            if (currentEditId) {
+                const post = posts.find(p => p.id === currentEditId);
+                if (post) {
+                    post.title = title;
+                    post.content = content;
+                }
+                currentEditId = null;
+            } else {
+                posts.unshift({
+                    id: Date.now(),
                     title,
                     content,
-                    createdAt: serverTimestamp(),
-                    author: "Admin"
+                    date: new Date().toLocaleDateString()
                 });
-                alert("✅ Post Published!");
-                document.getElementById("post-title").value = "";
-                document.getElementById("post-content").value = "";
-            } catch (e) {
-                alert("Error: " + e.message);
             }
+
+            localStorage.setItem("imcs_posts", JSON.stringify(posts));
+            alert("✅ Post Saved!");
+            document.getElementById("post-title").value = "";
+            document.getElementById("post-content").value = "";
+            loadPosts();
         }
 
-        // Load Members
-        async function loadMembers() {
-            const container = document.getElementById("members-list");
-            container.innerHTML = "<p>Loading members...</p>";
+        function loadPosts() {
+            const posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
+            const container = document.getElementById("posts-container");
 
-            // For now using demo - later pull from "members" collection
-            container.innerHTML = `
+            if (posts.length === 0) {
+                container.innerHTML = "<p>No posts yet.</p>";
+                return;
+            }
+
+            container.innerHTML = posts.map(post => 
+                <div style="background:#f8fafc; padding:20px; margin:12px 0; border-radius:12px; position:relative;">
+                    <strong>${post.title}</strong><br>
+                    <small>${post.date}</small>
+                    <p style="margin:12px 0;">${post.content}</p>
+                    <div style="position:absolute; top:15px; right:15px;">
+                        <button onclick="editPost(${post.id})" style="background:#3b82f6; color:white; border:none; padding:6px 12px; border-radius:6px; margin-right:8px;">Edit</button>
+                        <button onclick="deletePost(${post.id})" style="background:#ef4444; color:white; border:none; padding:6px 12px; border-radius:6px;">Delete</button>
+                    </div>
+                </div>
+            ).join('');
+        }
+
+        window.editPost = function(id) {
+            const posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
+            const post = posts.find(p => p.id === id);
+            if (post) {
+                document.getElementById("post-title").value = post.title;
+                document.getElementById("post-content").value = post.content;
+                currentEditId = id;
+            }
+        };
+
+        window.deletePost = function(id) {
+            if (confirm("Delete this post?")) {
+                let posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
+                posts = posts.filter(p => p.id !== id);
+                localStorage.setItem("imcs_posts", JSON.stringify(posts));
+                loadPosts();
+            }
+        };
+
+        function loadMembers() {
+            document.getElementById("members-list").innerHTML = 
                 <p><strong>Registered Members:</strong></p>
                 <ul>
                     <li>Anley Belay (Admin)</li>
-                    <li>Other registered members will appear here</li>
+                    <li>Other members will appear here</li>
                 </ul>
-            `;
+            ;
         }
 
-        // Real-time Posts
-        const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
-        onSnapshot(q, (snapshot) => {
-            const container = document.getElementById("posts-container");
-            let html = "";
-            snapshot.forEach(doc => {
-                const post = doc.data();
-     const date = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : "Recent";
-                html += `
-                    <div style="background:#f8fafc; padding:20px; margin:12px 0; border-radius:12px;">
-                        <strong>${post.title}</strong><br>
-                        <small>${date}</small>
-                        <p style="margin-top:10px;">${post.content}</p>
-                    </div>
-                `;
-            });
-            container.innerHTML = html || "<p>No posts yet.</p>";
-        });
+        function manageEvents() {
+            alert("Events Management - Coming Soon");
+        }
+
+        window.onload = loadPosts;
     </script>
 </body>
 </html>
+
