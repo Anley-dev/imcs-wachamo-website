@@ -1,4 +1,4 @@
-// IMCS Wachemo - Firebase Auth 
+// IMCS Wachemo - Firebase Auth
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import {
     getAuth,
@@ -9,13 +9,18 @@ import {
     updateProfile
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-// Get Firebase config from window object (loaded by config.js)
-if (!window.__FIREBASE_CONFIG__) {
-    throw new Error("Firebase configuration not found. Make sure config.js is loaded before auth.js");
+// Get Firebase config from config.js
+const firebaseConfig = window.FIREBASE_CONFIG;
+
+if (!firebaseConfig) {
+    throw new Error("Firebase configuration not found");
 }
 
-const firebaseConfig = window.__FIREBASE_CONFIG__;
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+// Initialize Firebase
+const app = getApps().length === 0
+    ? initializeApp(firebaseConfig)
+    : getApps()[0];
+
 const auth = getAuth(app);
 
 const protectedPages = ["dashboard.html", "profile.html", "events.html", "gallery.html", "admin.html", "news.html"];
