@@ -99,23 +99,23 @@ onAuthStateChanged(auth, (user) => {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
     // Navbar
-    const logoutBtn = document.getElementById("logoutBtn") || document.querySelector(".nav-btn");
-    if (logoutBtn) {
-        if (user) {
-            logoutBtn.textContent = "Logout";
-            logoutBtn.onclick = async (e) => {
-                e.preventDefault();
-                if (confirm("Logout?")) {
-                    await signOut(auth);
-                    window.location.href = "index.html";
-                }
-            };
-        } else {
-            logoutBtn.textContent = "Login";
-            logoutBtn.href = "login.html";
-        }
-    }
+const logoutBtn = document.getElementById("logoutBtn");
 
+if (logoutBtn) {
+    if (user) {
+        logoutBtn.textContent = "Logout";
+        logoutBtn.onclick = async (e) => {
+            e.preventDefault();
+            await signOut(auth);
+            window.location.href = "index.html";
+        };
+    } else {
+        logoutBtn.textContent = "Login";
+        logoutBtn.onclick = () => {
+            window.location.href = "login.html";
+        };
+    }
+}
     // Better Protection
     if (protectedPages.includes(currentPage)) {
         if (!user) {
