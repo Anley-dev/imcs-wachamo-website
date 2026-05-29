@@ -133,13 +133,7 @@ if (logoutBtn) {
 
 function handleAuthError(error, context) {
     console.error(error);
-    let msg = "An unexpected error occurred.";
-    if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password") {
-        msg = "Invalid email or password.";
-    } else if (error.code === "auth/email-already-in-use") {
-        msg = "This email is already registered.";
-    }
-    alert(`❌ ${context} Failed: ${msg}`);
+    alert(context + " FAILED: " + error.code + " | " + error.message);
 }
 
 function showError(id, message) {
