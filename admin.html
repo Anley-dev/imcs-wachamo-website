@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,7 +31,7 @@
         <h1>Admin Panel</h1>
         <p>Executive Council Control Center</p>
 
-        <!-- 1. Post News -->
+        <!-- Post News -->
         <div class="app-card">
             <h2>Post News / Announcements</h2>
             <input type="text" id="post-title" placeholder="Post Title" style="width:100%; padding:12px; margin:10px 0;">
@@ -40,26 +41,24 @@
             </button>
         </div>
 
-        <!-- 2. Manage Members -->
+        <!-- Manage Members -->
         <div class="app-card">
             <h2>Manage Members</h2>
-            <p>View and manage registered members.</p>
             <button onclick="loadMembers()" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">
                 View All Members
             </button>
-            <div id="members-list" style="margin-top:15px;"></div>
+            <div id="members-list" style="margin-top:20px;"></div>
         </div>
 
-        <!-- 3. Events Management -->
+        <!-- Events Management -->
         <div class="app-card">
             <h2>Events Management</h2>
-            <p>Create and manage upcoming events.</p>
             <button onclick="manageEvents()" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">
                 Manage Events
             </button>
         </div>
 
-        <!-- Published Posts with Edit & Delete -->
+        <!-- Published Posts -->
         <div class="app-card">
             <h2>Published Posts</h2>
             <div id="posts-container">No posts yet.</div>
@@ -67,34 +66,28 @@
     </main>
 
     <script>
-        let currentEditId = null;
+        let editingId = null;
 
         function publishPost() {
             const title = document.getElementById("post-title").value.trim();
             const content = document.getElementById("post-content").value.trim();
-
-            if (!title || !content) return alert("Please fill title and content");
+            if (!title || !content) return alert("Fill all fields");
 
             let posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
 
-            if (currentEditId) {
-                const post = posts.find(p => p.id === currentEditId);
+            if (editingId) {
+                const post = posts.find(p => p.id === editingId);
                 if (post) {
                     post.title = title;
                     post.content = content;
                 }
-                currentEditId = null;
+                editingId = null;
             } else {
-                posts.unshift({
-                    id: Date.now(),
-                    title,
-                    content,
-                    date: new Date().toLocaleDateString()
-                });
+                posts.unshift({ id: Date.now(), title, content, date: new Date().toLocaleDateString() });
             }
 
             localStorage.setItem("imcs_posts", JSON.stringify(posts));
-            alert("✅ Post Saved!");
+            alert("✅ Post " + (editingId ? "Updated" : "Published") + "!");
             document.getElementById("post-title").value = "";
             document.getElementById("post-content").value = "";
             loadPosts();
@@ -103,23 +96,14 @@
         function loadPosts() {
             const posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
             const container = document.getElementById("posts-container");
-
-            if (posts.length === 0) {
-                container.innerHTML = "<p>No posts yet.</p>";
-                return;
-            }
-
-            container.innerHTML = posts.map(post => `
-                <div style="background:#f8fafc; padding:20px; margin:12px 0; border-radius:12px; position:relative;">
-                    <strong>${post.title}</strong><br>
-                    <small>${post.date}</small>
-                    <p style="margin:12px 0;">${post.content}</p>
-                    <div style="position:absolute; top:15px; right:15px;">
-                        <button onclick="editPost(${post.id})" style="background:#3b82f6; color:white; border:none; padding:6px 12px; border-radius:6px; margin-right:8px;">Edit</button>
-                        <button onclick="deletePost(${post.id})" style="background:#ef4444; color:white; border:none; padding:6px 12px; border-radius:6px;">Delete</button>
-                    </div>
+            container.innerHTML = posts.map(p => `
+                <div style="background:#f8fafc; padding:20px; margin:12px 0; border-radius:12px;">
+                    <strong>\( {p.title}</strong> <small>( \){p.date})</small>
+                    <p>${p.content}</p>
+                    <button onclick="editPost(${p.id})" style="background:#3b82f6;color:white;border:none;padding:5px 12px;border-radius:6px;margin-right:8px;">Edit</button>
+                    <button onclick="deletePost(${p.id})" style="background:#ef4444;color:white;border:none;padding:5px 12px;border-radius:6px;">Delete</button>
                 </div>
-            `).join('');
+            `).join('') || "<p>No posts yet.</p>";
         }
 
         window.editPost = function(id) {
@@ -128,11 +112,12 @@
             if (post) {
                 document.getElementById("post-title").value = post.title;
                 document.getElementById("post-content").value = post.content;
-                currentEditId = id;
+                editingId = id;
             }
         };
 
         window.deletePost = function(id) {
+
             if (confirm("Delete this post?")) {
                 let posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
                 posts = posts.filter(p => p.id !== id);
@@ -144,10 +129,7 @@
         function loadMembers() {
             document.getElementById("members-list").innerHTML = `
                 <p><strong>Registered Members:</strong></p>
-                <ul>
-                    <li>Anley Belay (Admin)</li>
-                    <li>Other members will appear here</li>
-                </ul>
+                <ul><li>Anley Belay (Admin)</li><li>More members will appear here</li></ul>
             `;
         }
 
@@ -159,3 +141,4 @@
     </script>
 </body>
 </html>
+
