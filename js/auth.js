@@ -1,3 +1,7 @@
+console.log("AUTH LOADED");
+console.log("CONFIG:", window.FIREBASE_CONFIG);
+console.log("GET AUTH:", typeof getAuth);
+
 // IMCS Wachemo - Firebase Auth
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import {
