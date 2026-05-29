@@ -32,7 +32,7 @@
 
     <header style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 80px 20px; text-align: center;">
         <h1>News & Announcements</h1>
-        <p>Latest updates from IMCS Wachemo</p>
+        <p>Latest updates from IMCS Wachemo Community</p>
     </header>
 
     <main class="workspace-container">
@@ -41,48 +41,26 @@
         </div>
     </main>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
-            authDomain: "imcs-wachamo.firebaseapp.com",
-            projectId: "imcs-wachamo",
-            storageBucket: "imcs-wachamo.firebasestorage.app",
-            messagingSenderId: "445125483030",
-            appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
-
-        onSnapshot(q, (snapshot) => {
+    <script>
+        function loadNews() {
+            const posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
             const container = document.getElementById("news-container");
-            let html = "";
 
-            if (snapshot.empty) {
-                container.innerHTML = "<p>No announcements yet.</p>";
+            if (posts.length === 0) {
+                container.innerHTML = "<p>No announcements yet. The Executive Council will post soon.</p>";
                 return;
             }
 
-            snapshot.forEach((doc) => {
-                const post = doc.data();
-                const date = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : "Recent";
+            container.innerHTML = posts.map(post => `
+                <div class="app-card" style="margin-bottom: 25px;">
+                    <h2>${post.title}</h2>
+                    <small style="color:#64748b;">${post.date}</small>
+                    <p style="margin-top: 15px; line-height: 1.7;">${post.content}</p>
+                </div>
+            `).join('');
+        }
 
-                html += `
-                    <div class="app-card" style="margin-bottom: 25px;">
-                        <h2>${post.title}</h2>
-                        <small>${date}</small>
-                        <p style="margin-top: 15px; line-height: 1.7;">${post.content}</p>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        });
+        window.onload = loadNews;
     </script>
 </body>
 </html>
