@@ -1,4 +1,3 @@
-
 // IMCS Wachemo - Firebase Auth 
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import {
@@ -10,29 +9,12 @@ import {
     updateProfile
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-// Get Firebase config from environment or window object
-const getFirebaseConfig = () => {
-    // For GitHub Pages - config injected via config.js
-    if (window.__FIREBASE_CONFIG__) {
-        return window.__FIREBASE_CONFIG__;
-    }
-    
-    // For development with Vite
-    if (import.meta.env.VITE_FIREBASE_API_KEY) {
-        return {
-            apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-            authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-            projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-            storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-            messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-            appId: import.meta.env.VITE_FIREBASE_APP_ID
-        };
-    }
+// Get Firebase config from window object (loaded by config.js)
+if (!window.__FIREBASE_CONFIG__) {
+    throw new Error("Firebase configuration not found. Make sure config.js is loaded before auth.js");
+}
 
-    throw new Error("Firebase configuration not found");
-};
-
-const firebaseConfig = getFirebaseConfig();
+const firebaseConfig = window.__FIREBASE_CONFIG__;
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 
