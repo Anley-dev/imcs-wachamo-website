@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <script type="module" src="js/auth.js"></script>
-    <script type="module" src="js/admin.js"></script>
 </head>
 <body>
 
@@ -30,45 +29,106 @@
 
     <main class="workspace-container">
         <h1>Admin Panel</h1>
-        <p class="subtitle">Executive Council Control Center</p>
+        <p>Executive Council Control Center</p>
 
         <!-- Post News -->
         <div class="app-card">
             <h2>Post News / Announcements</h2>
-            <input type="text" id="post-title" placeholder="Post Title" required>
-            <textarea id="post-content" rows="5" placeholder="Write announcement here..." required></textarea>
-            <button onclick="publishPost()" class="btn btn-primary">Publish Post</button>
+            <input type="text" id="post-title" placeholder="Post Title" style="width:100%; padding:12px; margin:10px 0;">
+            <textarea id="post-content" rows="5" placeholder="Write announcement..." style="width:100%; padding:12px;"></textarea>
+            <button onclick="publishPost()" style="background:#10b981; color:white; padding:14px 30px; border:none; border-radius:8px;">
+                Publish New Post
+            </button>
         </div>
 
-        <!-- Manage Members -->
-        <div class="app-card">
-            <h2>Manage Members</h2>
-            <p>View and manage registered members.</p>
-            <button onclick="viewMembers()" class="btn btn-secondary">View All Members</button>
-            <div id="members-list" style="margin-top:15px;"></div>
-        </div>
-
-        <!-- Events Management -->
-        <div class="app-card">
-            <h2>Events Management</h2>
-            <p>Create and manage upcoming events.</p>
-            <button onclick="alert('Events Management - Coming Soon')" class="btn btn-secondary">Manage Events</button>
-        </div>
-
-        <!-- Published Posts -->
+        <!-- Published Posts with Edit & Delete -->
         <div class="app-card">
             <h2>Published Posts</h2>
-            <div id="posts-container">No posts yet.</div>
+            <div id="posts-container">Loading posts...</div>
         </div>
     </main>
 
     <script>
-        function viewMembers() {
-            document.getElementById("members-list").innerHTML = `
-                <p><strong>Registered Members:</strong></p>
-                <ul><li>Anley Belay (Admin)</li></ul>
-            `;
+        let currentEditingId = null;
+
+        function publishPost() {
+            const title = document.getElementById("post-title").value.trim();
+            const content = document.getElementById("post-content").value.trim();
+
+            if (!title || !content) return alert("Fill title and content");
+
+            let posts = JSON.parse(localStorage.getItem("imcs_announcements") || "[]");
+
+            if (currentEditingId) {
+                // Update existing post
+                const post = posts.find(p => p.id === currentEditingId);
+                if (post) {
+                    post.title = title;
+                    post.content = content;
+                }
+                currentEditingId = null;
+                document.querySelector("button[onclick='publishPost()']").textContent = "Publish New Post";
+            } else {
+                // Create new post
+                posts.unshift({
+                    id: Date.now(),
+                    title: title,
+                    content: content,
+                    date: new Date().toLocaleDateString()
+                });
+            }
+
+            localStorage.setItem("imcs_announcements", JSON.stringify(posts));
+            alert("✅ Post Saved Successfully!");
+
+            document.getElementById("post-title").value = "";
+            document.getElementById("post-content").value = "";
+            loadPosts();
         }
+
+        function loadPosts() {
+            const posts = JSON.parse(localStorage.getItem("imcs_announcements") || "[]");
+            const container = document.getElementById("posts-container");
+
+            if (posts.length === 0) {
+                container.innerHTML = "<p>No posts yet.</p>";
+                return;
+            }
+
+            container.innerHTML = posts.map(post => `
+                <div style="background:#f8fafc; padding:20px; margin:12px 0; border-radius:12px; position:relative;">
+                    <strong>${post.title}</strong><br>
+                    <small>${post.date}</small>
+                    <p style="margin:12px 0;">${post.content}</p>
+                    <div style="position:absolute; top:15px; right:15px;">
+                        <button onclick="editPost(${post.id})" style="margin-right:8px; background:#3b82f6; color:white; border:none; padding:6px 12px; border-radius:6px;">Edit</button>
+                        <button onclick="deletePost(${post.id})" style="background:#ef4444; color:white; border:none; padding:6px 12px; border-radius:6px;">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.editPost = function(id) {
+            const posts = JSON.parse(localStorage.getItem("imcs_announcements") || "[]");
+            const post = posts.find(p => p.id === id);
+            if (post) {
+                document.getElementById("post-title").value = post.title;
+                document.getElementById("post-content").value = post.content;
+                currentEditingId = id;
+                document.querySelector("button[onclick='publishPost()']").textContent = "Update Post";
+            }
+        };
+
+        window.deletePost = function(id) {
+            if (confirm("Delete this post?")) {
+                let posts = JSON.parse(localStorage.getItem("imcs_announcements") || "[]");
+                posts = posts.filter(p => p.id !== id);
+                localStorage.setItem("imcs_announcements", JSON.stringify(posts));
+                loadPosts();
+            }
+        };
+
+        window.onload = loadPosts;
     </script>
 </body>
 </html>
