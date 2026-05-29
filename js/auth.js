@@ -10,19 +10,33 @@ import {
     updateProfile
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
-    authDomain: "imcs-wachamo.firebaseapp.com",
-    projectId: "imcs-wachamo",
-    storageBucket: "imcs-wachamo.firebasestorage.app",
-    messagingSenderId: "445125483030",
-    appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
+// Get Firebase config from environment or window object
+const getFirebaseConfig = () => {
+    // For GitHub Pages - config injected via config.js
+    if (window.__FIREBASE_CONFIG__) {
+        return window.__FIREBASE_CONFIG__;
+    }
+    
+    // For development with Vite
+    if (import.meta.env.VITE_FIREBASE_API_KEY) {
+        return {
+            apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+            authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+            projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+            storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+            appId: import.meta.env.VITE_FIREBASE_APP_ID
+        };
+    }
+
+    throw new Error("Firebase configuration not found");
 };
 
+const firebaseConfig = getFirebaseConfig();
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 
-const protectedPages = ["dashboard.html", "profile.html", "events.html", "gallery.html", "admin.html"];
+const protectedPages = ["dashboard.html", "profile.html", "events.html", "gallery.html", "admin.html", "news.html"];
 
 document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("register-form");
@@ -146,4 +160,3 @@ function showError(id, message) {
 function clearErrors() {
     document.querySelectorAll(".error").forEach(el => el.classList.remove("error"));
 }
-
