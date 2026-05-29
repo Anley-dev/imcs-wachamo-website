@@ -39,6 +39,7 @@
         <div id="news-container">
             <p>Loading latest news...</p>
         </div>
+        <div id="error-container" style="display: none; color: #dc2626; padding: 15px; background: #fee2e2; border-radius: 8px; margin-top: 15px;"></div>
     </main>
 
     <script type="module">
@@ -54,38 +55,57 @@
             appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        try {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
 
-        const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
+            const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
 
-        onSnapshot(q, (snapshot) => {
-            const container = document.getElementById("news-container");
-            let html = "";
+            onSnapshot(q, (snapshot) => {
+                const container = document.getElementById("news-container");
+                const errorContainer = document.getElementById("error-container");
+                let html = "";
 
-            if (snapshot.empty) {
-                container.innerHTML = "<p>No announcements yet. Check back later.</p>";
-                return;
-            }
+                console.log("Snapshot received. Empty:", snapshot.empty, "Size:", snapshot.size);
 
-            snapshot.forEach((doc) => {
-                const post = doc.data();
-                const date = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString('en-US', {
-                    year: 'numeric', month: 'long', day: 'numeric'
-                }) : "Recent";
+                if (snapshot.empty) {
+                    container.innerHTML = "<p>No announcements yet. Check back later.</p>";
+                    errorContainer.style.display = "none";
+                    return;
+                }
 
-                html += `
-                    <div class="app-card" style="margin-bottom: 25px;">
-                        <h2>${post.title}</h2>
-                        <small style="color:#64748b;">${date}</small>
-                        <p style="margin-top: 15px; line-height: 1.7;">${post.content}</p>
-                    </div>
-                `;
+                snapshot.forEach((doc) => {
+                    const post = doc.data();
+                    console.log("Post data:", post);
+                    
+                    const date = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    }) : "Recent";
+
+                    html += `
+                        <div class="app-card" style="margin-bottom: 25px;">
+                            <h2>${post.title || "Untitled"}</h2>
+                            <small style="color:#64748b;">${date}</small>
+                            <p style="margin-top: 15px; line-height: 1.7;">${post.content || "No content"}</p>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+                errorContainer.style.display = "none";
+            }, (error) => {
+                console.error("Firestore error:", error);
+                const errorContainer = document.getElementById("error-container");
+                errorContainer.textContent = "Error loading announcements: " + error.message;
+                errorContainer.style.display = "block";
             });
 
-            container.innerHTML = html;
-        });
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+            const errorContainer = document.getElementById("error-container");
+            errorContainer.textContent = "Firebase error: " + error.message;
+            errorContainer.style.display = "block";
+        }
     </script>
 </body>
 </html>
-
