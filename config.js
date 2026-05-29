@@ -1,6 +1,5 @@
-// config.js - Firebase configuration for GitHub Pages
-// This file contains the Firebase config that will be used in production
-window.__FIREBASE_CONFIG__ = {
+// Firebase configuration
+window.FIREBASE_CONFIG = {
     apiKey: "AIzaSyDSlXqHHVNYcx8WTb66RvJazDaMCl3l6B8",
     authDomain: "imcs-wachamo.firebaseapp.com",
     projectId: "imcs-wachamo",
