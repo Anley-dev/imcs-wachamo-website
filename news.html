@@ -30,16 +30,15 @@
         </div>
     </nav>
 
-    <header style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 90px 20px; text-align: center;">
+    <header style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 80px 20px; text-align: center;">
         <h1>News & Announcements</h1>
-        <p>Latest updates from the IMCS Wachemo Community</p>
+        <p>Latest updates from IMCS Wachemo</p>
     </header>
 
     <main class="workspace-container">
         <div id="news-container">
             <p>Loading latest news...</p>
         </div>
-        <div id="error-container" style="display: none; color: #dc2626; padding: 15px; background: #fee2e2; border-radius: 8px; margin-top: 15px;"></div>
     </main>
 
     <script type="module">
@@ -55,57 +54,36 @@
             appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
         };
 
-        try {
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-            const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
+        const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
 
-            onSnapshot(q, (snapshot) => {
-                const container = document.getElementById("news-container");
-                const errorContainer = document.getElementById("error-container");
-                let html = "";
+        onSnapshot(q, (snapshot) => {
+            const container = document.getElementById("news-container");
+            let html = "";
 
-                console.log("Snapshot received. Empty:", snapshot.empty, "Size:", snapshot.size);
+            if (snapshot.empty) {
+                container.innerHTML = "<p>No announcements yet.</p>";
+                return;
+            }
 
-                if (snapshot.empty) {
-                    container.innerHTML = "<p>No announcements yet. Check back later.</p>";
-                    errorContainer.style.display = "none";
-                    return;
-                }
+            snapshot.forEach((doc) => {
+                const post = doc.data();
+                const date = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString() : "Recent";
 
-                snapshot.forEach((doc) => {
-                    const post = doc.data();
-                    console.log("Post data:", post);
-                    
-                    const date = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString('en-US', {
-                        year: 'numeric', month: 'long', day: 'numeric'
-                    }) : "Recent";
-
-                    html += `
-                        <div class="app-card" style="margin-bottom: 25px;">
-                            <h2>${post.title || "Untitled"}</h2>
-                            <small style="color:#64748b;">${date}</small>
-                            <p style="margin-top: 15px; line-height: 1.7;">${post.content || "No content"}</p>
-                        </div>
-                    `;
-                });
-
-                container.innerHTML = html;
-                errorContainer.style.display = "none";
-            }, (error) => {
-                console.error("Firestore error:", error);
-                const errorContainer = document.getElementById("error-container");
-                errorContainer.textContent = "Error loading announcements: " + error.message;
-                errorContainer.style.display = "block";
+                html += `
+                    <div class="app-card" style="margin-bottom: 25px;">
+                        <h2>${post.title}</h2>
+                        <small>${date}</small>
+                        <p style="margin-top: 15px; line-height: 1.7;">${post.content}</p>
+                    </div>
+                `;
             });
 
-        } catch (error) {
-            console.error("Firebase initialization error:", error);
-            const errorContainer = document.getElementById("error-container");
-            errorContainer.textContent = "Firebase error: " + error.message;
-            errorContainer.style.display = "block";
-        }
+            container.innerHTML = html;
+        });
     </script>
 </body>
 </html>
+

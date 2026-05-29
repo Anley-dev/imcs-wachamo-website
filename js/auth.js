@@ -1,5 +1,5 @@
 
-// IMCS Wachemo - Strong Auth Protection
+// IMCS Wachemo - Firebase Auth + Member Save
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import {
     getAuth,
@@ -9,6 +9,7 @@ import {
     signOut,
     updateProfile
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
@@ -21,29 +22,38 @@ const firebaseConfig = {
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
-
-const protectedPages = ["dashboard.html", "profile.html", "admin.html", "events.html", "gallery.html"];
+const db = getFirestore(app);
 
 document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("register-form");
     const loginForm = document.getElementById("login-form");
 
-    // Registration
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const name = document.getElementById("reg-name")?.value.trim();
-            const email = document.getElementById("reg-email")?.value.trim();
-            const phone = document.getElementById("reg-phone")?.value.trim();
-            const password = document.getElementById("reg-password")?.value;
-            const confirm = document.getElementById("reg-confirm-password")?.value;
+            const name = document.getElementById("reg-name").value.trim();
+            const email = document.getElementById("reg-email").value.trim();
+            const phone = document.getElementById("reg-phone").value.trim();
+            const password = document.getElementById("reg-password").value;
+            const confirm = document.getElementById("reg-confirm-password").value;
 
             if (password !== confirm) return alert("Passwords do not match");
 
             try {
                 const userCred = await createUserWithEmailAndPassword(auth, email, password);
                 await updateProfile(userCred.user, { displayName: name });
-                alert("✅ Registration successful! Please login.");
+
+                // Save to Firestore
+                await addDoc(collection(db, "members"), {
+                    uid: userCred.user.uid,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    joinedAt: serverTimestamp(),
+                    role: "member"
+                });
+
+                alert("✅ Registration successful!");
                 window.location.href = "login.html";
             } catch (error) {
                 alert("Registration failed: " + error.message);
@@ -51,12 +61,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Login
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const email = document.getElementById("login-email")?.value.trim();
-            const password = document.getElementById("login-password")?.value;
+            const email = document.getElementById("login-email").value.trim();
+            const password = document.getElementById("login-password").value;
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
@@ -68,11 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Strong Global Protection
 onAuthStateChanged(auth, (user) => {
-    const currentPage = window.location.pathname.split("/").pop() || "index.html";
-
-    // Update Logout Button
     const logoutBtn = document.getElementById("logoutBtn") || document.querySelector(".btn-logout");
     if (logoutBtn) {
         logoutBtn.textContent = user ? "Logout" : "Login";
@@ -82,13 +87,6 @@ onAuthStateChanged(auth, (user) => {
                 window.location.href = "index.html";
             }
         } : null;
-    }
-
-    // Strong Page Protection
-    if (protectedPages.includes(currentPage)) {
-        if (!user) {
-            window.location.replace("login.html");   // Use replace to prevent back button
-        }
     }
 });
 
