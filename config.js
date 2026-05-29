@@ -1,3 +1,4 @@
+
 // Firebase configuration
 window.FIREBASE_CONFIG = {
     apiKey: "AIzaSyDSlXqHHVNYcx8WTb66RvJazDaMCl3l6B8",
