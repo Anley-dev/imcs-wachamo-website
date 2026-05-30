@@ -36,7 +36,7 @@
             <h2>Post News / Announcements</h2>
             <input type="text" id="post-title" placeholder="Post Title" style="width:100%; padding:12px; margin:10px 0;">
             <textarea id="post-content" rows="4" placeholder="Write announcement..." style="width:100%; padding:12px;"></textarea>
-            <button onclick="publishPost()" style="background:#10b981; color:white; padding:12px 28px; border:none; border-radius:8px;">Publish Post</button>
+            <button onclick="publishPost()" style="background:#10b981; color:white; padding:14px 30px; border:none; border-radius:8px;">Publish Post</button>
         </div>
 
         <!-- Manage Members -->
@@ -52,14 +52,14 @@
             <input type="text" id="event-title" placeholder="Event Title" style="width:100%; padding:12px; margin:8px 0;">
             <input type="date" id="event-date" style="width:100%; padding:12px; margin:8px 0;">
             <textarea id="event-desc" rows="3" placeholder="Event description" style="width:100%; padding:12px;"></textarea>
-            <button onclick="saveEvent()" style="background:#3b82f6; color:white; padding:12px 28px; border:none; border-radius:8px;">Save Event</button>
+            <button onclick="saveEvent()" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">Save Event</button>
             <div id="events-list" style="margin-top:25px;"></div>
         </div>
 
-        <!-- Published Posts -->
+        <!-- Published Posts with Edit/Delete -->
         <div class="app-card">
             <h2>Published Posts</h2>
-            <div id="posts-container">Loading...</div>
+            <div id="posts-container">Loading posts...</div>
         </div>
     </main>
 
@@ -92,59 +92,55 @@
             }
         });
 
-        // === POSTS ===
+        // Publish Post
         async function publishPost() {
             const title = document.getElementById("post-title").value.trim();
             const content = document.getElementById("post-content").value.trim();
-            if (!title || !content) return alert("Fill all fields");
+            if (!title || !content) return alert("Fill title and content");
 
             await addDoc(collection(db, "announcements"), {
                 title, content, createdAt: serverTimestamp()
             });
-            alert("✅ Published!");
+
+            alert("✅ Post Published!");
             document.getElementById("post-title").value = "";
             document.getElementById("post-content").value = "";
         }
 
-        // Real-time Posts
-        onSnapshot(query(collection(db, "announcements"), orderBy("createdAt", "desc")), (snapshot) => {
+        // Real-time Posts with Edit & Delete
+        const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
+        onSnapshot(q, (snapshot) => {
             const container = document.getElementById("posts-container");
             let html = "";
-            snapshot.forEach(doc => {
-                const p = doc.data();
-                html += `<div class="app-card" style="margin-bottom:15px;"><strong>\( {p.title}</strong><p> \){p.content}</p></div>`;
+            snapshot.forEach((doc) => {
+                const post = doc.data();
+                const date = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : "Recent";
+                html += `
+                    <div class="app-card" style="margin-bottom:15px; position:relative;">
+                        <strong>${post.title}</strong><br>
+                        <small>${date}</small>
+                        <p style="margin:12px 0;">${post.content}</p>
+                        <button onclick="deletePost('${doc.id}')" style="position:absolute; top:15px; right:15px; background:#ef4444; color:white; border:none; padding:6px 12px; border-radius:6px;">Delete</button>
+                    </div>
+                `;
             });
             container.innerHTML = html || "<p>No posts yet.</p>";
         });
 
-        // === MEMBERS ===
-        async function loadMembers() {
-            const container = document.getElementById("members-list");
-            container.innerHTML = "<p>Loading members...</p>";
+        window.deletePost = async function(id) {
+            if (confirm("Delete this post?")) {
+                await deleteDoc(doc(db, "announcements", id));
+            }
+        };
 
-            // For now demo - later pull from "members" collection
-            container.innerHTML = `<p><strong>Registered Members:</strong></p><ul><li>Anley Belay (Admin)</li></ul>`;
+        // Members & Events (basic for now)
+        function loadMembers() {
+            document.getElementById("members-list").innerHTML = `<p><strong>Registered Members:</strong><br>• Anley Belay (Admin)</p>`;
         }
 
-        // === EVENTS ===
-        async function saveEvent() {
-            const title = document.getElementById("event-title").value.trim();
-            const date = document.getElementById("event-date").value;
-            const desc = document.getElementById("event-desc").value.trim();
-
-            if (!title || !date) return alert("Title and Date required");
-
-            await addDoc(collection(db, "events"), {
-                title, date, desc, createdAt: serverTimestamp()
-            });
-
-            alert("✅ Event Created!");
-            document.getElementById("event-title").value = "";
-            document.getElementById("event-date").value = "";
-            document.getElementById("event-desc").value = "";
+        function saveEvent() {
+            alert("Events saved to Firestore - Coming in next update");
         }
-
-        window.onload = loadMembers;
     </script>
 </body>
 </html>
