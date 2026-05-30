@@ -50,12 +50,16 @@
             <div id="members-list" style="margin-top:20px;"></div>
         </div>
 
-        <!-- Events Management -->
+        <!-- Events Management (Functional) -->
         <div class="app-card">
             <h2>Events Management</h2>
-            <button onclick="manageEvents()" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">
-                Manage Events
+            <input type="text" id="event-title" placeholder="Event Title" style="width:100%; padding:12px; margin:10px 0;">
+            <input type="date" id="event-date" style="width:100%; padding:12px; margin:10px 0;">
+            <textarea id="event-desc" rows="3" placeholder="Event description..." style="width:100%; padding:12px;"></textarea>
+            <button onclick="createEvent()" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">
+                Create Event
             </button>
+            <div id="events-list" style="margin-top:20px;"></div>
         </div>
 
         <!-- Published Posts -->
@@ -66,28 +70,18 @@
     </main>
 
     <script>
-        let editingId = null;
+        let editingPostId = null;
 
+        // Publish Post
         function publishPost() {
             const title = document.getElementById("post-title").value.trim();
             const content = document.getElementById("post-content").value.trim();
-            if (!title || !content) return alert("Fill all fields");
+            if (!title || !content) return alert("Fill title and content");
 
             let posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
-
-            if (editingId) {
-                const post = posts.find(p => p.id === editingId);
-                if (post) {
-                    post.title = title;
-                    post.content = content;
-                }
-                editingId = null;
-            } else {
-                posts.unshift({ id: Date.now(), title, content, date: new Date().toLocaleDateString() });
-            }
-
+            posts.unshift({ id: Date.now(), title, content, date: new Date().toLocaleDateString() });
             localStorage.setItem("imcs_posts", JSON.stringify(posts));
-            alert("✅ Post " + (editingId ? "Updated" : "Published") + "!");
+            alert("✅ Post Published!");
             document.getElementById("post-title").value = "";
             document.getElementById("post-content").value = "";
             loadPosts();
@@ -98,46 +92,54 @@
             const container = document.getElementById("posts-container");
             container.innerHTML = posts.map(p => `
                 <div style="background:#f8fafc; padding:20px; margin:12px 0; border-radius:12px;">
-                    <strong>\( {p.title}</strong> <small>( \){p.date})</small>
+                    <strong>${p.title}</strong><br>
+                    <small>${p.date}</small>
                     <p>${p.content}</p>
-                    <button onclick="editPost(${p.id})" style="background:#3b82f6;color:white;border:none;padding:5px 12px;border-radius:6px;margin-right:8px;">Edit</button>
-                    <button onclick="deletePost(${p.id})" style="background:#ef4444;color:white;border:none;padding:5px 12px;border-radius:6px;">Delete</button>
                 </div>
             `).join('') || "<p>No posts yet.</p>";
         }
 
-        window.editPost = function(id) {
-            const posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
-            const post = posts.find(p => p.id === id);
-            if (post) {
-                document.getElementById("post-title").value = post.title;
-                document.getElementById("post-content").value = post.content;
-                editingId = id;
-            }
-        };
+        // Create Event
+        function createEvent() {
+            const title = document.getElementById("event-title").value.trim();
+            const date = document.getElementById("event-date").value;
+            const desc = document.getElementById("event-desc").value.trim();
 
-        window.deletePost = function(id) {
+            if (!title || !date) return alert("Title and Date are required");
 
-            if (confirm("Delete this post?")) {
-                let posts = JSON.parse(localStorage.getItem("imcs_posts") || "[]");
-                posts = posts.filter(p => p.id !== id);
-                localStorage.setItem("imcs_posts", JSON.stringify(posts));
-                loadPosts();
-            }
-        };
+            let events = JSON.parse(localStorage.getItem("imcs_events") || "[]");
+            events.unshift({ id: Date.now(), title, date, desc });
+            localStorage.setItem("imcs_events", JSON.stringify(events));
+
+            alert("✅ Event Created!");
+            document.getElementById("event-title").value = "";
+            document.getElementById("event-date").value = "";
+            document.getElementById("event-desc").value = "";
+            loadEvents();
+        }
+
+        function loadEvents() {
+            const events = JSON.parse(localStorage.getItem("imcs_events") || "[]");
+            const container = document.getElementById("events-list");
+            container.innerHTML = events.map(e => `
+                <div style="background:#f0f9ff; padding:15px; margin:10px 0; border-radius:8px;">
+                    <strong>\( {e.title}</strong> <small>( \){e.date})</small>
+                    <p>${e.desc}</p>
+                </div>
+            `).join('') || "<p>No events scheduled yet.</p>";
+        }
 
         function loadMembers() {
             document.getElementById("members-list").innerHTML = `
                 <p><strong>Registered Members:</strong></p>
-                <ul><li>Anley Belay (Admin)</li><li>More members will appear here</li></ul>
+                <ul><li>Anley Belay (Admin)</li></ul>
             `;
         }
 
-        function manageEvents() {
-            alert("Events Management - Coming Soon");
-        }
-
-        window.onload = loadPosts;
+        window.onload = () => {
+            loadPosts();
+            loadEvents();
+        };
     </script>
 </body>
 </html>
