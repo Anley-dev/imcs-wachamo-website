@@ -1,129 +1,95 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Events | IMCS Wachemo</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script type="module" src="js/auth.js"></script>
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
+    <nav class="app-navbar">
         <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <i class="fas fa-cross cross-icon"></i> IMCS <span>Wachemo</span>
+            <a href="index.html" class="nav-brand">
+                <i class="fas fa-cross"></i> IMCS <span class="brand-accent">Wachemo</span>
             </a>
-            <div class="menu-toggle" id="mobile-menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
             <ul class="nav-menu">
-                <li><a href="index.html" class="nav-links">Home</a></li>
-                <li><a href="about.html" class="nav-links">About</a></li>
-                <li><a href="events.html" class="nav-links active">Events</a></li>
-                <li><a href="gallery.html" class="nav-links">Gallery</a></li>
-                <li><a href="contact.html" class="nav-links">Contact</a></li>
-                <li><a href="login.html" class="nav-btn">Login</a></li>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="events.html" class="active">Events</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="news.html">News</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><button id="logoutBtn" class="btn btn-logout">Logout</button></li>
             </ul>
         </div>
     </nav>
 
-    <!-- EVENTS HEADER -->
-    <header class="page-header">
-        <div class="container">
-            <h1>Movement Events</h1>
-            <p>Stay updated with our upcoming spiritual programs, intellectual forums, and community services.</p>
-        </div>
+    <header style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 80px 20px; text-align: center;">
+        <h1>Upcoming Events</h1>
+        <p>IMCS Wachemo University Activities</p>
     </header>
 
-    <!-- HIGHLIGHT COUNTDOWN SECTION -->
-    <section class="countdown-section">
-        <div class="container">
-            <div class="countdown-card">
-                <span class="badge">Next Major Event</span>
-                <h2>Annual National Pax Romana Conference</h2>
-                <p class="event-meta"><i class="far fa-calendar-alt"></i> June 25, 2026 | <i class="far fa-clock"></i> 8:30 AM EAT</p>
-                
-                <!-- Countdown Container (Target for JS) -->
-                <div class="countdown-display" id="featured-countdown" data-date="2026-06-25T08:30:00">
-                    <div class="time-block"><span id="days">38</span><p>Days</p></div>
-                    <div class="time-block"><span id="hours">12</span><p>Hours</p></div>
-                    <div class="time-block"><span id="minutes">45</span><p>Mins</p></div>
-                    <div class="time-block"><span id="seconds">09</span><p>Secs</p></div>
-                </div>
-                <a href="register.html" class="btn btn-primary">Reserve My Seat</a>
-            </div>
+    <main class="workspace-container">
+        <div id="events-container">
+            <p>Loading events...</p>
         </div>
-    </section>
+    </main>
 
-    <!-- EVENTS GRID MATRIX -->
-    <section class="events-catalog">
-        <div class="container">
-            <h2 class="section-title">Upcoming Programs</h2>
-            <div class="events-grid">
-                
-                <!-- Card 1 -->
-                <div class="event-item">
-                    <div class="event-date-tag">
-                        <span class="day">22</span>
-                        <span class="month">May</span>
-                    </div>
-                    <div class="event-info">
-                        <h3>Weekly Spiritual Devotion & Fellowship</h3>
-                        <p class="time-loc"><i class="fas fa-clock"></i> 5:30 PM | <i class="fas fa-map-marker-alt"></i> Campus Chapel Hall</p>
-                        <p class="desc">Gathering for Eucharistic adoration, shared prayers, and group scripture reflections to anchor our weekend.</p>
-                        <a href="#" class="card-link">View Details <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-                <!-- Card 2 -->
-                <div class="event-item">
-                    <div class="event-date-tag">
-                        <span class="day">05</span>
-                        <span class="month">Jun</span>
-                    </div>
-                    <div class="event-info">
-                        <h3>Catholic Intellectual Youth Forum</h3>
-                        <p class="time-loc"><i class="fas fa-clock"></i> 2:00 PM | <i class="fas fa-map-marker-alt"></i> Block 4 Seminar Room</p>
-                        <p class="desc">A structured open debate addressing contemporary social ethics, science, and upholding Catholic doctrine in campus environments.</p>
-                        <a href="#" class="card-link">View Details <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
+            authDomain: "imcs-wachamo.firebaseapp.com",
+            projectId: "imcs-wachamo",
+            storageBucket: "imcs-wachamo.firebasestorage.app",
+            messagingSenderId: "445125483030",
+            appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
+        };
 
-                <!-- Card 3 -->
-                <div class="event-item">
-                    <div class="event-date-tag">
-                        <span class="day">14</span>
-                        <span class="month">Jun</span>
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth();
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) window.location.href = "login.html";
+        });
+
+        // Real-time Events
+        const q = query(collection(db, "events"), orderBy("date", "asc"));
+        onSnapshot(q, (snapshot) => {
+            const container = document.getElementById("events-container");
+            let html = "";
+
+            if (snapshot.empty) {
+                container.innerHTML = "<p>No upcoming events. Check back later.</p>";
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const event = doc.data();
+                html += `
+                    <div class="app-card" style="margin-bottom: 25px;">
+                        <h2>${event.title}</h2>
+                        <small>📅 ${event.date}</small>
+                        <p style="margin:15px 0;">${event.desc}</p>
+                        <button onclick="rsvp('${doc.id}')" style="background:#10b981; color:white; padding:12px 24px; border:none; border-radius:8px;">
+                            RSVP
+                        </button>
                     </div>
-                    <div class="event-info">
-                        <h3>Charity & Hospital Outreach Program</h3>
-                        <p class="time-loc"><i class="fas fa-clock"></i> 9:00 AM | <i class="fas fa-map-marker-alt"></i> Local Community Hospital</p>
-                        <p class="desc">Living out our values through social action. We will visit patients, share basic provisions, and provide spiritual support.</p>
-                        <a href="#" class="card-link">View Details <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- GLOBAL FOOTER REUSE -->
-    <footer class="main-footer">
-        <div class="footer-bottom">
-            <p>&copy; 2026 IMCS Wachemo. Built with dedication using zero-cost cloud frameworks.</p>
-        </div>
-    </footer>
-
-    <script src="js/app.js"></script>
-    <script src="js/events.js"></script>
+                `;
+            });
+            container.innerHTML = html;
+        });
+    </script>
 </body>
 </html>
 
