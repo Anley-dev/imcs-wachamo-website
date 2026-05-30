@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +8,100 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
-    <script type="module" src="js/auth.js"></script>
+    <style>
+        .loading { opacity: 0.6; pointer-events: none; }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        .btn-delete { background: #ef4444; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; margin-right: 5px; }
+        .btn-delete:hover { background: #dc2626; }
+        .btn-edit { background: #f59e0b; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; margin-right: 5px; }
+        .btn-edit:hover { background: #d97706; }
+        .btn-action { background: #10b981; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; margin-right: 5px; }
+        .btn-action:hover { background: #059669; }
+        .btn-cancel { background: #6b7280; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; }
+        .btn-cancel:hover { background: #4b5563; }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal.show { display: block; }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h2 {
+            margin: 0;
+        }
+        .close-btn {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #666;
+        }
+        .close-btn:hover { color: #000; }
+        .modal-body {
+            margin: 20px 0;
+        }
+        .modal-body input,
+        .modal-body textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        .modal-body textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .post-item, .event-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        .post-item {
+            background: #f9fafb;
+            border-left-color: #10b981;
+        }
+        .event-item {
+            background: #f0f9ff;
+            border-left-color: #3b82f6;
+        }
+    </style>
 </head>
 <body>
 
@@ -33,40 +125,92 @@
 
         <!-- Post News -->
         <div class="app-card">
-            <h2>Post News / Announcements</h2>
-            <input type="text" id="post-title" placeholder="Post Title" style="width:100%; padding:12px; margin:10px 0;">
-            <textarea id="post-content" rows="5" placeholder="Write announcement..." style="width:100%; padding:12px;"></textarea>
-            <button onclick="publishPost()" style="background:#10b981; color:white; padding:14px 30px; border:none; border-radius:8px;">Publish Post</button>
-        </div>
-
-        <!-- Manage Members -->
-        <div class="app-card">
-            <h2>Manage Members</h2>
-            <button onclick="loadMembers()" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">View All Members</button>
-            <div id="members-list" style="margin-top:20px;"></div>
+            <h2>📰 Post News / Announcements</h2>
+            <input type="text" id="post-title" placeholder="Post Title" style="width:100%; padding:12px; margin:10px 0; border: 1px solid #ddd; border-radius: 6px;">
+            <textarea id="post-content" rows="5" placeholder="Write announcement..." style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
+            <button id="publishBtn" onclick="publishPost()" style="background:#10b981; color:white; padding:14px 30px; border:none; border-radius:8px; cursor:pointer; margin-top:10px;">Publish Post</button>
+            <p id="post-message"></p>
         </div>
 
         <!-- Events -->
         <div class="app-card">
-            <h2>Events Management</h2>
-            <input type="text" id="event-title" placeholder="Event Title" style="width:100%; padding:12px; margin:8px 0;">
-            <input type="date" id="event-date" style="width:100%; padding:12px; margin:8px 0;">
-            <textarea id="event-desc" rows="3" placeholder="Description" style="width:100%; padding:12px;"></textarea>
-            <button onclick="createEvent()" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">Create Event</button>
-            <div id="events-list" style="margin-top:20px;"></div>
+            <h2>📅 Events Management</h2>
+            <input type="text" id="event-title" placeholder="Event Title" style="width:100%; padding:12px; margin:8px 0; border: 1px solid #ddd; border-radius: 6px;">
+            <input type="date" id="event-date" style="width:100%; padding:12px; margin:8px 0; border: 1px solid #ddd; border-radius: 6px;">
+            <input type="time" id="event-time" style="width:100%; padding:12px; margin:8px 0; border: 1px solid #ddd; border-radius: 6px;">
+            <textarea id="event-desc" rows="3" placeholder="Event Description" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
+            <button id="eventBtn" onclick="createEvent()" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px; cursor:pointer; margin-top:10px;">Create Event</button>
+            <p id="event-message"></p>
+        </div>
+
+        <!-- Manage Members -->
+        <div class="app-card">
+            <h2>👥 Manage Members</h2>
+            <button onclick="loadMembers()" style="background:#6366f1; color:white; padding:12px 24px; border:none; border-radius:8px; cursor:pointer;">View All Members</button>
+            <div id="members-list" style="margin-top:20px;"></div>
         </div>
 
         <!-- Published Posts -->
         <div class="app-card">
-            <h2>Published Posts</h2>
-            <div id="posts-container">Loading...</div>
+            <h2>📄 Published Posts</h2>
+            <div id="posts-container">Loading posts...</div>
+        </div>
+
+        <!-- Published Events -->
+        <div class="app-card">
+            <h2>📋 Published Events</h2>
+            <div id="events-list">Loading events...</div>
         </div>
     </main>
+
+    <!-- Edit Post Modal -->
+    <div id="editPostModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Post</h2>
+                <span class="close-btn" onclick="closeEditPostModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <label><strong>Post Title</strong></label>
+                <input type="text" id="editPostTitle" placeholder="Post Title">
+                <label><strong>Content</strong></label>
+                <textarea id="editPostContent" placeholder="Post Content" rows="5"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeEditPostModal()">Cancel</button>
+                <button class="btn-action" onclick="saveEditPost()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Event Modal -->
+    <div id="editEventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Event</h2>
+                <span class="close-btn" onclick="closeEditEventModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <label><strong>Event Title</strong></label>
+                <input type="text" id="editEventTitle" placeholder="Event Title">
+                <label><strong>Date</strong></label>
+                <input type="date" id="editEventDate">
+                <label><strong>Time</strong></label>
+                <input type="time" id="editEventTime">
+                <label><strong>Description</strong></label>
+                <textarea id="editEventDesc" placeholder="Event Description" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeEditEventModal()">Cancel</button>
+                <button class="btn-action" onclick="saveEditEvent()">Save Changes</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
@@ -81,44 +225,378 @@
         const db = getFirestore(app);
         const auth = getAuth();
 
-        onAuthStateChanged(auth, (user) => {
-            if (!user) window.location.href = "login.html";
-        });
+        // Global variables for editing
+        let currentEditPostId = null;
+        let currentEditEventId = null;
 
-        document.getElementById("logoutBtn").addEventListener("click", async () => {
-            if (confirm("Logout?")) {
-                await signOut(auth);
-                window.location.href = "index.html";
+        // Check if user is logged in
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "login.html";
             }
         });
 
-        // Publish Post
-        async function publishPost() {
+        // Logout functionality
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            if (confirm("Are you sure you want to logout?")) {
+                try {
+                    await signOut(auth);
+                    window.location.href = "index.html";
+                } catch (error) {
+                    console.error("Logout error:", error);
+                }
+            }
+        });
+
+        // ===== PUBLISH POST FUNCTION =====
+        window.publishPost = async function() {
             const title = document.getElementById("post-title").value.trim();
             const content = document.getElementById("post-content").value.trim();
-            if (!title || !content) return alert("Fill title and content");
+            const messageDiv = document.getElementById("post-message");
+            const btn = document.getElementById("publishBtn");
 
-            await addDoc(collection(db, "announcements"), {
-                title, content, createdAt: serverTimestamp()
-            });
+            if (!title || !content) {
+                messageDiv.innerHTML = "<span class='error'>❌ Please fill in both title and content</span>";
+                return;
+            }
 
-            alert("✅ Post Published!");
-            document.getElementById("post-title").value = "";
-            document.getElementById("post-content").value = "";
-        }
+            btn.disabled = true;
+            btn.classList.add("loading");
+            messageDiv.innerHTML = "";
 
-        // Real-time Posts
+            try {
+                await addDoc(collection(db, "announcements"), {
+                    title: title,
+                    content: content,
+                    createdAt: serverTimestamp(),
+                    author: auth.currentUser?.email || "Anonymous"
+                });
+
+                messageDiv.innerHTML = "<span class='success'>✅ Post published successfully!</span>";
+                document.getElementById("post-title").value = "";
+                document.getElementById("post-content").value = "";
+                setTimeout(() => {
+                    messageDiv.innerHTML = "";
+                }, 3000);
+            } catch (error) {
+                console.error("Error publishing post:", error);
+                messageDiv.innerHTML = `<span class='error'>❌ Error: ${error.message}</span>`;
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove("loading");
+            }
+        };
+
+        // ===== CREATE EVENT FUNCTION =====
+        window.createEvent = async function() {
+            const title = document.getElementById("event-title").value.trim();
+            const date = document.getElementById("event-date").value;
+            const time = document.getElementById("event-time").value;
+            const description = document.getElementById("event-desc").value.trim();
+            const messageDiv = document.getElementById("event-message");
+            const btn = document.getElementById("eventBtn");
+
+            if (!title || !date || !description) {
+                messageDiv.innerHTML = "<span class='error'>❌ Please fill in title, date, and description</span>";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.classList.add("loading");
+            messageDiv.innerHTML = "";
+
+            try {
+                await addDoc(collection(db, "events"), {
+                    title: title,
+                    date: date,
+                    time: time || "",
+                    description: description,
+                    createdAt: serverTimestamp(),
+                    author: auth.currentUser?.email || "Anonymous"
+                });
+
+                messageDiv.innerHTML = "<span class='success'>✅ Event created successfully!</span>";
+                document.getElementById("event-title").value = "";
+                document.getElementById("event-date").value = "";
+                document.getElementById("event-time").value = "";
+                document.getElementById("event-desc").value = "";
+                setTimeout(() => {
+                    messageDiv.innerHTML = "";
+                }, 3000);
+            } catch (error) {
+                console.error("Error creating event:", error);
+                messageDiv.innerHTML = `<span class='error'>❌ Error: ${error.message}</span>`;
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove("loading");
+            }
+        };
+
+        // ===== REAL-TIME POSTS DISPLAY =====
         onSnapshot(query(collection(db, "announcements"), orderBy("createdAt", "desc")), (snapshot) => {
             const container = document.getElementById("posts-container");
+            if (snapshot.empty) {
+                container.innerHTML = "<p>No posts yet.</p>";
+                return;
+            }
+
             let html = "";
             snapshot.forEach(doc => {
-                const p = doc.data();
-                const date = p.createdAt ? new Date(p.createdAt.toDate()).toLocaleString() : "Recent";
-                html += `<div class="app-card" style="margin-bottom:15px;"><strong>${p.title}</strong><small> - \( {date}</small><p> \){p.content}</p></div>`;
+                const post = doc.data();
+                const date = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : "Recently";
+                html += `
+                    <div class="post-item">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 5px 0;">${escapeHtml(post.title)}</h4>
+                                <small style="color: #6b7280;">Posted ${date}</small>
+                                <p style="margin-top: 10px; color: #374151;">${escapeHtml(post.content)}</p>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn-edit" onclick="openEditPostModal('${doc.id}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn-delete" onclick="deletePost('${doc.id}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
             });
-            container.innerHTML = html || "<p>No posts yet.</p>";
+            container.innerHTML = html;
         });
+
+        // ===== REAL-TIME EVENTS DISPLAY =====
+        onSnapshot(query(collection(db, "events"), orderBy("createdAt", "desc")), (snapshot) => {
+            const container = document.getElementById("events-list");
+            if (snapshot.empty) {
+                container.innerHTML = "<p>No events yet.</p>";
+                return;
+            }
+
+            let html = "";
+            snapshot.forEach(doc => {
+                const event = doc.data();
+                const createdDate = event.createdAt ? new Date(event.createdAt.toDate()).toLocaleString() : "Recently";
+                const displayTime = event.time ? ` at ${event.time}` : "";
+                
+                html += `
+                    <div class="event-item">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 5px 0;">${escapeHtml(event.title)}</h4>
+                                <small style="color: #6b7280;">📅 ${event.date}${displayTime}</small>
+                                <p style="margin-top: 10px; color: #374151;">${escapeHtml(event.description)}</p>
+                                <small style="color: #9ca3af;">Created ${createdDate}</small>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn-edit" onclick="openEditEventModal('${doc.id}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn-delete" onclick="deleteEvent('${doc.id}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        });
+
+        // ===== EDIT POST FUNCTIONS =====
+        window.openEditPostModal = async function(postId) {
+            currentEditPostId = postId;
+            const snapshot = await fetch(`https://firestore.googleapis.com/v1/projects/imcs-wachamo/databases/(default)/documents/announcements/${postId}`)
+                .catch(() => null);
+            
+            if (snapshot) {
+                try {
+                    const data = await snapshot.json();
+                    document.getElementById("editPostTitle").value = data.fields?.title?.stringValue || "";
+                    document.getElementById("editPostContent").value = data.fields?.content?.stringValue || "";
+                } catch (e) {
+                    console.log("Using fallback method");
+                }
+            }
+            
+            // Simple approach - get data from displayed post
+            const postItem = event?.target?.closest('.post-item');
+            if (postItem) {
+                const title = postItem.querySelector('h4').textContent;
+                const content = postItem.querySelector('p').textContent;
+                document.getElementById("editPostTitle").value = title;
+                document.getElementById("editPostContent").value = content;
+            }
+            
+            document.getElementById("editPostModal").classList.add("show");
+        };
+
+        window.closeEditPostModal = function() {
+            document.getElementById("editPostModal").classList.remove("show");
+            currentEditPostId = null;
+        };
+
+        window.saveEditPost = async function() {
+            if (!currentEditPostId) return;
+
+            const title = document.getElementById("editPostTitle").value.trim();
+            const content = document.getElementById("editPostContent").value.trim();
+
+            if (!title || !content) {
+                alert("❌ Please fill in both title and content");
+                return;
+            }
+
+            try {
+                await updateDoc(doc(db, "announcements", currentEditPostId), {
+                    title: title,
+                    content: content
+                });
+                alert("✅ Post updated successfully!");
+                closeEditPostModal();
+            } catch (error) {
+                console.error("Error updating post:", error);
+                alert(`❌ Error: ${error.message}`);
+            }
+        };
+
+        // ===== EDIT EVENT FUNCTIONS =====
+        window.openEditEventModal = async function(eventId) {
+            currentEditEventId = eventId;
+            
+            // Get data from displayed event
+            const eventItem = event?.target?.closest('.event-item');
+            if (eventItem) {
+                const title = eventItem.querySelector('h4').textContent;
+                const dateText = eventItem.querySelector('small').textContent;
+                const description = eventItem.querySelector('p').textContent;
+                
+                document.getElementById("editEventTitle").value = title;
+                document.getElementById("editEventDesc").value = description;
+                
+                // Parse date and time from text
+                const dateMatch = dateText.match(/(\d{4}-\d{2}-\d{2})/);
+                const timeMatch = dateText.match(/(\d{2}:\d{2})/);
+                
+                if (dateMatch) document.getElementById("editEventDate").value = dateMatch[1];
+                if (timeMatch) document.getElementById("editEventTime").value = timeMatch[1];
+            }
+            
+            document.getElementById("editEventModal").classList.add("show");
+        };
+
+        window.closeEditEventModal = function() {
+            document.getElementById("editEventModal").classList.remove("show");
+            currentEditEventId = null;
+        };
+
+        window.saveEditEvent = async function() {
+            if (!currentEditEventId) return;
+
+            const title = document.getElementById("editEventTitle").value.trim();
+            const date = document.getElementById("editEventDate").value;
+            const time = document.getElementById("editEventTime").value;
+            const description = document.getElementById("editEventDesc").value.trim();
+
+            if (!title || !date || !description) {
+                alert("❌ Please fill in title, date, and description");
+                return;
+            }
+
+            try {
+                await updateDoc(doc(db, "events", currentEditEventId), {
+                    title: title,
+                    date: date,
+                    time: time || "",
+                    description: description
+                });
+                alert("✅ Event updated successfully!");
+                closeEditEventModal();
+            } catch (error) {
+                console.error("Error updating event:", error);
+                alert(`❌ Error: ${error.message}`);
+            }
+        };
+
+        // ===== DELETE FUNCTIONS =====
+        window.deletePost = async function(postId) {
+            if (confirm("Are you sure you want to delete this post?")) {
+                try {
+                    await deleteDoc(doc(db, "announcements", postId));
+                    alert("✅ Post deleted!");
+                } catch (error) {
+                    console.error("Error deleting post:", error);
+                    alert(`❌ Error: ${error.message}`);
+                }
+            }
+        };
+
+        window.deleteEvent = async function(eventId) {
+            if (confirm("Are you sure you want to delete this event?")) {
+                try {
+                    await deleteDoc(doc(db, "events", eventId));
+                    alert("✅ Event deleted!");
+                } catch (error) {
+                    console.error("Error deleting event:", error);
+                    alert(`❌ Error: ${error.message}`);
+                }
+            }
+        };
+
+        // ===== LOAD MEMBERS FUNCTION =====
+        window.loadMembers = function() {
+            const container = document.getElementById("members-list");
+            container.innerHTML = "Loading members...";
+            
+            onSnapshot(collection(db, "members"), (snapshot) => {
+                if (snapshot.empty) {
+                    container.innerHTML = "<p>No members found.</p>";
+                    return;
+                }
+
+                let html = "<div style='overflow-x: auto;'><table style='width:100%; border-collapse: collapse;'>";
+                html += "<tr style='background: #f3f4f6;'><th style='padding:12px; text-align:left; border-bottom: 2px solid #ddd;'>Name</th><th style='padding:12px; text-align:left; border-bottom: 2px solid #ddd;'>Email</th><th style='padding:12px; text-align:left; border-bottom: 2px solid #ddd;'>Position</th></tr>";
+                
+                snapshot.forEach(doc => {
+                    const member = doc.data();
+                    html += `
+                        <tr style='border-bottom: 1px solid #ddd;'>
+                            <td style='padding:12px;'>${escapeHtml(member.name || 'N/A')}</td>
+                            <td style='padding:12px;'>${escapeHtml(member.email || 'N/A')}</td>
+                            <td style='padding:12px;'>${escapeHtml(member.position || 'N/A')}</td>
+                        </tr>
+                    `;
+                });
+                html += "</table></div>";
+                container.innerHTML = html;
+            });
+        };
+
+        // ===== HELPER FUNCTIONS =====
+        function escapeHtml(unsafe) {
+            if (!unsafe) return "";
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const postModal = document.getElementById("editPostModal");
+            const eventModal = document.getElementById("editEventModal");
+            
+            if (event.target === postModal) {
+                postModal.classList.remove("show");
+            }
+            if (event.target === eventModal) {
+                eventModal.classList.remove("show");
+            }
+        };
     </script>
 </body>
 </html>
-
