@@ -16,8 +16,7 @@
     <nav class="app-navbar">
         <div class="nav-container">
             <a href="index.html" class="nav-brand">
-                <i class="fas fa-cross brand-icon"></i>
-                <span class="brand-text">IMCS <span class="brand-accent">Wachemo</span></span>
+                <i class="fas fa-cross"></i> IMCS <span class="brand-accent">Wachemo</span>
             </a>
             <ul class="nav-menu">
                 <li><a href="index.html">Home</a></li>
@@ -31,36 +30,36 @@
         </div>
     </nav>
 
-    <main class="workspace-container" id="main-content">
+    <main class="workspace-container">
         <h1>Welcome Back, <span id="user-name">Member</span> 👋</h1>
         <p class="subtitle">Pax Romana Local Portal • Wachemo University Campus</p>
 
         <div class="app-grid">
-            <div class="app-card">
+            <div class="app-card" onclick="goToSpiritual()">
                 <div class="card-header">
                     <i class="fas fa-calendar-check" style="color:#3b82f6;"></i>
                     <h2>Spiritual Programs</h2>
                 </div>
                 <p>Real-time Mass schedules, choir practice, and fellowship timelines.</p>
-                <strong>Coming soon...</strong>
+                <strong>Click to view schedule →</strong>
             </div>
 
-            <div class="app-card">
+            <div class="app-card" onclick="goToFormations()">
                 <div class="card-header">
                     <i class="fas fa-book-open" style="color:#10b981;"></i>
                     <h2>Intellect & Formations</h2>
                 </div>
                 <p>Academic resources, seminar modules, and study materials.</p>
-                <strong>Coming soon...</strong>
+                <strong>Click to explore →</strong>
             </div>
 
-            <div class="app-card">
+            <div class="app-card" onclick="goToAnnouncements()">
                 <div class="card-header">
                     <i class="fas fa-bullhorn" style="color:#f59e0b;"></i>
                     <h2>Announcements</h2>
                 </div>
                 <p>Latest updates from the Executive Council.</p>
-                <strong>No announcements yet.</strong>
+                <strong>View all announcements →</strong>
             </div>
         </div>
     </main>
@@ -83,6 +82,10 @@
                 window.location.href = "index.html";
             }
         });
+
+        function goToSpiritual() { alert("Spiritual Programs - Coming Soon"); }
+        function goToFormations() { alert("Intellect & Formations - Coming Soon"); }
+        function goToAnnouncements() { window.location.href = "news.html"; }
     </script>
 </body>
 </html>
