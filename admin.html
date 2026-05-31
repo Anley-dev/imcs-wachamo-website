@@ -160,11 +160,6 @@
             background: none;
             border: none;
             padding: 0;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
         .close-btn:hover {
@@ -407,30 +402,18 @@
         </div>
     </div>
 
-    <!-- Load admin.js -->
+    <!-- Import admin.js -->
     <script type="module" src="js/admin.js"></script>
 
-    <!-- Additional helper functions for modals -->
+    <!-- Modal helper scripts -->
     <script>
-        function showMessage(elementId, message, type) {
-            const element = document.getElementById(elementId);
-            element.textContent = message;
-            element.className = `message show ${type}`;
-            
-            if (type === 'success') {
-                setTimeout(() => {
-                    element.className = 'message';
-                }, 3000);
-            }
+        function closeEditPostModal() {
+            document.getElementById("editPostModal").classList.remove("show");
         }
 
-        window.closeEditPostModal = function() {
-            document.getElementById("editPostModal").classList.remove("show");
-        };
-
-        window.closeEditEventModal = function() {
+        function closeEditEventModal() {
             document.getElementById("editEventModal").classList.remove("show");
-        };
+        }
 
         // Close modals when clicking outside
         window.onclick = function(event) {
