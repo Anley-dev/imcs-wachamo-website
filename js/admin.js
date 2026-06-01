@@ -1,5 +1,6 @@
-// IMCS Wachemo - Admin Panel Logic
-// Firebase imports
+// IMCS Wachemo - Admin Panel Logic with Better Error Handling
+console.log("📦 Loading Firebase SDK...");
+
 const firebaseApp = firebase.initializeApp({
     apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
     authDomain: "imcs-wachamo.firebaseapp.com",
@@ -12,18 +13,28 @@ const firebaseApp = firebase.initializeApp({
 const db = firebase.firestore();
 const auth = firebase.auth();
 
+console.log("✅ Firebase initialized");
+
 // Global state
 let currentEditPostId = null;
 let currentEditEventId = null;
 
 // ============ INITIALIZATION ============
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("📄 DOM loaded, initializing admin panel...");
+    
     const logoutBtn = document.getElementById("logoutBtn");
 
     // Auth Protection
     auth.onAuthStateChanged((user) => {
         if (!user) {
+            console.warn("❌ Not authenticated, redirecting to login");
             window.location.href = "login.html";
+        } else {
+            console.log("✅ User authenticated:", user.email);
+            // Load existing posts and events
+            loadPosts();
+            loadEvents();
         }
     });
 
@@ -40,10 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
-    // Load existing posts and events
-    loadPosts();
-    loadEvents();
 });
 
 // ============ POSTS/NEWS FUNCTIONS ============
@@ -62,6 +69,10 @@ function publishPost() {
 
     btn.disabled = true;
     btn.style.opacity = "0.6";
+    messageDiv.innerHTML = "📤 Publishing...";
+    messageDiv.className = "message show";
+
+    console.log("📝 Publishing post to Firestore...");
 
     db.collection("news").add({
         title: title,
@@ -70,6 +81,7 @@ function publishPost() {
         author: auth.currentUser?.email || "Anonymous"
     })
     .then(() => {
+        console.log("✅ Post published successfully!");
         messageDiv.innerHTML = "✅ Post published successfully!";
         messageDiv.className = "message show success";
 
@@ -85,7 +97,7 @@ function publishPost() {
         loadPosts();
     })
     .catch((error) => {
-        console.error("Error publishing post:", error);
+        console.error("❌ Error publishing post:", error);
         messageDiv.innerHTML = `❌ Error: ${error.message}`;
         messageDiv.className = "message show error";
     })
@@ -97,10 +109,16 @@ function publishPost() {
 
 function loadPosts() {
     const container = document.getElementById("posts-container");
+    container.innerHTML = '⏳ Loading posts...';
     
-    db.collection("news")
+    console.log("📥 Fetching posts from Firestore...");
+
+    const unsubscribe = db.collection("news")
         .orderBy("createdAt", "desc")
+        .limit(50)
         .onSnapshot((snapshot) => {
+            console.log(`📊 Loaded ${snapshot.size} posts`);
+            
             if (snapshot.empty) {
                 container.innerHTML = '<div class="empty-state"><p>No posts published yet.</p></div>';
                 return;
@@ -126,12 +144,23 @@ function loadPosts() {
 
             container.innerHTML = html;
         }, (error) => {
-            console.error("Error loading posts:", error);
-            container.innerHTML = '<div class="empty-state"><p>❌ Error loading posts</p></div>';
+            console.error("❌ Error loading posts:", error);
+            container.innerHTML = `
+                <div class="empty-state" style="background: #fee2e2; padding: 20px; color: #7f1d1d; border-radius: 8px;">
+                    <p>❌ Error loading posts</p>
+                    <p style="font-size: 0.9rem;">${error.message}</p>
+                    <p style="font-size: 0.85rem; margin-top: 10px;">Check browser console (F12) for details</p>
+                </div>
+            `;
         });
+
+    // Return unsubscribe function (optional cleanup)
+    return unsubscribe;
 }
 
 function editPost(postId) {
+    console.log("✏️ Editing post:", postId);
+    
     db.collection("news").doc(postId).get().then((doc) => {
         if (!doc.exists) {
             alert("Post not found!");
@@ -161,14 +190,16 @@ function saveEditPost() {
         return;
     }
 
+    console.log("💾 Saving post edits...");
+
     db.collection("news").doc(currentEditPostId).update({
         title: title,
         content: content
     })
     .then(() => {
+        console.log("✅ Post updated!");
         alert("✅ Post updated successfully!");
         closeEditPostModal();
-        loadPosts();
     })
     .catch((error) => {
         console.error("Error updating post:", error);
@@ -179,10 +210,12 @@ function saveEditPost() {
 function deletePost(postId) {
     if (!confirm("Are you sure you want to delete this post?")) return;
 
+    console.log("🗑️ Deleting post:", postId);
+
     db.collection("news").doc(postId).delete()
     .then(() => {
+        console.log("✅ Post deleted!");
         alert("✅ Post deleted!");
-        loadPosts();
     })
     .catch((error) => {
         console.error("Error deleting post:", error);
@@ -213,6 +246,10 @@ function createEvent() {
 
     btn.disabled = true;
     btn.style.opacity = "0.6";
+    messageDiv.innerHTML = "📤 Creating...";
+    messageDiv.className = "message show";
+
+    console.log("📝 Creating event in Firestore...");
 
     db.collection("events").add({
         title: title,
@@ -223,6 +260,7 @@ function createEvent() {
         author: auth.currentUser?.email || "Anonymous"
     })
     .then(() => {
+        console.log("✅ Event created successfully!");
         messageDiv.innerHTML = "✅ Event created successfully!";
         messageDiv.className = "message show success";
 
@@ -252,10 +290,16 @@ function createEvent() {
 
 function loadEvents() {
     const container = document.getElementById("events-list");
+    container.innerHTML = '⏳ Loading events...';
     
-    db.collection("events")
+    console.log("📥 Fetching events from Firestore...");
+
+    const unsubscribe = db.collection("events")
         .orderBy("createdAt", "desc")
+        .limit(50)
         .onSnapshot((snapshot) => {
+            console.log(`📊 Loaded ${snapshot.size} events`);
+            
             if (snapshot.empty) {
                 container.innerHTML = '<div class="empty-state"><p>No events created yet.</p></div>';
                 return;
@@ -283,12 +327,22 @@ function loadEvents() {
 
             container.innerHTML = html;
         }, (error) => {
-            console.error("Error loading events:", error);
-            container.innerHTML = '<div class="empty-state"><p>❌ Error loading events</p></div>';
+            console.error("❌ Error loading events:", error);
+            container.innerHTML = `
+                <div class="empty-state" style="background: #fee2e2; padding: 20px; color: #7f1d1d; border-radius: 8px;">
+                    <p>❌ Error loading events</p>
+                    <p style="font-size: 0.9rem;">${error.message}</p>
+                    <p style="font-size: 0.85rem; margin-top: 10px;">Check browser console (F12) for details</p>
+                </div>
+            `;
         });
+
+    return unsubscribe;
 }
 
 function editEvent(eventId) {
+    console.log("✏️ Editing event:", eventId);
+    
     db.collection("events").doc(eventId).get().then((doc) => {
         if (!doc.exists) {
             alert("Event not found!");
@@ -322,6 +376,8 @@ function saveEditEvent() {
         return;
     }
 
+    console.log("💾 Saving event edits...");
+
     db.collection("events").doc(currentEditEventId).update({
         title: title,
         date: date,
@@ -329,9 +385,9 @@ function saveEditEvent() {
         description: description
     })
     .then(() => {
+        console.log("✅ Event updated!");
         alert("✅ Event updated successfully!");
         closeEditEventModal();
-        loadEvents();
     })
     .catch((error) => {
         console.error("Error updating event:", error);
@@ -342,10 +398,12 @@ function saveEditEvent() {
 function deleteEvent(eventId) {
     if (!confirm("Are you sure you want to delete this event?")) return;
 
+    console.log("🗑️ Deleting event:", eventId);
+
     db.collection("events").doc(eventId).delete()
     .then(() => {
+        console.log("✅ Event deleted!");
         alert("✅ Event deleted!");
-        loadEvents();
     })
     .catch((error) => {
         console.error("Error deleting event:", error);
@@ -364,29 +422,40 @@ function loadMembers() {
     const container = document.getElementById("members-list");
     container.innerHTML = "🔍 Loading members...";
     
+    console.log("👥 Loading members...");
+
     // Try 'members' collection first
-    db.collection("members").onSnapshot((snapshot) => {
+    db.collection("members").limit(100).onSnapshot((snapshot) => {
         if (!snapshot.empty) {
+            console.log(`✅ Found ${snapshot.size} members in 'members' collection`);
             displayMembers(snapshot, container);
             return;
         }
         
+        console.log("⚠️ 'members' collection empty, trying 'users'...");
+        
         // Try 'users' collection
-        db.collection("users").onSnapshot((snapshot2) => {
+        db.collection("users").limit(100).onSnapshot((snapshot2) => {
             if (!snapshot2.empty) {
+                console.log(`✅ Found ${snapshot2.size} users in 'users' collection`);
                 displayMembers(snapshot2, container);
                 return;
             }
             
+            console.log("⚠️ 'users' collection empty, trying 'authUsers'...");
+            
             // Try 'authUsers' collection
-            db.collection("authUsers").onSnapshot((snapshot3) => {
+            db.collection("authUsers").limit(100).onSnapshot((snapshot3) => {
                 if (!snapshot3.empty) {
+                    console.log(`✅ Found ${snapshot3.size} users in 'authUsers' collection`);
                     displayMembers(snapshot3, container);
                 } else {
+                    console.error("❌ No members found in any collection!");
                     container.innerHTML = `
                         <div style="background: #fef3c7; padding: 15px; border-radius: 8px; color: #92400e;">
                             <p><strong>⚠️ No members found!</strong></p>
-                            <p>Create a 'members' collection in Firebase</p>
+                            <p>No data in 'members', 'users', or 'authUsers' collections.</p>
+                            <p>Create a 'members' collection in Firebase with documents containing: name, email, position</p>
                         </div>
                     `;
                 }
@@ -434,7 +503,6 @@ function escapeHtml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
-// Close modals
 function closeModal(modalId) {
     document.getElementById(modalId).classList.remove("show");
 }
@@ -450,3 +518,5 @@ window.onclick = function(event) {
         eventModal.classList.remove("show");
     }
 };
+
+console.log("✅ Admin.js loaded successfully!");
