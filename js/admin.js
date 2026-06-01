@@ -1,19 +1,29 @@
 // IMCS Wachemo - Admin Panel Logic with Better Error Handling
 console.log("📦 Loading Firebase SDK...");
 
-const firebaseApp = firebase.initializeApp({
-    apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
-    authDomain: "imcs-wachamo.firebaseapp.com",
-    projectId: "imcs-wachamo",
-    storageBucket: "imcs-wachamo.firebasestorage.app",
-    messagingSenderId: "445125483030",
-    appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
-});
+// Initialize Firebase safely (check if already initialized)
+let db, auth;
 
-const db = firebase.firestore();
-const auth = firebase.auth();
-
-console.log("✅ Firebase initialized");
+try {
+    if (!firebase.apps.length) {
+        const firebaseApp = firebase.initializeApp({
+            apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
+            authDomain: "imcs-wachamo.firebaseapp.com",
+            projectId: "imcs-wachamo",
+            storageBucket: "imcs-wachamo.firebasestorage.app",
+            messagingSenderId: "445125483030",
+            appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
+        });
+        db = firebase.firestore();
+        auth = firebase.auth();
+    } else {
+        db = firebase.firestore();
+        auth = firebase.auth();
+    }
+    console.log("✅ Firebase initialized");
+} catch (error) {
+    console.error("❌ Firebase initialization error:", error);
+}
 
 // Global state
 let currentEditPostId = null;
@@ -135,14 +145,23 @@ function loadPosts() {
                         <small style="color: #6b7280;">📅 ${date}</small>
                         <p style="margin: 10px 0; color: #374151;">${escapeHtml(post.content)}</p>
                         <div class="item-actions">
-                            <button class="btn-edit" onclick="editPost('${doc.id}')">✏️ Edit</button>
-                            <button class="btn-delete" onclick="deletePost('${doc.id}')">🗑️ Delete</button>
+                            <button class="btn-edit" data-post-id="${doc.id}">✏️ Edit</button>
+                            <button class="btn-delete" data-post-id="${doc.id}">🗑️ Delete</button>
                         </div>
                     </div>
                 `;
             });
 
             container.innerHTML = html;
+
+            // Add event listeners to dynamically created buttons
+            container.querySelectorAll(".btn-edit").forEach(btn => {
+                btn.addEventListener("click", () => editPost(btn.dataset.postId));
+            });
+
+            container.querySelectorAll(".btn-delete").forEach(btn => {
+                btn.addEventListener("click", () => deletePost(btn.dataset.postId));
+            });
         }, (error) => {
             console.error("❌ Error loading posts:", error);
             container.innerHTML = `
@@ -318,14 +337,23 @@ function loadEvents() {
                         <p style="margin: 10px 0; color: #374151;">${escapeHtml(event.description)}</p>
                         <small style="color: #9ca3af;">Created ${createdDate}</small>
                         <div class="item-actions">
-                            <button class="btn-edit" onclick="editEvent('${doc.id}')">✏️ Edit</button>
-                            <button class="btn-delete" onclick="deleteEvent('${doc.id}')">🗑️ Delete</button>
+                            <button class="btn-edit" data-event-id="${doc.id}">✏️ Edit</button>
+                            <button class="btn-delete" data-event-id="${doc.id}">🗑️ Delete</button>
                         </div>
                     </div>
                 `;
             });
 
             container.innerHTML = html;
+
+            // Add event listeners to dynamically created buttons
+            container.querySelectorAll(".btn-edit").forEach(btn => {
+                btn.addEventListener("click", () => editEvent(btn.dataset.eventId));
+            });
+
+            container.querySelectorAll(".btn-delete").forEach(btn => {
+                btn.addEventListener("click", () => deleteEvent(btn.dataset.eventId));
+            });
         }, (error) => {
             console.error("❌ Error loading events:", error);
             container.innerHTML = `
