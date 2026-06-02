@@ -84,6 +84,15 @@ function publishPost() {
 
     console.log("📝 Publishing post to Firestore...");
 
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+        console.error("❌ Firestore timeout - taking too long to publish");
+        messageDiv.innerHTML = "❌ Timeout: Firestore connection slow. Check your internet or Firebase permissions.";
+        messageDiv.className = "message show error";
+        btn.disabled = false;
+        btn.style.opacity = "1";
+    }, 15000); // 15 second timeout
+
     db.collection("news").add({
         title: title,
         content: content,
@@ -91,6 +100,7 @@ function publishPost() {
         author: auth.currentUser?.email || "Anonymous"
     })
     .then(() => {
+        clearTimeout(timeoutId);
         console.log("✅ Post published successfully!");
         messageDiv.innerHTML = "✅ Post published successfully!";
         messageDiv.className = "message show success";
@@ -107,6 +117,7 @@ function publishPost() {
         loadPosts();
     })
     .catch((error) => {
+        clearTimeout(timeoutId);
         console.error("❌ Error publishing post:", error);
         messageDiv.innerHTML = `❌ Error: ${error.message}`;
         messageDiv.className = "message show error";
@@ -270,6 +281,15 @@ function createEvent() {
 
     console.log("📝 Creating event in Firestore...");
 
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+        console.error("❌ Firestore timeout - taking too long to create event");
+        messageDiv.innerHTML = "❌ Timeout: Firestore connection slow. Check your internet or Firebase permissions.";
+        messageDiv.className = "message show error";
+        btn.disabled = false;
+        btn.style.opacity = "1";
+    }, 15000); // 15 second timeout
+
     db.collection("events").add({
         title: title,
         date: date,
@@ -279,6 +299,7 @@ function createEvent() {
         author: auth.currentUser?.email || "Anonymous"
     })
     .then(() => {
+        clearTimeout(timeoutId);
         console.log("✅ Event created successfully!");
         messageDiv.innerHTML = "✅ Event created successfully!";
         messageDiv.className = "message show success";
@@ -297,6 +318,7 @@ function createEvent() {
         loadEvents();
     })
     .catch((error) => {
+        clearTimeout(timeoutId);
         console.error("Error creating event:", error);
         messageDiv.innerHTML = `❌ Error: ${error.message}`;
         messageDiv.className = "message show error";
