@@ -10,6 +10,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Small styling addition for the language switcher toggle */
+        .lang-switch {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .lang-switch:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+        @media (max-width: 768px) {
+            .lang-switch {
+                margin-top: 10px;
+                width: 100%;
+                text-align: center;
+                padding: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -27,11 +54,17 @@
             </div>
             
             <ul class="nav-menu" id="navMenu">
-                <li><a href="#home" class="nav-links active">Home</a></li>
-                <li><a href="#about" class="nav-links">About Us</a></li>
-                <li><a href="#events" class="nav-links">Events</a></li>
-                <li><a href="#stories" class="nav-links">Stories</a></li>
-                <li><a href="#register" class="nav-btn">Join Us</a></li>
+                <li><a href="#home" class="nav-links active lang-trans" data-en="Home" data-am="ዋና ገጽ">Home</a></li>
+                <li><a href="#about" class="nav-links lang-trans" data-en="About Us" data-am="ስለ እኛ">About Us</a></li>
+                <li><a href="#pillars" class="nav-links lang-trans" data-en="Our Pillars" data-am="ዓናድዎቻችን">Our Pillars</a></li>
+                <li><a href="#stories" class="nav-links lang-trans" data-en="Stories" data-am="ታሪኮች">Stories</a></li>
+                <li>
+                    <select id="langSelector" class="lang-switch">
+                        <option value="en">English 🇬🇧</option>
+                        <option value="am">አማርኛ 🇪🇹</option>
+                    </select>
+                </li>
+                <li><a href="#register" class="nav-btn lang-trans" data-en="Join Us" data-am="ይቀላቀሉን">Join Us</a></li>
             </ul>
 
             <button class="menu-toggle" id="mobileMenu" aria-label="Toggle Menu">
@@ -46,14 +79,14 @@
     <section class="hero-section" id="home">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <div class="hero-badge">
+            <div class="hero-badge lang-trans" data-en="<i class='fa-solid fa-cross'></i> Faith · Community · Service" data-am="<i class='fa-solid fa-cross'></i> እምነት · ማህበረሰብ · አገልግሎት">
                 <i class="fa-solid fa-cross"></i> Faith · Community · Service
             </div>
-            <h1 class="hero-title">Building a Global <span class="accent">Catholic Student Movement</span></h1>
-            <p class="hero-description">Join thousands of young Catholics making a difference. Together we live out our faith through service, leadership, and deep spiritual growth at Wachemo University and beyond.</p>
+            <h1 class="hero-title lang-trans" data-en="Building a Global <span class='accent'>Catholic Student Movement</span>" data-am="ዓለም አቀፍ <span class='accent'>የካቶሊክ ተማሪዎች ንቅናቄ</span> መገንባት">Building a Global <span class="accent">Catholic Student Movement</span></h1>
+            <p class="hero-description lang-trans" data-en="Join thousands of young Catholics making a difference. Together we live out our faith through service, leadership, and deep spiritual growth at Wachemo University and beyond." data-am="ልዩነት እየፈጠሩ ያሉ በሺዎች የሚቆጠሩ ወጣት ካቶሊኮችን ይቀላቀሉ። በዋቸሞ ዩኒቨርሲቲ እና ከዚያም በላይ በአገልግሎት፣ በአመራር እና በጥልቅ መንፈሳዊ ዕድገት እምነታችንን አብረን እንኖራለን።">Join thousands of young Catholics making a difference. Together we live out our faith through service, leadership, and deep spiritual growth at Wachemo University and beyond.</p>
             <div class="hero-cta">
-                <a href="#register" class="btn btn-primary btn-large"><i class="fa-solid fa-arrow-right"></i> Join IMCS Wachemo</a>
-                <a href="#about" class="btn btn-outline btn-large">Learn Our Mission</a>
+                <a href="#register" class="btn btn-primary btn-large lang-trans" data-en="<i class='fa-solid fa-arrow-right'></i> Join IMCS Wachemo" data-am="<i class='fa-solid fa-arrow-right'></i> አይ.ኤም.ሲ.ኤስ ዋቸሞን ይቀላቀሉ"><i class="fa-solid fa-arrow-right"></i> Join IMCS Wachemo</a>
+                <a href="#about" class="btn btn-outline btn-large lang-trans" data-en="Learn Our Mission" data-am="ተልእኳችንን ይወቁ">Learn Our Mission</a>
             </div>
         </div>
     </section>
@@ -63,76 +96,41 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <span class="stat-number">500+</span>
-                <span class="stat-label">Active Members</span>
+                <span class="stat-label lang-trans" data-en="Active Members" data-am="ንቁ አባላት">Active Members</span>
             </div>
             <div class="stat-card">
                 <span class="stat-number">12+</span>
-                <span class="stat-label">Annual Ministries</span>
+                <span class="stat-label lang-trans" data-en="Annual Ministries" data-am="ዓመታዊ አገልግሎቶች">Annual Ministries</span>
             </div>
             <div class="stat-card">
                 <span class="stat-number">100%</span>
-                <span class="stat-label">Catholic Fellowship</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- EVENTS GALLERY SECTION -->
-    <section class="container" id="events">
-        <div class="section-header">
-            <span class="section-subtitle">Our Highlights</span>
-            <h2 class="section-title">Upcoming & Past Events</h2>
-            <p class="section-desc">Explore our vibrant community celebrations, fellowships, and outreach programs organized across Wachemo University.</p>
-        </div>
-
-        <div class="about-grid">
-            <!-- Event Card 1 -->
-            <div class="about-card">
-                <img src="images/orientation.jpg" alt="Orientation Night Layout">
-                <div class="card-meta">Campus Chapel Fellowship</div>
-                <h3>Orientation Night</h3>
-                <p>Welcoming Freshmen into our spiritual family with praise, worship, and insightful senior mentorship.</p>
-            </div>
-
-            <!-- Event Card 2 -->
-            <div class="about-card">
-                <img src="images/liturgy.jpg" alt="Sunday Liturgy">
-                <div class="card-meta">Sunday Eucharistic Celebration</div>
-                <h3>Sunday Liturgy</h3>
-                <p>Gathering as one dynamic body of Christ to nurture our souls through the holy sacraments and community breakings.</p>
-            </div>
-
-            <!-- Event Card 3 -->
-            <div class="about-card">
-                <img src="images/summit.jpg" alt="Leaders Summit">
-                <div class="card-meta">Vespers Preparation</div>
-                <h3>Leaders Summit</h3>
-                <p>Planning the Academic Year ahead with comprehensive capacity building, leadership workshops, and prayers.</p>
+                <span class="stat-label lang-trans" data-en="Catholic Fellowship" data-am="የካቶሊክ ህብረት">Catholic Fellowship</span>
             </div>
         </div>
     </section>
 
     <!-- CORE PILLARS SECTION -->
-    <section class="container values-section" id="about">
+    <section class="container values-section" id="pillars">
         <div class="section-header">
-            <span class="section-subtitle">Our Pillars</span>
-            <h2 class="section-title">What Guides Us</h2>
-            <p class="section-desc">Empowering Catholic students at Wachemo University to live their baptismal calling through fundamental tracks.</p>
+            <span class="section-subtitle lang-trans" data-en="Our Tracks" data-am="አቅጣጫዎቻችን">Our Tracks</span>
+            <h2 class="section-title lang-trans" data-en="What Guides Our Movement" data-am="ንቅናቄያችንን የሚመሩ እሴቶች">What Guides Our Movement</h2>
+            <p class="section-desc lang-trans" data-en="Empowering Catholic students at Wachemo University to live their baptismal calling through fundamental tracks." data-am="በዋቸሞ ዩኒቨርሲቲ የሚገኙ የካቶሊክ ተማሪዎች መሠረታዊ በሆኑ መንገዶች የጥምቀት ጥሪያቸውን እንዲወጡ ማስቻል።">Empowering Catholic students at Wachemo University to live their baptismal calling through fundamental tracks.</p>
         </div>
         <div class="values-grid">
             <div class="value-card">
                 <i class="fa-solid fa-heart value-icon"></i>
-                <h3>Spiritual Growth</h3>
-                <p>Deepening our sacramental lives, prayers, and understanding of Catholic doctrines inside modern university landscapes.</p>
+                <h3 class="lang-trans" data-en="Spiritual Growth" data-am="መንፈሳዊ ዕድገት">Spiritual Growth</h3>
+                <p class="lang-trans" data-en="Deepening our sacramental lives, prayers, and understanding of Catholic doctrines inside modern university landscapes." data-am="በዘመናዊ የዩኒቨርሲቲ ቆይታ ውስጥ ምስጢራውያን ሕይወታችንን፣ ጸሎታችንን እና የካቶሊክ አስተምህሮዎችን መረዳታችንን ማጠናከር።">Deepening our sacramental lives, prayers, and understanding of Catholic doctrines inside modern university landscapes.</p>
             </div>
             <div class="value-card">
                 <i class="fa-solid fa-users value-icon"></i>
-                <h3>Intellectual Forum</h3>
-                <p>Engaging in vibrant debates blending Faith and Reason, answering burning cultural questions structurally.</p>
+                <h3 class="lang-trans" data-en="Intellectual Forum" data-am="አእምሯዊ መድረክ">Intellectual Forum</h3>
+                <p class="lang-trans" data-en="Engaging in vibrant debates blending Faith and Reason, answering burning cultural questions structurally." data-am="እምነትን እና ምክንያታዊነትን የሚያቀናጁ ሕያው ውይይቶችን ማድረግ፣ ወቅታዊ ባህላዊ ጥያቄዎችን በስርዓት መመለስ።">Engaging in vibrant debates blending Faith and Reason, answering burning cultural questions structurally.</p>
             </div>
             <div class="value-card">
                 <i class="fa-solid fa-hand-holding-heart value-icon"></i>
-                <h3>Social Justice</h3>
-                <p>Reaching out to peripheral communities through targeted charity drives, secondary school tutoring, and hospital visitations.</p>
+                <h3 class="lang-trans" data-en="Social Justice" data-am="ማህበራዊ ፍትህ">Social Justice</h3>
+                <p class="lang-trans" data-en="Reaching out to peripheral communities through targeted charity drives, secondary school tutoring, and hospital visitations." data-am="በተደራጁ የበጎ አድራጎት ስራዎች፣ የሁለተኛ ደረጃ ተማሪዎች ድጋፍ እና የሆስፒታል ጉብኝቶች ተደራሽ መሆን።">Reaching out to peripheral communities through targeted charity drives, secondary school tutoring, and hospital visitations.</p>
             </div>
         </div>
     </section>
@@ -141,32 +139,32 @@
     <section class="testimonial-section" id="stories">
         <div class="container">
             <div class="section-header">
-                <span class="section-subtitle">Member Stories</span>
-                <h2 class="section-title">Voices From Our Movement</h2>
-                <p class="section-desc">Hear how the faith journey of students has been transformed through IMCS Wachemo.</p>
+                <span class="section-subtitle lang-trans" data-en="Member Stories" data-am="የአባላት ታሪክ">Member Stories</span>
+                <h2 class="section-title lang-trans" data-en="Voices From Our Movement" data-am="ከንቅናቄያችን የተሰሙ ድምፆች">Voices From Our Movement</h2>
+                <p class="section-desc lang-trans" data-en="Hear how the faith journey of students has been transformed through IMCS Wachemo." data-am="በአይ.ኤም.ሲ.ኤስ ዋቸሞ አማካኝነት የተማሪዎች የእምነት ጉዞ እንዴት እንደተለወጠ ይስሙ።">Hear how the faith journey of students has been transformed through IMCS Wachemo.</p>
             </div>
 
             <div class="testimonial-grid">
                 <!-- Story Card 1 -->
                 <div class="testimonial">
-                    <p class="quote">"IMCS helped me understand that being Catholic isn't just personal—it's about changing the world through Christ's love. My faith has never been deeper."</p>
+                    <p class="quote lang-trans" data-en="&quot;IMCS helped me understand that being Catholic isn't just personal—it's about changing the world through Christ's love. My faith has never been deeper.&quot;" data-am="&quot;አይ.ኤም.ሲ.ኤስ ካቶሊክ መሆን ግላዊ ብቻ እንዳልሆነ እንድረዳ ረድቶኛል—ይህ በክርስቶስ ፍቅር ዓለምን ስለመቀየር ነው። እምነቴ ከምንጊዜውም በላይ ጥልቅ ሆኗል።&quot;">"IMCS helped me understand that being Catholic isn't just personal—it's about changing the world through Christ's love. My faith has never been deeper."</p>
                     <div class="story-author">
                         <img src="images/imcs-repo-logo.png" alt="IMCS Logo" class="story-avatar">
                         <div>
-                            <h4 class="author">IMCS Wachemo Member</h4>
-                            <p class="author-role">Student Testimony</p>
+                            <h4 class="author lang-trans" data-en="IMCS Wachemo Member" data-am="የአይ.ኤም.ሲ.ኤስ ዋቸሞ አባል">IMCS Wachemo Member</h4>
+                            <p class="author-role lang-trans" data-en="Student Testimony" data-am="የተማሪ ምስክርነት">Student Testimony</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Story Card 2 -->
                 <div class="testimonial">
-                    <p class="quote">"This community challenged me to live my faith boldly. The friendships I've made here are for eternity. We're not just a club—we're a family in Christ."</p>
+                    <p class="quote lang-trans" data-en="&quot;This community challenged me to live my faith boldly. The friendships I've made here are for eternity. We're not just a club—we're a family in Christ.&quot;" data-am="&quot;ይህ ማህበረሰብ እምነቴን በድፍረት እንድኖር አነሳሳኝ። እዚህ የመሰረትኳቸው ወዳጅነቶች ለዘላለም ናቸው። እኛ ክበብ ብቻ አይደለንም—በክርስቶስ አንድ ቤተሰብ ነን።&quot;">"This community challenged me to live my faith boldly. The friendships I've made here are for eternity. We're not just a club—we're a family in Christ."</p>
                     <div class="story-author">
                         <img src="images/imcs-repo-logo.png" alt="IMCS Logo" class="story-avatar">
                         <div>
-                            <h4 class="author">IMCS Wachemo Member</h4>
-                            <p class="author-role">Student Testimony</p>
+                            <h4 class="author lang-trans" data-en="IMCS Wachemo Member" data-am="የአይ.ኤም.ሲ.ኤስ ዋቸሞ አባል">IMCS Wachemo Member</h4>
+                            <p class="author-role lang-trans" data-en="Student Testimony" data-am="የተማሪ ምስክርነት">Student Testimony</p>
                         </div>
                     </div>
                 </div>
@@ -174,36 +172,36 @@
         </div>
     </section>
 
-    <!-- REGISTRATION MEMBERSHIP SECTION -->
+    <!-- REGISTRATION MEMBERSHIP SECTION (Gateway to Dashboard) -->
     <section class="container" id="register">
         <div class="about-grid" style="grid-template-columns: repeat(auto-fit, minmax(100%, 1fr)); max-width: 550px; margin: 0 auto;">
             <div class="about-card" style="background: var(--surface); padding: 40px 30px;">
-                <h3 style="text-align: center; font-size: 1.8rem; margin-bottom: 8px;">Membership Portal</h3>
-                <p style="text-align: center; margin-bottom: 30px; font-size: 0.95rem;">Enter your student details below to register.</p>
+                <h3 class="lang-trans" style="text-align: center; font-size: 1.8rem; margin-bottom: 8px;" data-en="Membership Portal" data-am="የአባልነት መግቢያ">Membership Portal</h3>
+                <p class="lang-trans" style="text-align: center; margin-bottom: 30px; font-size: 0.95rem;" data-en="Enter your student details below to register and access your dashboard." data-am="ለመመዝገብ እና ዳሽቦርድዎን ለማግኘት የተማሪ መረጃዎን ከታች ያስገቡ።">Enter your student details below to register and access your dashboard.</p>
                 
                 <form action="#" style="display: flex; flex-direction: column; gap: 20px;">
                     <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);"><i class="fa-solid fa-user"></i> Full Name</label>
-                        <input type="text" placeholder="Enter full name" style="width:100%; padding: 12px; background: var(--background); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color:#fff; outline:none;">
+                        <label class="lang-trans" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);" data-en="<i class='fa-solid fa-user'></i> Full Name" data-am="<i class='fa-solid fa-user'></i> ሙሉ ስም"><i class="fa-solid fa-user"></i> Full Name</label>
+                        <input type="text" placeholder="Enter full name" style="width:100%; padding: 12px; background: var(--background); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color:#fff; outline:none;" required>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);"><i class="fa-solid fa-envelope"></i> University Email</label>
-                        <input type="email" placeholder="student@wachemo.edu.et" style="width:100%; padding: 12px; background: var(--background); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color:#fff; outline:none;">
+                        <label class="lang-trans" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);" data-en="<i class='fa-solid fa-envelope'></i> University Email" data-am="<i class='fa-solid fa-envelope'></i> የዩኒቨርሲቲ ኢሜይል"><i class="fa-solid fa-envelope"></i> University Email</label>
+                        <input type="email" placeholder="student@wachemo.edu.et" style="width:100%; padding: 12px; background: var(--background); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color:#fff; outline:none;" required>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);"><i class="fa-solid fa-phone"></i> Phone Number</label>
-                        <input type="text" placeholder="+251 9XX XXX XXX" style="width:100%; padding: 12px; background: var(--background); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color:#fff; outline:none;">
+                        <label class="lang-trans" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);" data-en="<i class='fa-solid fa-phone'></i> Phone Number" data-am="<i class='fa-solid fa-phone'></i> የስልክ ቁጥር"><i class="fa-solid fa-phone"></i> Phone Number</label>
+                        <input type="text" placeholder="+251 9XX XXX XXX" style="width:100%; padding: 12px; background: var(--background); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color:#fff; outline:none;" required>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);"><i class="fa-solid fa-lock"></i> Password</label>
-                        <input type="password" placeholder="Minimum 8 characters" style="width:100%; padding: 12px; background: var(--background); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color:#fff; outline:none;">
+                        <label class="lang-trans" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);" data-en="<i class='fa-solid fa-lock'></i> Password" data-am="<i class='fa-solid fa-lock'></i> የይለፍ ቃል"><i class="fa-solid fa-lock"></i> Password</label>
+                        <input type="password" placeholder="Minimum 8 characters" style="width:100%; padding: 12px; background: var(--background); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color:#fff; outline:none;" required>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);"><i class="fa-solid fa-lock"></i> Confirm Password</label>
-                        <input type="password" placeholder="Confirm password" style="width:100%; padding: 12px; background: var(--background); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color:#fff; outline:none;">
+                        <label class="lang-trans" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);" data-en="<i class='fa-solid fa-lock'></i> Confirm Password" data-am="<i class='fa-solid fa-lock'></i> ይለፍ ቃል ያረጋግጡ"><i class="fa-solid fa-lock"></i> Confirm Password</label>
+                        <input type="password" placeholder="Confirm password" style="width:100%; padding: 12px; background: var(--background); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color:#fff; outline:none;" required>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="padding: 14px; font-size: 1rem; margin-top: 10px; width: 100%; font-weight: 700;">Register Membership</button>
-                    <p style="text-align: center; font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;">Already a member? <a href="#" style="color: var(--accent-gold); font-weight: 600;">Sign In Here</a></p>
+                    <button type="submit" class="btn btn-primary lang-trans" style="padding: 14px; font-size: 1rem; margin-top: 10px; width: 100%; font-weight: 700;" data-en="Register Membership" data-am="አባልነትን ይመዝግቡ">Register Membership</button>
+                    <p class="lang-trans" style="text-align: center; font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;" data-en="Already a member? <a href='login.html' style='color: var(--accent-gold); font-weight: 600;'>Sign In Here</a>" data-am="አስቀድመው አባል ነዎት? <a href='login.html' style='color: var(--accent-gold); font-weight: 600;'>እዚህ ይግቡ</a>">Already a member? <a href="login.html" style="color: var(--accent-gold); font-weight: 600;">Sign In Here</a></p>
                 </form>
             </div>
         </div>
@@ -217,7 +215,7 @@
                     <img src="images/imcs-repo-logo.png" alt="IMCS Wachemo Logo" class="footer-logo-img">
                     <span>IMCS <span>Wachemo</span></span>
                 </div>
-                <p class="footer-bio">Empowering Catholic students at Wachemo University to live their baptismal calling through faith, service, and leadership frameworks.</p>
+                <p class="footer-bio lang-trans" data-en="Empowering Catholic students at Wachemo University to live their baptismal calling through faith, service, and leadership frameworks." data-am="በዋቸሞ ዩኒቨርሲቲ የካቶሊክ ተማሪዎች የጥምቀት ጥሪያቸውን በእምነት፣ በአገልግሎት እና በአመራር ማዕቀፎች እንዲኖሩ ማስቻል።">Empowering Catholic students at Wachemo University to live their baptismal calling through faith, service, and leadership frameworks.</p>
                 <div class="footer-socials">
                     <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
                     <a href="#" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
@@ -226,19 +224,19 @@
             </div>
 
             <div class="footer-links">
-                <h4>Quick Links</h4>
+                <h4 class="lang-trans" data-en="Quick Links" data-am="ፈጣን ሊንኮች">Quick Links</h4>
                 <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About Us</a></li>
-                    <li><a href="#events">Upcoming Events</a></li>
-                    <li><a href="#stories">Photo Gallery</a></li>
-                    <li><a href="#">Contact Support</a></li>
+                    <li><a href="#home" class="lang-trans" data-en="Home" data-am="ዋና ገጽ">Home</a></li>
+                    <li><a href="#about" class="lang-trans" data-en="About Us" data-am="ስለ እኛ">About Us</a></li>
+                    <li><a href="#pillars" class="lang-trans" data-en="Our Pillars" data-am="ዓናድዎቻችን">Our Pillars</a></li>
+                    <li><a href="#stories" class="lang-trans" data-en="Testimonials" data-am="ምስክርነቶች">Testimonials</a></li>
+                    <li><a href="login.html" class="lang-trans" data-en="Member Login" data-am="የአባላት መግቢያ">Member Login</a></li>
                 </ul>
             </div>
 
             <div class="footer-contact">
-                <h4>Contact Info</h4>
-                <p><i class="fa-solid fa-location-dot"></i> Wachemo University, Ethiopia</p>
+                <h4 class="lang-trans" data-en="Contact Info" data-am="የእውቂያ መረጃ">Contact Info</h4>
+                <p><i class="fa-solid fa-location-dot"></i> <span class="lang-trans" data-en="Wachemo University, Ethiopia" data-am="ዋቸሞ ዩኒቨርሲቲ፣ ኢትዮጵያ">Wachemo University, Ethiopia</span></p>
                 <p><i class="fa-solid fa-envelope"></i> info@imcswachamo.org.et</p>
             </div>
         </div>
@@ -247,8 +245,9 @@
         </div>
     </footer>
 
-    <!-- INTERACTIVE RESPONSIVE MOBILE NAVBAR SCRIPT -->
+    <!-- RESPONSIVE MOBILE NAVBAR SCRIPT & DYNAMIC TRANSLATION ENGINE -->
     <script>
+        // Hamburger Menu Operations
         const mobileMenu = document.getElementById('mobileMenu');
         const navMenu = document.getElementById('navMenu');
 
@@ -257,11 +256,26 @@
             navMenu.classList.toggle('active');
         });
 
-        // Auto-close menu drawer when navigation items are clicked
-        document.querySelectorAll('.nav-links', '.nav-btn').forEach(link => {
+        document.querySelectorAll('.nav-links, .nav-btn').forEach(link => {
             link.addEventListener('click', () => {
                 mobileMenu.classList.remove('active');
                 navMenu.classList.remove('active');
+            });
+        });
+
+        // Language Translation Handler
+        const langSelector = document.getElementById('langSelector');
+        const translatableElements = document.querySelectorAll('.lang-trans');
+
+        langSelector.addEventListener('change', (e) => {
+            const selectedLanguage = e.target.value;
+            
+            translatableElements.forEach(element => {
+                if(selectedLanguage === 'am') {
+                    element.innerHTML = element.getAttribute('data-am');
+                } else {
+                    element.innerHTML = element.getAttribute('data-en');
+                }
             });
         });
     </script>
