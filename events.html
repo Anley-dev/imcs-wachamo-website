@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,15 +34,15 @@
         <p>IMCS Wachemo University Activities</p>
     </header>
 
-    <main class="workspace-container">
+    <main class="workspace-container" style="max-width: 800px; margin: 40px auto; padding: 0 20px;">
         <div id="events-container">
-            <p>Loading events...</p>
+            <p style="text-align: center; color: #6b7280;">⏳ Loading events...</p>
         </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -63,25 +62,35 @@
             if (!user) window.location.href = "login.html";
         });
 
-        // Real-time Events
+        // Real-time Events Listener
         const q = query(collection(db, "events"), orderBy("date", "asc"));
         onSnapshot(q, (snapshot) => {
             const container = document.getElementById("events-container");
             let html = "";
 
             if (snapshot.empty) {
-                container.innerHTML = "<p>No upcoming events. Check back later.</p>";
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #6b7280; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                        <p>No upcoming events. Check back later.</p>
+                    </div>`;
                 return;
             }
 
             snapshot.forEach(doc => {
                 const event = doc.data();
+                
+                // Formats the optional timestamp time if available
+                const timeDisplay = event.time ? ` at ${event.time}` : "";
+                
+                // CRITICAL FIX: Changed event.desc to event.description to align with Firestore keys
                 html += `
-                    <div class="app-card" style="margin-bottom: 25px;">
-                        <h2>${event.title}</h2>
-                        <small>📅 ${event.date}</small>
-                        <p style="margin:15px 0;">${event.desc}</p>
-                        <button onclick="rsvp('${doc.id}')" style="background:#10b981; color:white; padding:12px 24px; border:none; border-radius:8px;">
+                    <div class="app-card" style="background: white; border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h2 style="margin-top: 0; color: #1e3a8a;">${escapeHtml(event.title || "Untitled Event")}</h2>
+                        <small style="color: #6b7280; font-weight: 500; display: block; margin-bottom: 12px;">
+                            <i class="fas fa-calendar-alt"></i> 📅 ${event.date}${timeDisplay}
+                        </small>
+                        <p style="margin: 15px 0; color: #374151; line-height: 1.6;">${escapeHtml(event.description || "No description provided.")}</p>
+                        <button onclick="rsvp('${doc.id}')" style="background: #10b981; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;">
                             RSVP
                         </button>
                     </div>
@@ -89,7 +98,18 @@
             });
             container.innerHTML = html;
         });
+
+        // Expose RSVP function to global window scope so HTML 'onclick' can trigger it
+        window.rsvp = function(eventId) {
+            alert("Thank you for your RSVP! Registration feature integration coming soon.");
+            // Later on, you can add code here to push the user's ID into an rsvp array inside Firestore
+        };
+
+        // Helper function to escape text safely against visual syntax breaking
+        function escapeHtml(str) {
+            if (!str) return "";
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
     </script>
 </body>
 </html>
-
