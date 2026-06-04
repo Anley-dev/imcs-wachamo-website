@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,261 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
-    <style>
-        .app-card { 
-            background: white; 
-            border-radius: 12px; 
-            padding: 25px; 
-            margin-bottom: 25px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-        
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-        
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        
-        .btn-primary {
-            background: #10b981;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary:hover {
-            background: #059669;
-        }
-        
-        .btn-primary:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-        }
-        
-        .btn-secondary {
-            background: #3b82f6;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-secondary:hover {
-            background: #2563eb;
-        }
-        
-        .message {
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 10px;
-            display: none;
-        }
-        
-        .message.show {
-            display: block;
-        }
-        
-        .message.success {
-            background: #d1fae5;
-            color: #065f46;
-            border-left: 4px solid #10b981;
-        }
-        
-        .message.error {
-            background: #fee2e2;
-            color: #7f1d1d;
-            border-left: 4px solid #ef4444;
-        }
-        
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            overflow-y: auto;
-        }
-        
-        .modal.show {
-            display: block;
-        }
-        
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #f3f4f6;
-            padding-bottom: 15px;
-        }
-        
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: #1f2937;
-        }
-        
-        .close-btn {
-            font-size: 28px;
-            font-weight: bold;
-            color: #6b7280;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0;
-        }
-        
-        .close-btn:hover {
-            color: #1f2937;
-        }
-        
-        .modal-body {
-            margin: 20px 0;
-        }
-        
-        .modal-footer {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 2px solid #f3f4f6;
-        }
-        
-        .btn-cancel {
-            background: #6b7280;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        
-        .btn-cancel:hover {
-            background: #4b5563;
-        }
-        
-        .btn-save {
-            background: #10b981;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        
-        .btn-save:hover {
-            background: #059669;
-        }
-        
-        .post-item, .event-item {
-            background: #f9fafb;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 4px solid;
-        }
-        
-        .post-item {
-            border-left-color: #10b981;
-        }
-        
-        .event-item {
-            border-left-color: #3b82f6;
-        }
-        
-        .item-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-        
-        .btn-edit {
-            background: #f59e0b;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        
-        .btn-edit:hover {
-            background: #d97706;
-        }
-        
-        .btn-delete {
-            background: #ef4444;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        
-        .btn-delete:hover {
-            background: #dc2626;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #6b7280;
-        }
-    </style>
+    <script type="module" src="js/auth.js"></script>
 </head>
 <body>
 
@@ -282,132 +29,116 @@
 
     <main class="workspace-container">
         <h1>Admin Panel</h1>
-        <p>Executive Council Control Center - Manage News, Events & Members</p>
+        <p>Executive Council Control Center</p>
 
-        <!-- POST NEWS SECTION -->
+        <!-- Post News -->
         <div class="app-card">
-            <h2>📰 Post News / Announcements</h2>
-            <div class="form-group">
-                <label>Post Title</label>
-                <input type="text" id="post-title" placeholder="Enter announcement title">
-            </div>
-            <div class="form-group">
-                <label>Content</label>
-                <textarea id="post-content" placeholder="Write your announcement here..."></textarea>
-            </div>
-            <button class="btn-primary" id="publishBtn" onclick="publishPost()">Publish Post</button>
-            <div id="post-message" class="message"></div>
+            <h2>Post News / Announcements</h2>
+            <input type="text" id="post-title" placeholder="Post Title" style="width:100%; padding:12px; margin:10px 0;">
+            <textarea id="post-content" rows="5" placeholder="Write announcement..." style="width:100%; padding:12px;"></textarea>
+            <button onclick="publishPost()" style="background:#10b981; color:white; padding:14px 30px; border:none; border-radius:8px;">Publish Post</button>
         </div>
 
-        <!-- EVENTS SECTION -->
+        <!-- Manage Members -->
         <div class="app-card">
-            <h2>📅 Events Management</h2>
-            <div class="form-group">
-                <label>Event Title</label>
-                <input type="text" id="event-title" placeholder="Enter event title">
-            </div>
-            <div class="form-group">
-                <label>Date</label>
-                <input type="date" id="event-date">
-            </div>
-            <div class="form-group">
-                <label>Time (Optional)</label>
-                <input type="time" id="event-time">
-            </div>
-            <div class="form-group">
-                <label>Description</label>
-                <textarea id="event-desc" placeholder="Describe the event..."></textarea>
-            </div>
-            <button class="btn-primary" id="eventBtn" onclick="createEvent()">Create Event</button>
-            <div id="event-message" class="message"></div>
+            <h2>Manage Members</h2>
+            <button onclick="loadMembers()" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">View All Members</button>
+            <div id="members-list" style="margin-top:20px;"></div>
         </div>
 
-        <!-- MEMBERS SECTION -->
+        <!-- Events Management -->
         <div class="app-card">
-            <h2>👥 Manage Members</h2>
-            <button class="btn-secondary" onclick="loadMembers()">View All Members</button>
-            <div id="members-list" style="margin-top: 20px;"></div>
+            <h2>Events Management</h2>
+            <input type="text" id="event-title" placeholder="Event Title" style="width:100%; padding:12px; margin:8px 0;">
+            <input type="date" id="event-date" style="width:100%; padding:12px; margin:8px 0;">
+            <textarea id="event-desc" rows="3" placeholder="Event description" style="width:100%; padding:12px;"></textarea>
+            <button onclick="createEvent()" style="background:#3b82f6; color:white; padding:12px 24px; border:none; border-radius:8px;">Create Event</button>
+            <div id="events-list" style="margin-top:20px;"></div>
         </div>
 
-        <!-- PUBLISHED POSTS SECTION -->
+        <!-- Published Posts -->
         <div class="app-card">
-            <h2>📄 Published Posts</h2>
-            <div id="posts-container" class="empty-state">
-                <p>Loading posts...</p>
-            </div>
-        </div>
-
-        <!-- PUBLISHED EVENTS SECTION -->
-        <div class="app-card">
-            <h2>📋 Published Events</h2>
-            <div id="events-list" class="empty-state">
-                <p>Loading events...</p>
-            </div>
+            <h2>Published Posts</h2>
+            <div id="posts-container">Loading posts...</div>
         </div>
     </main>
 
-    <!-- EDIT POST MODAL -->
-    <div id="editPostModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Edit Post</h2>
-                <button class="close-btn" onclick="closeEditPostModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Title</label>
-                    <input type="text" id="editPostTitle" placeholder="Post title">
-                </div>
-                <div class="form-group">
-                    <label>Content</label>
-                    <textarea id="editPostContent" placeholder="Post content"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" onclick="closeEditPostModal()">Cancel</button>
-                <button class="btn-save" onclick="saveEditPost()">Save Changes</button>
-            </div>
-        </div>
-    </div>
+    <script type="module">
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-    <!-- EDIT EVENT MODAL -->
-    <div id="editEventModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Edit Event</h2>
-                <button class="close-btn" onclick="closeEditEventModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Title</label>
-                    <input type="text" id="editEventTitle" placeholder="Event title">
-                </div>
-                <div class="form-group">
-                    <label>Date</label>
-                    <input type="date" id="editEventDate">
-                </div>
-                <div class="form-group">
-                    <label>Time</label>
-                    <input type="time" id="editEventTime">
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="editEventDesc" placeholder="Event description"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" onclick="closeEditEventModal()">Cancel</button>
-                <button class="btn-save" onclick="saveEditEvent()">Save Changes</button>
-            </div>
-        </div>
-    </div>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
+            authDomain: "imcs-wachamo.firebaseapp.com",
+            projectId: "imcs-wachamo",
+            storageBucket: "imcs-wachamo.firebasestorage.app",
+            messagingSenderId: "445125483030",
+            appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
+        };
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth();
 
-    <!-- Admin Logic -->
-    <script src="js/admin.js"></script>
+        onAuthStateChanged(auth, (user) => {
+            if (!user) window.location.href = "login.html";
+        });
+
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            if (confirm("Logout?")) {
+                await signOut(auth);
+                window.location.href = "index.html";
+            }
+        });
+
+        // Publish Post
+        async function publishPost() {
+            const title = document.getElementById("post-title").value.trim();
+            const content = document.getElementById("post-content").value.trim();
+            if (!title || !content) return alert("Please fill title and content");
+
+            try {
+                await addDoc(collection(db, "announcements"), {
+                    title,
+                    content,
+                    createdAt: serverTimestamp()
+                });
+                alert("✅ Post Published!");
+                document.getElementById("post-title").value = "";
+                document.getElementById("post-content").value = "";
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        }
+
+        // Real-time Posts
+        const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
+        onSnapshot(q, (snapshot) => {
+            const container = document.getElementById("posts-container");
+            let html = "";
+            snapshot.forEach(doc => {
+                const p = doc.data();
+                const date = p.createdAt ? new Date(p.createdAt.toDate()).toLocaleString() : "Recent";
+                html += `
+                    <div class="app-card" style="margin-bottom:15px;">
+                        <strong>${p.title}</strong><br>
+                        <small>${date}</small>
+                        <p>${p.content}</p>
+                    </div>
+                `;
+            });
+            container.innerHTML = html || "<p>No posts yet.</p>";
+        });
+
+        // Members & Events (basic)
+        function loadMembers() {
+            document.getElementById("members-list").innerHTML = `<p><strong>Registered Members:</strong><br>• Anley Belay (Admin)</p>`;
+        }
+
+        function createEvent() {
+            alert("Events Management - Coming Soon");
+        }
+    </script>
 </body>
 </html>
