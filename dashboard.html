@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +8,45 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
-    <script type="module" src="js/auth.js"></script>
+    <style>
+        /* Security Shield: Completely block unauthorized rendering flashes */
+        body { display: none; }
+        
+        .tab-content { display: none; }
+        .tab-content.active-panel { display: block; }
+        
+        /* Language Dropdown Core Interface styling */
+        .dash-lang-switch {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            outline: none;
+            transition: var(--transition, all 0.3s ease);
+        }
+        .dash-lang-switch:hover {
+            border-color: #facc15;
+            color: #facc15;
+        }
+        .dash-lang-option {
+            background: #1e293b;
+            color: #fff;
+        }
+        
+        /* Profile Formatting UI */
+        .profile-container { max-width: 600px; margin: 20px 0; background: var(--surface, #1e293b); padding: 30px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .profile-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+        .profile-field label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted, #94a3b8); }
+        .profile-field input { padding: 12px; background: var(--background, #0f172a); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; outline: none; }
+        
+        /* Inline News & Event Layouts */
+        .content-item-card { background: var(--surface, #1e293b); padding: 20px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid var(--accent-gold, #facc15); }
+        .meta-tag { font-size: 0.8rem; color: var(--accent-gold, #facc15); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; }
+    </style>
 </head>
 <body>
 
@@ -19,74 +56,199 @@
                 <i class="fas fa-cross"></i> IMCS <span class="brand-accent">Wachemo</span>
             </a>
             <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                <li><a href="events.html">Events</a></li>
-                <li><a href="gallery.html">Gallery</a></li>
-                <li><a href="news.html">News</a></li>
-                <li><a href="profile.html">Profile</a></li>
-                <li><button id="logoutBtn" class="btn btn-logout">Logout</button></li>
+                <li><a href="index.html" class="lang-trans" data-en="Home" data-am="ዋና ገጽ">Home</a></li>
+                <li><a href="#" class="nav-tab-btn active lang-trans" data-en="Dashboard" data-am="ዳሽቦርድ" onclick="switchPanel('hub-panel')">Dashboard</a></li>
+                <li><a href="#" class="nav-tab-btn lang-trans" data-en="Events" data-am="ክንውኖች" onclick="switchPanel('events-panel')">Events</a></li>
+                <li><a href="#" class="nav-tab-btn lang-trans" data-en="News" data-am="ዜና" onclick="switchPanel('news-panel')">News</a></li>
+                <li><a href="#" class="nav-tab-btn lang-trans" data-en="Profile" data-am="ማንነት" onclick="switchPanel('profile-panel')">Profile</a></li>
+                <li>
+                    <select id="dashLangSelector" class="dash-lang-switch">
+                        <option value="en" class="dash-lang-option">EN 🇬🇧</option>
+                        <option value="am" class="dash-lang-option">አም 🇪🇹</option>
+                    </select>
+                </li>
+                <li><button id="logoutBtn" class="btn btn-logout lang-trans" data-en="Logout" data-am="ውጣ">Logout</button></li>
             </ul>
         </div>
     </nav>
 
     <main class="workspace-container">
-        <h1>Welcome Back, <span id="user-name">Member</span> 👋</h1>
-        <p class="subtitle">Pax Romana Local Portal • Wachemo University Campus</p>
+        <!-- PANEL 1: MAIN HUB DASHBOARD -->
+        <div id="hub-panel" class="tab-content active-panel">
+            <h1 class="lang-trans" data-en="Welcome Back, <span id='user-name'>Member</span> 👋" data-am="እንኳን ደህና መጡ፣ <span id='user-name-am'>አባል</span> 👋">Welcome Back, <span id="user-name">Member</span> 👋</h1>
+            <p class="subtitle lang-trans" data-en="Pax Romana Local Portal • Wachemo University Campus" data-am="ፓክስ ሮማና የአካባቢው ፖርታል • ዋቸሞ ዩኒቨርሲቲ ግቢ">Pax Romana Local Portal • Wachemo University Campus</p>
 
-        <div class="app-grid">
-            <div class="app-card" onclick="goToSpiritual()">
-                <div class="card-header">
-                    <i class="fas fa-calendar-check" style="color:#3b82f6;"></i>
-                    <h2>Spiritual Programs</h2>
+            <div class="app-grid">
+                <div class="app-card" onclick="switchPanel('events-panel')">
+                    <div class="card-header">
+                        <i class="fas fa-calendar-check" style="color:#3b82f6;"></i>
+                        <h2 class="lang-trans" data-en="Spiritual Programs & Events" data-am="መንፈሳዊ መርሃ ግብሮች እና ክንውኖች">Spiritual Programs & Events</h2>
+                    </div>
+                    <p class="lang-trans" data-en="Real-time Mass schedules, choir practice, and fellowship timelines." data-am="የእውነተኛ ጊዜ የቅዳሴ መርሃ ግብሮች፣ የኮራል ልምምዶች እና የኅብረት ጊዜያት።">Real-time Mass schedules, choir practice, and fellowship timelines.</p>
+                    <strong class="lang-trans" data-en="Click to view schedule →" data-am="መርሃ ግብሩን ለማየት ይጫኑ →">Click to view schedule →</strong>
                 </div>
-                <p>Real-time Mass schedules, choir practice, and fellowship timelines.</p>
-                <strong>Click to view schedule →</strong>
+
+                <div class="app-card" onclick="handleFormationClick()">
+                    <div class="card-header">
+                        <i class="fas fa-book-open" style="color:#10b981;"></i>
+                        <h2 class="lang-trans" data-en="Intellect & Formations" data-am="አእምሯዊ እና ግንባታ">Intellect & Formations</h2>
+                    </div>
+                    <p class="lang-trans" data-en="Academic resources, seminar modules, and study materials." data-am="የአካዳሚክ ግብዓቶች፣ የሴሚናር ሞጁሎች እና የጥናት ቁሳቁሶች።">Academic resources, seminar modules, and study materials.</p>
+                    <strong class="lang-trans" data-en="Click to explore →" data-am="ለመመርመር ይጫኑ →">Click to explore →</strong>
+                </div>
+
+                <div class="app-card" onclick="switchPanel('news-panel')">
+                    <div class="card-header">
+                        <i class="fas fa-bullhorn" style="color:#f59e0b;"></i>
+                        <h2 class="lang-trans" data-en="Announcements & News" data-am="ማስታወቂያዎች እና ዜናዎች">Announcements & News</h2>
+                    </div>
+                    <p class="lang-trans" data-en="Latest updates from the Executive Council." data-am="ከስራ አስፈፃሚ ምክር ቤት የተገኙ የቅርብ ጊዜ መረጃዎች።">Latest updates from the Executive Council.</p>
+                    <strong class="lang-trans" data-en="View all announcements →" data-am="ሁሉንም ማስታወቂያዎች ይመልከቱ →">View all announcements →</strong>
+                </div>
             </div>
+        </div>
 
-            <div class="app-card" onclick="goToFormations()">
-                <div class="card-header">
-                    <i class="fas fa-book-open" style="color:#10b981;"></i>
-                    <h2>Intellect & Formations</h2>
-                </div>
-                <p>Academic resources, seminar modules, and study materials.</p>
-                <strong>Click to explore →</strong>
+        <!-- PANEL 2: INTEGRATED EVENTS MANIFEST -->
+        <div id="events-panel" class="tab-content">
+            <h1 class="lang-trans" data-en="Upcoming Community Events" data-am="የሚመጡ የማህበረሰብ ክንውኖች">Upcoming Community Events</h1>
+            <p class="subtitle lang-trans" data-en="Secure internal campus ministry activities." data-am="ደህንነታቸው የተጠበቁ የውስጥ ካምፓስ አገልግሎት እንቅስቃሴዎች።">Secure internal campus ministry activities.</p>
+            <br>
+            <div class="content-item-card">
+                <div class="meta-tag lang-trans" data-en="Campus Chapel Fellowship" data-am="የካምፓስ ቻፕል ህብረት">Campus Chapel Fellowship</div>
+                <h3 class="lang-trans" data-en="Orientation Night" data-am="የቅበላ ምሽት">Orientation Night</h3>
+                <p class="lang-trans" data-en="Welcoming Freshmen into our spiritual family with praise, worship, and insightful senior mentorship." data-am="አዲስ ገቢ ተማሪዎችን በምስጋና፣ በአምልኮ እና በበሰሉ ታላላቅ ተማሪዎች እገዛ ወደ መንፈሳዊ ቤተሰባችን መቀበል።">Welcoming Freshmen into our spiritual family with praise, worship, and insightful senior mentorship.</p>
             </div>
+            <div class="content-item-card">
+                <div class="meta-tag lang-trans" data-en="Sunday Eucharistic Celebration" data-am="የእሁድ ቅዱስ ቁርባን ክብረ በዓል">Sunday Eucharistic Celebration</div>
+                <h3 class="lang-trans" data-en="Sunday Liturgy" data-am="የእሁድ ቅዳሴ">Sunday Liturgy</h3>
+                <p class="lang-trans" data-en="Gathering as one dynamic body of Christ to nurture our souls through the holy sacraments." data-am="በቅዱሳን ምስጢራት ነፍሳችንን ለመመገብ እንደ አንድ ህያው የክርስቶስ አካል መሰብሰብ።">Gathering as one dynamic body of Christ to nurture our souls through the holy sacraments.</p>
+            </div>
+            <div class="content-item-card">
+                <div class="meta-tag lang-trans" data-en="Vespers Preparation" data-am="የሰርክ ጸሎት ዝግጅት">Vespers Preparation</div>
+                <h3 class="lang-trans" data-en="Leaders Summit" data-am="የመሪዎች ጉባኤ">Leaders Summit</h3>
+                <p class="lang-trans" data-en="Planning the Academic Year ahead with comprehensive capacity building and leadership workshops." data-am="አጠቃላይ የአቅም ግንባታ እና የአመራር ስልጠናዎችን በመስጠት መጪውን የትምህርት ዘመን ማቀድ።">Planning the Academic Year ahead with comprehensive capacity building and leadership workshops.</p>
+            </div>
+        </div>
 
-            <div class="app-card" onclick="goToAnnouncements()">
-                <div class="card-header">
-                    <i class="fas fa-bullhorn" style="color:#f59e0b;"></i>
-                    <h2>Announcements</h2>
+        <!-- PANEL 3: INTEGRATED NEWS/ANNOUNCEMENTS FEED -->
+        <div id="news-panel" class="tab-content">
+            <h1 class="lang-trans" data-en="News & Announcements" data-am="ዜና እና ማስታወቂያዎች">News & Announcements</h1>
+            <p class="subtitle lang-trans" data-en="Official briefings from the IMCS Wachemo Executive Council." data-am="ከአይ.ኤም.ሲ.ኤስ ዋቸሞ ስራ አስፈፃሚ ምክር ቤት የተሰጡ ይፋዊ መግለጫዎች።">Official briefings from the IMCS Wachemo Executive Council.</p>
+            <br>
+            <div class="content-item-card" style="border-left-color: #f59e0b;">
+                <div class="meta-tag lang-trans" data-en="Urgent Council Notice" data-am="አስቸኳይ የምክር ቤት ማሳሰቢያ">Urgent Council Notice</div>
+                <h3 class="lang-trans" data-en="Registration Deadline Extension" data-am="የምዝገባ ማጠቃለያ ቀን መራዘም">Registration Deadline Extension</h3>
+                <p class="lang-trans" data-en="The system access portal registration window for new local community members has been extended through the weekend." data-am="ለአዳዲስ የማህበረሰቡ አባላት የሚሆን የስርዓቱ መግቢያ ፖርታል ምዝገባ መስኮት እስከ ቅዳሜና እሁድ ተራዝሟል።">The system access portal registration window for new local community members has been extended through the weekend.</p>
+            </div>
+        </div>
+
+        <!-- PANEL 4: USER PROFILE CONFIGURATION -->
+        <div id="profile-panel" class="tab-content">
+            <h1 class="lang-trans" data-en="Your Member Profile" data-am="የአባልነት መገለጫዎ">Your Member Profile</h1>
+            <p class="subtitle lang-trans" data-en="Manage your local registry data accounts here." data-am="የአካባቢዎን የመመዝገቢያ መረጃ አካውንቶች እዚህ ያስተዳድሩ።">Manage your local registry data accounts here.</p>
+            
+            <div class="profile-container">
+                <div class="profile-field">
+                    <label class="lang-trans" data-en="Registered Display Name" data-am="የተመዘገበ ስም">Registered Display Name</label>
+                    <input type="text" id="profileName" readonly>
                 </div>
-                <p>Latest updates from the Executive Council.</p>
-                <strong>View all announcements →</strong>
+                <div class="profile-field">
+                    <label class="lang-trans" data-en="Verified University Account Email" data-am="የተረጋገጠ የዩኒቨርሲቲ ኢሜይል">Verified University Account Email</label>
+                    <input type="text" id="profileEmail" readonly>
+                </div>
             </div>
         </div>
     </main>
 
-    <script>
+    <!-- FIREBASE AND ROUTING SCRIPT CONTROLLER MODULE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
         import { onAuthStateChanged, getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+        
         const auth = getAuth();
+        let cachedUsername = "Member";
 
+        // AUTH GUARD: Enforces that ONLY authorized, logged-in members can see this file
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                document.getElementById("user-name").textContent = user.displayName || user.email.split('@')[0];
+                cachedUsername = user.displayName || user.email.split('@')[0];
+                
+                // Set the baseline tokens safely inside structural nodes
+                updateUserDomFields();
+                document.getElementById("profileEmail").value = user.email;
+                
+                // GRANT ACCESS: Reveal the page layout safely now that user is verified
+                document.body.style.display = "block";
             } else {
+                // REJECTED: Not authorized, boot straight to login terminal instantly
                 window.location.href = "login.html";
             }
         });
 
+        // Signout Event Handler
         document.getElementById("logoutBtn").addEventListener("click", async () => {
-            if (confirm("Logout?")) {
+            const isAmharic = (document.getElementById('dashLangSelector').value === 'am');
+            const confirmMsg = isAmharic ? "በእርግጠኝነት መውጣት ይፈልጋሉ?" : "Are you sure you want to log out?";
+            
+            if (confirm(confirmMsg)) {
                 await signOut(auth);
                 window.location.href = "index.html";
             }
         });
 
-        function goToSpiritual() { alert("Spiritual Programs - Coming Soon"); }
-        function goToFormations() { alert("Intellect & Formations - Coming Soon"); }
-        function goToAnnouncements() { window.location.href = "news.html"; }
+        // Dynamic Panel Switcher Logic Loop
+        window.switchPanel = function(panelId) {
+            document.querySelectorAll('.tab-content').forEach(panel => {
+                panel.classList.remove('active-panel');
+            });
+            document.getElementById(panelId).classList.add('active-panel');
+
+            document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const targetEvent = event || window.event;
+            if(targetEvent && targetEvent.target && targetEvent.target.classList.contains('nav-tab-btn')) {
+                targetEvent.target.classList.add('active');
+            }
+        }
+
+        // Live Dashboard Client-Side Localization Engine
+        const dashLangSelector = document.getElementById('dashLangSelector');
+        const transElements = document.querySelectorAll('.lang-trans');
+
+        dashLangSelector.addEventListener('change', (e) => {
+            const lang = e.target.value;
+            
+            transElements.forEach(element => {
+                if(lang === 'am') {
+                    element.innerHTML = element.getAttribute('data-am');
+                } else {
+                    element.innerHTML = element.getAttribute('data-en');
+                }
+            });
+            
+            // Sync current dynamic username strings safely within changed innerHTML sets
+            updateUserDomFields();
+        });
+
+        function updateUserDomFields() {
+            const nameFieldEn = document.getElementById("user-name");
+            const nameFieldAm = document.getElementById("user-name-am");
+            
+            if (nameFieldEn) nameFieldEn.textContent = cachedUsername;
+            if (nameFieldAm) nameFieldAm.textContent = cachedUsername;
+            document.getElementById("profileName").value = cachedUsername;
+        }
+
+        window.handleFormationClick = function() {
+            const isAmharic = (dashLangSelector.value === 'am');
+            if(isAmharic) {
+                alert("አእምሯዊ እና ግንባታ ሞጁሎች በአስተዳዳሪው በመዋቀር ላይ ናቸው።");
+            } else {
+                alert("Intellect & Formations modules are being configured by the administrator.");
+            }
+        }
     </script>
 </body>
 </html>
-
