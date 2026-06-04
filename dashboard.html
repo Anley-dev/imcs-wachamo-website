@@ -4,17 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | IMCS Wachemo</title>
-    <!-- System Component Style Assets -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
-    <!-- Application Logic Architecture Controller -->
     <script type="module" src="js/dashboard-engine.js" defer></script>
 </head>
 <body id="dashboardBody" class="auth-gate-locked">
 
-    <!-- COMPONENT: MAIN NAVIGATION SYSTEMS HEADER -->
+    <!-- NAVIGATION HEADER -->
     <nav class="app-navbar">
         <div class="nav-container">
             <a href="index.html" class="nav-brand">
@@ -22,10 +20,10 @@
             </a>
             <ul class="nav-menu">
                 <li><a href="index.html" class="lang-trans" data-en="Home" data-am="ዋና ገጽ">Home</a></li>
-                <li><button id="navTabHub" class="nav-link-btn active lang-trans" data-en="Dashboard" data-am="ዳሽቦርድ">Dashboard</button></li>
-                <li><button id="navTabEvents" class="nav-link-btn lang-trans" data-en="Events" data-am="ክንውኖች">Events</button></li>
-                <li><button id="navTabNews" class="nav-link-btn lang-trans" data-en="News" data-am="ዜና">News</button></li>
-                <li><button id="navTabProfile" class="nav-link-btn lang-trans" data-en="Profile" data-am="ማንነት">Profile</button></li>
+                <li><a href="dashboard.html" class="active lang-trans" data-en="Dashboard" data-am="ዳሽቦርድ">Dashboard</a></li>
+                <li><a href="events.html" class="lang-trans" data-en="Events" data-am="ክንውኖች">Events</a></li>
+                <li><a href="news.html" class="lang-trans" data-en="News" data-am="ዜና">News</a></li>
+                <li><a href="profile.html" class="lang-trans" data-en="Profile" data-am="ማንነት">Profile</a></li>
                 <li>
                     <select id="dashLangToggle" class="dash-lang-select">
                         <option value="en">EN 🇬🇧</option>
@@ -37,141 +35,70 @@
         </div>
     </nav>
 
-    <!-- CORE WORKSPACE PORTAL WRAPPER -->
+    <!-- WORKSPACE HUB CONTENT -->
     <main class="workspace-container">
-        
-        <!-- PANEL 1: MAIN SYSTEM CORE HUB VIEW -->
-        <div id="hub-view-panel" class="tab-panel-node active-view">
-            <div class="workspace-header">
-                <div>
-                    <h1 class="workspace-title lang-trans" data-en="Welcome Back, <span id='user-display-name'>Member</span> 👋" data-am="እንኳን ደህና መጡ፣ <span id='user-display-name-am'>አባል</span> 👋">Welcome Back, <span id="user-display-name">Member</span> 👋</h1>
-                    <p class="workspace-subtitle lang-trans" data-en="Pax Romana Local Portal • Wachemo University Campus" data-am="ፓክስ ሮማና የአካባቢው ፖርታል • ዋቸሞ ዩኒቨርሲቲ ግቢ">Pax Romana Local Portal • Wachemo University Campus</p>
+        <div class="workspace-header">
+            <div>
+                <h1 class="workspace-title lang-trans" data-en="Welcome Back, <span id='user-display-name'>Member</span> 👋" data-am="እንኳን ደህና መጡ፣ <span id='user-display-name-am'>አባል</span> 👋">Welcome Back, <span id="user-display-name">Member</span> 👋</h1>
+                <p class="workspace-subtitle lang-trans" data-en="Pax Romana Local Portal • Wachemo University Campus" data-am="ፓክስ ሮማና የአካባቢው ፖርታል • ዋቸሞ ዩኒቨርሲቲ ግቢ">Pax Romana Local Portal • Wachemo University Campus</p>
+            </div>
+        </div>
+
+        <div class="app-grid">
+            <!-- Card Link: events.html -->
+            <div class="app-card" style="cursor: pointer;" onclick="window.location.href='events.html'">
+                <div class="card-header">
+                    <div class="icon-wrapper bg-blue-tint text-blue">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h2 class="card-title lang-trans" data-en="Spiritual Programs & Events" data-am="መንፈሳዊ መርሃ ግብሮች እና ክንውኖች">Spiritual Programs & Events</h2>
+                </div>
+                <p class="card-description lang-trans" data-en="Real-time Mass schedules, choir practice, and fellowship timelines." data-am="የእውነተኛ ጊዜ የቅዳሴ መርሃ ግብሮች፣ የኮራል ልምምዶች እና የኅብረት ጊዜያት።">Real-time Mass schedules, choir practice, and fellowship timelines.</p>
+                <div class="data-view-engine">
+                    <div class="view-node">
+                        <div class="node-meta">
+                            <h4 class="lang-trans" data-en="Sunday Liturgy Service" data-am="የእሁድ ቅዳሴ አገልግሎት">Sunday Liturgy Service</h4>
+                            <span>08:00 AM • Campus Chapel</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-muted"></i>
+                    </div>
                 </div>
             </div>
 
-            <div class="app-grid">
-                <!-- Grid Feature Item Card 1: Events Link -->
-                <div id="cardLaunchEvents" class="app-card interactive-card">
-                    <div class="card-header">
-                        <div class="icon-wrapper bg-blue-tint text-blue">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <h2 class="card-title lang-trans" data-en="Spiritual Programs & Events" data-am="መንፈሳዊ መርሃ ግብሮች እና ክንውኖች">Spiritual Programs & Events</h2>
+            <!-- Card Link: Formations Alert -->
+            <div id="cardLaunchFormations" class="app-card" style="cursor: pointer;">
+                <div class="card-header">
+                    <div class="icon-wrapper bg-green-tint text-green">
+                        <i class="fas fa-book-open"></i>
                     </div>
-                    <p class="card-description lang-trans" data-en="Real-time Mass schedules, choir practice, and fellowship timelines." data-am="የእውነተኛ ጊዜ የቅዳሴ መርሃ ግብሮች፣ የኮራል ልምምዶች እና የኅብረት ጊዜያት።">Real-time Mass schedules, choir practice, and fellowship timelines.</p>
-                    <div class="data-view-engine">
-                        <div class="view-node">
-                            <div class="node-meta">
-                                <h4 class="lang-trans" data-en="Sunday Liturgy Service" data-am="የእሁድ ቅዳሴ አገልግሎት">Sunday Liturgy Service</h4>
-                                <span>08:00 AM • Campus Chapel</span>
-                            </div>
-                            <i class="fas fa-chevron-right text-muted"></i>
-                        </div>
-                    </div>
+                    <h2 class="card-title lang-trans" data-en="Intellect & Formations" data-am="አእምሯዊ እና ግንባታ">Intellect & Formations</h2>
                 </div>
-
-                <!-- Grid Feature Item Card 2: Formations Alert -->
-                <div id="cardLaunchFormations" class="app-card interactive-card">
-                    <div class="card-header">
-                        <div class="icon-wrapper bg-green-tint text-green">
-                            <i class="fas fa-book-open"></i>
-                        </div>
-                        <h2 class="card-title lang-trans" data-en="Intellect & Formations" data-am="አእምሯዊ እና ግንባታ">Intellect & Formations</h2>
-                    </div>
-                    <p class="card-description lang-trans" data-en="Academic resources, seminar modules, and study materials." data-am="የአካዳሚክ ግብዓቶች፣ የሴሚናር ሞጁሎች እና የጥናት ቁሳቁሶች።">Academic resources, seminar modules, and study materials.</p>
-                    <div class="data-view-engine">
-                        <div class="skeleton-loader"></div>
-                    </div>
+                <p class="card-description lang-trans" data-en="Academic resources, seminar modules, and study materials." data-am="የአካዳሚክ ግብዓቶች፣ የሴሚናር ሞጁሎች እና የጥናት ቁሳቁሶች።">Academic resources, seminar modules, and study materials.</p>
+                <div class="data-view-engine">
+                    <div class="skeleton-loader"></div>
                 </div>
+            </div>
 
-                <!-- Grid Feature Item Card 3: News Link -->
-                <div id="cardLaunchNews" class="app-card interactive-card">
-                    <div class="card-header">
-                        <div class="icon-wrapper bg-orange-tint text-orange">
-                            <i class="fas fa-bullhorn"></i>
-                        </div>
-                        <h2 class="card-title lang-trans" data-en="Announcements & News" data-am="ማስታወቂያዎች እና ዜናዎች">Announcements & News</h2>
+            <!-- Card Link: news.html -->
+            <div class="app-card" style="cursor: pointer;" onclick="window.location.href='news.html'">
+                <div class="card-header">
+                    <div class="icon-wrapper bg-orange-tint text-orange">
+                        <i class="fas fa-bullhorn"></i>
                     </div>
-                    <p class="card-description lang-trans" data-en="Latest updates from the Executive Council." data-am="ከስራ አስፈፃሚ ምክር ቤት የተገኙ የቅርብ ጊዜ መረጃዎች።">Latest updates from the Executive Council.</p>
-                    <div class="data-view-engine">
-                        <div class="view-node">
-                            <div class="node-meta">
-                                <h4 class="lang-trans" data-en="Portal Registration Extended" data-am="የፖርታል ምዝገባ ተራዝሟል">Portal Registration Extended</h4>
-                                <span class="lang-trans" data-en="Urgent Executive Directive" data-am="አስቸኳይ የስራ አስፈፃሚ መመሪያ">Urgent Executive Directive</span>
-                            </div>
-                            <i class="fas fa-chevron-right text-muted"></i>
+                    <h2 class="card-title lang-trans" data-en="Announcements & News" data-am="ማስታወቂያዎች እና ዜናዎች">Announcements & News</h2>
+                </div>
+                <p class="card-description lang-trans" data-en="Latest updates from the Executive Council." data-am="ከስራ አስፈፃሚ ምክር ቤት የተገኙ የቅርብ ጊዜ መረጃዎች።">Latest updates from the Executive Council.</p>
+                <div class="data-view-engine">
+                    <div class="view-node">
+                        <div class="node-meta">
+                            <h4 class="lang-trans" data-en="Portal Registration Extended" data-am="የፖርታል ምዝገባ ተራዝሟል">Portal Registration Extended</h4>
+                            <span class="lang-trans" data-en="Urgent Executive Directive" data-am="አስቸኳይ የስራ አስፈፃሚ መመሪያ">Urgent Executive Directive</span>
                         </div>
+                        <i class="fas fa-chevron-right text-muted"></i>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- PANEL 2: INTEGRATED INTERNAL EVENTS -->
-        <div id="events-view-panel" class="tab-panel-node">
-            <div class="workspace-header">
-                <div>
-                    <h1 class="workspace-title lang-trans" data-en="Upcoming Community Events" data-am="የሚመጡ የማህበረሰብ ክንውኖች">Upcoming Community Events</h1>
-                    <p class="workspace-subtitle lang-trans" data-en="Secure internal campus ministry timelines." data-am="ደህንነታቸው የተጠበቁ የውስጥ ካምፓስ አገልግሎት የጊዜ ሰሌዳዎች።">Secure internal campus ministry timelines.</p>
-                </div>
-            </div>
-            
-            <div class="panel-list-stack">
-                <div class="view-node massive-node">
-                    <div class="node-meta">
-                        <span class="badge-label-blue">Orientation Tracker</span>
-                        <h3 class="lang-trans" data-en="Freshmen Welcome Night" data-am="የአዲስ ገቢ ተማሪዎች የቅበላ ምሽት">Freshmen Welcome Night</h3>
-                        <p class="lang-trans" data-en="Welcoming freshmen into our local campus ministry family with praise and worship." data-am="አዲስ ገቢ ተማሪዎችን በምስጋና እና በአምልኮ ወደ አካባቢው የካምፓስ አገልግሎት ቤተሰባችን መቀበል።">Welcoming freshmen into our local campus ministry family with praise and worship.</p>
-                    </div>
-                </div>
-                <div class="view-node massive-node">
-                    <div class="node-meta">
-                        <span class="badge-label-green">Eucharist Schedule</span>
-                        <h3 class="lang-trans" data-en="Sunday Holy Mass Liturgy" data-am="የእሁድ ቅዱስ ቅዳሴ ሥነ-ስርዓት">Sunday Holy Mass Liturgy</h3>
-                        <p class="lang-trans" data-en="Gathering together to nourish our spiritual paths via Catholic Sacraments." data-am="በካቶሊክ ምስጢራት አማካኝነት መንፈሳዊ ጎዳናችንን ለመመገብ አብረን መሰብሰብ።">Gathering together to nourish our spiritual paths via Catholic Sacraments.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL 3: INTEGRATED EXECUTIVE BULLETIN NEWS -->
-        <div id="news-view-panel" class="tab-panel-node">
-            <div class="workspace-header">
-                <div>
-                    <h1 class="workspace-title lang-trans" data-en="News & Bulletins" data-am="ዜና እና መግለጫዎች">News & Bulletins</h1>
-                    <p class="workspace-subtitle lang-trans" data-en="Official updates from the IMCS Executive Cabinet." data-am="ከአይ.ኤም.ሲ.ኤስ ስራ አስፈፃሚ ካቢኔ የተገኙ ይፋዊ መረጃዎች።">Official updates from the IMCS Executive Cabinet.</p>
-                </div>
-            </div>
-            
-            <div class="view-node massive-node alert-node-border">
-                <div class="node-meta">
-                    <span class="badge-label-orange">Urgent Council Notice</span>
-                    <h3 class="lang-trans" data-en="Registration Window Deadline Extension" data-am="የምዝገባ መስኮት ማጠቃለያ ቀን መራዘም">Registration Window Deadline Extension</h3>
-                    <p class="lang-trans" data-en="The database access registration portal link has been extended through this weekend for verification validation tasks." data-am="የመረጃ ቋት መግቢያ ምዝገባ ፖርታል ሊንክ ለማረጋገጫ ማረጋገጫ ስራዎች ሲባል እስከዚህ ሳምንት መጨረሻ ተራዝሟል።">The database access registration portal link has been extended through this weekend for verification validation tasks.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL 4: SECURE ENCRYPTED REGISTRY PROFILE -->
-        <div id="profile-view-panel" class="tab-panel-node">
-            <div class="workspace-header">
-                <div>
-                    <h1 class="workspace-title lang-trans" data-en="Member Profile Registry" data-am="የአባልነት መገለጫ መዝገብ">Member Profile Registry</h1>
-                    <p class="workspace-subtitle lang-trans" data-en="Review your authorized campus data fields." data-am="የተፈቀደላቸውን የካምፓስ መረጃ መስኮች ይመልከቱ።">Review your authorized campus data fields.</p>
-                </div>
-            </div>
-
-            <div class="profile-card-form">
-                <div class="form-element-group">
-                    <label class="lang-trans" data-en="Account Display Token" data-am="የመለያ መገለጫ ስም">Account Display Token</label>
-                    <input type="text" id="profileRegistryName" readonly>
-                </div>
-                <div class="form-element-group">
-                    <label class="lang-trans" data-en="Verified University Email Address" data-am="የተረጋገጠ የዩኒቨርሲቲ ኢሜይል አድራሻ">Verified University Email Address</label>
-                    <input type="text" id="profileRegistryEmail" readonly>
-                </div>
-            </div>
-        </div>
-
     </main>
 </body>
 </html>
