@@ -26,8 +26,10 @@ setPersistence(auth, browserLocalPersistence)
     .catch((error) => console.error("Persistence Setup Failure:", error));
 
 /* ==========================================================================
-   Security Authentication Monitoring Gate
+   Security Authentication Monitoring Gate & Grace Period Filter
    ========================================================================== */
+let isFirstHandshakeCheck = true;
+
 onAuthStateChanged(auth, (user) => {
     const dashboardBodyNode = document.getElementById("dashboardBody");
 
@@ -46,19 +48,28 @@ onAuthStateChanged(auth, (user) => {
             dashboardBodyNode.classList.remove("auth-gate-locked");
             dashboardBodyNode.classList.add("auth-gate-unlocked");
         }
+        isFirstHandshakeCheck = false;
     } else {
-        console.warn("Firebase Auth Guard: Missing user token payload. Redirecting back to gateway...");
-        
-        // Remove the locked state so it doesn't stay stuck on a blank dim screen
-        if (dashboardBodyNode) {
-            dashboardBodyNode.classList.remove("auth-gate-locked");
-        }
-        
-        // Allow a small window for page renders or debugging logs before booting out
-        if (!window.location.pathname.includes("login.html")) {
+        // If it's the absolute first split-second of the page loading, give Firebase a moment to breathe
+        if (isFirstHandshakeCheck) {
+            isFirstHandshakeCheck = false;
+            console.log("Auth handshake pending token verification... waiting for local storage resolve.");
+            
+            // Wait 1.5 seconds to see if the session registers before enforcing the boot rule
             setTimeout(() => {
+                if (!auth.currentUser && !window.location.pathname.includes("login.html")) {
+                    console.warn("Firebase Auth Guard: Token missing after grace period. Redirecting...");
+                    if (dashboardBodyNode) dashboardBodyNode.classList.remove("auth-gate-locked");
+                    window.location.href = "login.html";
+                }
+            }, 1500);
+        } else {
+            // If it's not the first load and the user explicitly lacks a token, redirect immediately
+            console.warn("Firebase Auth Guard: Missing user token payload. Redirecting back to gateway...");
+            if (dashboardBodyNode) dashboardBodyNode.classList.remove("auth-gate-locked");
+            if (!window.location.pathname.includes("login.html")) {
                 window.location.href = "login.html";
-            }, 1200);
+            }
         }
     }
 });
