@@ -102,7 +102,7 @@
                         <i class="fas fa-bullhorn" style="color:#f59e0b;"></i>
                         <h2 class="lang-trans" data-en="Announcements & News" data-am="ማስታወቂያዎች እና ዜናዎች">Announcements & News</h2>
                     </div>
-                    <p class="lang-trans" data-en="Latest updates from the Executive Council." data-am="ከስራ አስፈፃሚ ምክር ቤት የተገኙ የቅርብ ጊዜ መረጃዎች።">Latest updates from the Executive Council.</p>
+                    <p class="lang-trans" data-en="Latest updates from the Executive Council." data-am="ከስራ አስፈፃሚ ምክር ቤት የተገኙ የቅርብ ጊዜ መፈላጊዎች።">Latest updates from the Executive Council.</p>
                     <strong class="lang-trans" data-en="View all announcements →" data-am="ሁሉንም ማስታወቂያዎች ይመልከቱ →">View all announcements →</strong>
                 </div>
             </div>
@@ -165,7 +165,20 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
         import { onAuthStateChanged, getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
         
-        const auth = getAuth();
+        // ⚠️ CRITICAL: Replace these keys with your exact project configurations from login.html / config.js
+        const firebaseConfig = {
+            apiKey: "YOUR_FIREBASE_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase connection pipeline
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
         let cachedUsername = "Member";
 
         // AUTH GUARD: Enforces that ONLY authorized, logged-in members can see this file
