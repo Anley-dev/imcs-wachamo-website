@@ -1,123 +1,811 @@
+/* 
+   IMCS WACHAMO - ENHANCED CSS STYLING
+   Professional Catholic Design with Logo
+ */
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IMCS Wachemo | International Movement of Catholic Students</title>
+:root {
+    --primary: #1E3A8A;       
+    --secondary: #FACC15;     
+    --background: #0F172A;    
+    --surface: #1E293B;       
+    --text-main: #FFFFFF;
+    --text-muted: #94A3B8;
+    --accent-gold: #FACC15;
+    --accent-light: #E2E8F0;
+    --font-sans: 'Inter', sans-serif;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
-</head>
-<body>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <i class="fas fa-cross cross-icon"></i> IMCS <span>Wachemo</span>
-            </a>
-            <div class="menu-toggle" id="mobile-menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
-            <ul class="nav-menu">
-                <li><a href="index.html" class="nav-links active">Home</a></li>
-                <li><a href="dashboard.html" class="nav-links">Dashboard</a></li>
-                <li><a href="about.html" class="nav-links">About</a></li>
-                <li><a href="events.html" class="nav-links">Events</a></li>
-                <li><a href="gallery.html" class="nav-links">Gallery</a></li>
-                <li><a href="contact.html" class="nav-links">Contact</a></li>
-                <li><a href="login.html" class="nav-btn">Login</a></li>
-            </ul>
-        </div>
-    </nav>
+html {
+    scroll-behavior: smooth;
+}
 
-    <header class="hero-section">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <span class="hero-subtitle">Welcome to IMCS Pax Romana</span>
-            <h1 class="hero-title">Empowering Catholic Students in Faith, Intellect, and Service</h1>
-            <p class="hero-description">
-                Join a vibrant community of students at Wachemo University dedicated to spiritual growth, leadership development, and global solidarity.
-            </p>
-            <div class="hero-cta">
-                <a href="register.html" class="btn btn-primary">Join Our Community</a>
-                <a href="about.html" class="btn btn-outline">Learn More</a>
-            </div>
-        </div>
-    </header>
+body {
+    font-family: var(--font-sans);
+    background-color: var(--background);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
 
-    <section class="about-preview">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-subtitle">Who We Are</span>
-                <h2 class="section-title">Living the Faith on Campus</h2>
-                <p class="section-desc">IMCS Pax Romana Wachemo is a community of young Catholic intellectuals striving to integrate deep spiritual life with high academic excellence.</p>
-            </div>
+a {
+    text-decoration: none;
+    color: inherit;
+}
 
-            <div class="about-grid">
-                <div class="about-card">
-                    <div class="card-icon"><i class="fas fa-cross"></i></div>
-                    <h3>Our Mission</h3>
-                    <p>To witness to the Gospel of Christ within the higher education ecosystem, fostering spiritual, intellectual, and human growth among students.</p>
-                </div>
-                <div class="about-card">
-                    <div class="card-icon"><i class="fas fa-eye"></i></div>
-                    <h3>Our Vision</h3>
-                    <p>To build a generation of dynamic Catholic leaders equipped with integrity, professional competence, and a deep sense of social responsibility.</p>
-                </div>
-                <div class="about-card">
-                    <div class="card-icon"><i class="fas fa-hands-holding-heart"></i></div>
-                    <h3>Our Core Values</h3>
-                    <p>Grounded in spiritual solidarity, intellectual depth, sacrificial service, and a global community framework with Catholic teaching.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+/* ===== NAVBAR / NAVIGATION ===== */
+.navbar {
+    background-color: rgba(15, 23, 42, 0.98);
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
 
-    <footer class="main-footer">
-        <div class="footer-container">
-            <div class="footer-info">
-                <a href="index.html" class="footer-logo">
-                    <i class="fas fa-cross cross-icon"></i> IMCS <span>Wachemo</span>
-                </a>
-                <p class="footer-bio">Empowering Catholic students at Wachemo University to live their baptismal calling through faith, service, and leadership.</p>
-                <div class="footer-socials">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-telegram-plane"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-            </div>
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 24px;
+}
 
-            <div class="footer-links">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="about.html">About Us</a></li>
-                    <li><a href="events.html">Upcoming Events</a></li>
-                    <li><a href="gallery.html">Photo Gallery</a></li>
-                    <li><a href="contact.html">Contact Support</a></li>
-                </ul>
-            </div>
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+}
 
-            <div class="footer-contact">
-                <h4>Contact Info</h4>
-                <p><i class="fas fa-map-marker-alt"></i> Wachemo University, Ethiopia</p>
-                <p><i class="fas fa-envelope"></i> info@imcswachamo.org.et</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 IMCS Wachemo. Built with dedication using zero-cost cloud frameworks.</p>
-        </div>
-    </footer>
-        <script src="js/app.js?v=99"></script>
-    <script type="module" src="js/auth.js?v=strict"></script>
+.nav-logo:hover {
+    transform: scale(1.02);
+}
 
-</body>
-</html>
+.logo-container {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(250, 204, 21, 0.08);
+    border: 1.5px solid rgba(250, 204, 21, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
 
+.logo-container:hover {
+    transform: scale(1.08) rotate(-5deg);
+    border-color: rgba(250, 204, 21, 0.6);
+    box-shadow: 0 0 20px rgba(250, 204, 21, 0.2);
+}
+
+.logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.logo-main {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+}
+
+.logo-sub {
+    font-size: 0.7rem;
+    color: var(--accent-gold);
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 40px;
+}
+
+.nav-links {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    transition: var(--transition);
+    position: relative;
+}
+
+.nav-links:hover, .nav-links.active {
+    color: var(--text-main);
+}
+
+.nav-links.active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent-gold);
+    border-radius: 1px;
+}
+
+.nav-btn {
+    background: linear-gradient(135deg, var(--primary), #2D5AA8);
+    padding: 11px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: var(--transition);
+    border: 1px solid rgba(250, 204, 21, 0.2);
+    color: var(--text-main);
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: inline-block;
+}
+
+.nav-btn:hover {
+    background: var(--accent-gold);
+    color: #000;
+    border-color: var(--accent-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(250, 204, 21, 0.25);
+}
+
+/* ===== HERO SECTION ===== */
+.hero-section {
+    position: relative;
+    height: 100vh;
+    min-height: 700px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 24px 0;
+    background: linear-gradient(135deg, var(--background) 0%, var(--primary) 50%, var(--surface) 100%);
+    overflow: hidden;
+    margin-top: 80px;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(250, 204, 21, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.8), transparent);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.3);
+    z-index: 0;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-badge {
+    display: inline-block;
+    background: rgba(250, 204, 21, 0.12);
+    border: 1px solid rgba(250, 204, 21, 0.35);
+    padding: 12px 20px;
+    border-radius: 50px;
+    margin-bottom: 24px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-gold);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.hero-badge i {
+    margin-right: 8px;
+}
+
+.hero-subtitle {
+    color: var(--accent-gold);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+    display: inline-block;
+}
+
+.hero-title {
+    font-size: 3.8rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+}
+
+.hero-title .accent {
+    background: linear-gradient(to right, var(--accent-gold), #f0b800);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-description {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    margin-bottom: 48px;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+}
+
+.hero-cta {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 16px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: var(--transition);
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-gold), #f0b800);
+    color: #000;
+}
+
+.btn-primary:hover {
+    background: #e2b710;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(250, 204, 21, 0.3);
+}
+
+.btn-outline {
+    border: 2px solid var(--text-main);
+    color: var(--text-main);
+    background: transparent;
+}
+
+.btn-outline:hover {
+    background: var(--text-main);
+    color: var(--background);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(255, 255, 255, 0.2);
+}
+
+/* ===== STATISTICS SECTION ===== */
+.stats-section {
+    background: var(--surface);
+    padding: 60px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stats-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+}
+
+.stat-card {
+    text-align: center;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--accent-gold);
+    margin-bottom: 8px;
+    display: block;
+    background: linear-gradient(to right, var(--accent-gold), #f0b800);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+/* ===== CONTAINER & SECTION HEADERS ===== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 24px;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-subtitle {
+    color: var(--accent-gold);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.section-desc {
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* ===== ABOUT PREVIEW ===== */
+.about-preview {
+    background-color: var(--background);
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+}
+
+.about-card {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.4), rgba(30, 58, 138, 0.2));
+    border: 1px solid rgba(250, 204, 21, 0.2);
+    padding: 40px 32px;
+    border-radius: 8px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.about-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to right, var(--accent-gold), transparent);
+}
+
+.about-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(250, 204, 21, 0.4);
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.6), rgba(30, 58, 138, 0.4));
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    color: var(--accent-gold);
+    margin-bottom: 20px;
+}
+
+.about-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.about-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+/* ===== VALUES SECTION ===== */
+.values-section {
+    background: linear-gradient(135deg, var(--background) 0%, rgba(30, 58, 138, 0.2) 100%);
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+    margin-top: 50px;
+}
+
+.value-card {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.4), rgba(30, 58, 138, 0.2));
+    border: 1px solid rgba(250, 204, 21, 0.2);
+    padding: 40px 32px;
+    border-radius: 12px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.value-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to right, var(--accent-gold), transparent);
+}
+
+.value-card:hover {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.6), rgba(30, 58, 138, 0.4));
+    border-color: rgba(250, 204, 21, 0.4);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(250, 204, 21, 0.1);
+}
+
+.value-icon {
+    font-size: 2.8rem;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.value-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.value-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+/* ===== TESTIMONIALS SECTION ===== */
+.testimonial-section {
+    background: var(--surface);
+    padding: 80px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.testimonial-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 50px;
+}
+
+.testimonial {
+    background: var(--background);
+    border-left: 4px solid var(--accent-gold);
+    padding: 28px;
+    border-radius: 8px;
+    transition: var(--transition);
+    position: relative;
+}
+
+.testimonial:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(250, 204, 21, 0.15);
+}
+
+.testimonial::before {
+    content: '"';
+    position: absolute;
+    top: 12px;
+    right: 24px;
+    font-size: 3rem;
+    color: rgba(250, 204, 21, 0.2);
+    font-family: Georgia, serif;
+}
+
+.quote {
+    color: var(--accent-light);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 18px;
+    font-style: italic;
+}
+
+.author {
+    color: var(--accent-gold);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+.author-role {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* ===== CTA SECTION ===== */
+.cta-section {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--background) 100%);
+    padding: 100px 24px;
+    text-align: center;
+}
+
+.cta-box {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.cta-section h2 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.cta-section p {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+    line-height: 1.7;
+}
+
+/* ===== FOOTER ===== */
+.main-footer {
+    background-color: #08111d;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 60px;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 40px 24px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 60px;
+}
+
+.footer-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-logo {
+    font-size: 1.3rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.footer-logo:hover {
+    transform: scale(1.02);
+}
+
+.footer-logo-img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.footer-logo span { 
+    color: var(--text-main);
+}
+
+.footer-logo span span {
+    color: var(--accent-gold);
+}
+
+.footer-bio {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+    max-width: 360px;
+    line-height: 1.7;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 12px;
+}
+
+.footer-socials a {
+    width: 44px;
+    height: 44px;
+    background: rgba(30, 58, 138, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    color: var(--accent-gold);
+    border: 1px solid rgba(250, 204, 21, 0.2);
+}
+
+.footer-socials a:hover {
+    background: var(--accent-gold);
+    color: #000;
+    border-color: var(--accent-gold);
+    transform: translateY(-3px);
+}
+
+.footer-links h4,
+.footer-contact h4 {
+    font-size: 1.05rem;
+    margin-bottom: 24px;
+    font-weight: 700;
+}
+
+.footer-links ul { 
+    list-style: none; 
+}
+
+.footer-links li { 
+    margin-bottom: 12px; 
+}
+
+.footer-links a {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.footer-links a:hover { 
+    color: var(--accent-gold); 
+    padding-left: 4px;
+}
+
+.footer-contact p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.footer-contact i { 
+    color: var(--accent-gold); 
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* ===== MENU TOGGLE (Mobile) ===== */
+.menu-toggle {
+    display: none;
+    cursor: pointer;
+}
+
+.bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    transition: 0.3s;
+    background-color: var(--text-main);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.4rem;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+    }
+    
+    .nav-menu {
+        gap: 20px;
+        flex-direction: column;
+        position: absolute;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background-color: var(--surface);
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+        padding: 20px 0;
+    }
+    
+    .nav-menu.active {
+        left: 0;
+    }
+    
+    .menu-toggle {
+        display: block;
+    }
+    
+    .stats-grid, 
+    .values-grid,
+    .testimonial-grid,
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.structural-hide {
+    display: none !important;
+}
+
+.cross-icon {
+    color: var(--accent-gold);
+    font-size: 1.3rem;
+}
