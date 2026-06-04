@@ -1,12 +1,12 @@
 // IMCS Wachemo - Admin Panel Logic with Better Error Handling
 console.log("📦 Loading Firebase SDK...");
 
-// Initialize Firebase safely (check if already initialized)
+// Initialize Firebase safely
 let db, auth;
 
 try {
     if (!firebase.apps.length) {
-        const firebaseApp = firebase.initializeApp({
+        firebase.initializeApp({
             apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
             authDomain: "imcs-wachamo.firebaseapp.com",
             projectId: "imcs-wachamo",
@@ -35,20 +35,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const logoutBtn = document.getElementById("logoutBtn");
 
-    // Auth Protection
     auth.onAuthStateChanged((user) => {
         if (!user) {
             console.warn("❌ Not authenticated, redirecting to login");
             window.location.href = "login.html";
         } else {
             console.log("✅ User authenticated:", user.email);
-            // Load existing posts and events
             loadPosts();
             loadEvents();
         }
     });
 
-    // Logout
     if (logoutBtn) {
         logoutBtn.addEventListener("click", async () => {
             if (confirm("Are you sure you want to logout?")) {
@@ -82,11 +79,8 @@ function publishPost() {
     messageDiv.innerHTML = "📤 Publishing...";
     messageDiv.className = "message show";
 
-    console.log("📝 Publishing post to Firestore...");
-
     const timeoutId = setTimeout(() => {
-        console.error("❌ Firestore timeout - taking too long to publish");
-        messageDiv.innerHTML = "❌ Timeout: Firestore connection slow. Check your internet or Firebase permissions.";
+        messageDiv.innerHTML = "❌ Timeout: Firestore connection slow.";
         messageDiv.className = "message show error";
         btn.disabled = false;
         btn.style.opacity = "1";
@@ -100,11 +94,9 @@ function publishPost() {
     })
     .then(() => {
         clearTimeout(timeoutId);
-        console.log("✅ Post published successfully!");
         messageDiv.innerHTML = "✅ Post published successfully!";
         messageDiv.className = "message show success";
 
-        // Clear form
         document.getElementById("post-title").value = "";
         document.getElementById("post-content").value = "";
 
@@ -114,7 +106,6 @@ function publishPost() {
     })
     .catch((error) => {
         clearTimeout(timeoutId);
-        console.error("❌ Error publishing post:", error);
         messageDiv.innerHTML = `❌ Error: ${error.message}`;
         messageDiv.className = "message show error";
     })
@@ -165,7 +156,6 @@ function loadPosts() {
                 btn.addEventListener("click", () => deletePost(btn.dataset.postId));
             });
         }, (error) => {
-            console.error("❌ Error loading posts:", error);
             container.innerHTML = `
                 <div class="empty-state" style="background: #fee2e2; padding: 20px; color: #7f1d1d; border-radius: 8px;">
                     <p>❌ Error loading posts</p>
@@ -178,20 +168,24 @@ function loadPosts() {
 }
 
 function editPost(postId) {
+    // Clear old data to prevent visual glitches
+    document.getElementById("editPostTitle").value = "Loading...";
+    document.getElementById("editPostContent").value = "Loading...";
+    document.getElementById("editPostModal").classList.add("show");
+
     db.collection("news").doc(postId).get().then((doc) => {
         if (!doc.exists) {
             alert("Post not found!");
+            closeEditPostModal();
             return;
         }
-
         const post = doc.data();
         currentEditPostId = postId;
-        document.getElementById("editPostTitle").value = post.title;
-        document.getElementById("editPostContent").value = post.content;
-        document.getElementById("editPostModal").classList.add("show");
+        document.getElementById("editPostTitle").value = post.title || "";
+        document.getElementById("editPostContent").value = post.content || "";
     }).catch((error) => {
-        console.error("Error editing post:", error);
         alert(`Error: ${error.message}`);
+        closeEditPostModal();
     });
 }
 
@@ -215,7 +209,6 @@ function saveEditPost() {
         closeEditPostModal();
     })
     .catch((error) => {
-        console.error("Error updating post:", error);
         alert(`❌ Error: ${error.message}`);
     });
 }
@@ -224,11 +217,7 @@ function deletePost(postId) {
     if (!confirm("Are you sure you want to delete this post?")) return;
 
     db.collection("news").doc(postId).delete()
-    .then(() => {
-        console.log("✅ Post deleted!");
-    })
     .catch((error) => {
-        console.error("Error deleting post:", error);
         alert(`❌ Error: ${error.message}`);
     });
 }
@@ -241,7 +230,6 @@ function closeEditPostModal() {
 // ============ EVENTS FUNCTIONS ============
 
 function createEvent() {
-    // Safely grab elements
     const titleInput = document.getElementById("event-title");
     const dateInput = document.getElementById("event-date");
     const timeInput = document.getElementById("event-time");
@@ -275,7 +263,7 @@ function createEvent() {
 
     const timeoutId = setTimeout(() => {
         if (messageDiv) {
-            messageDiv.innerHTML = "❌ Timeout: Connection slow. Check your network.";
+            messageDiv.innerHTML = "❌ Timeout: Connection slow.";
             messageDiv.className = "message show error";
         }
         if (btn) {
@@ -294,7 +282,6 @@ function createEvent() {
     })
     .then(() => {
         clearTimeout(timeoutId);
-        
         if (messageDiv) {
             messageDiv.innerHTML = "✅ Event created successfully!";
             messageDiv.className = "message show success";
@@ -359,7 +346,6 @@ function loadEvents() {
 
             container.innerHTML = html;
 
-            // CRITICAL FIX: Map specifically to dataset.eventId instead of dataset.postId
             container.querySelectorAll(".btn-edit").forEach(btn => {
                 btn.addEventListener("click", () => editEvent(btn.dataset.eventId)); 
             });
@@ -368,7 +354,6 @@ function loadEvents() {
                 btn.addEventListener("click", () => deleteEvent(btn.dataset.eventId)); 
             });
         }, (error) => {
-            console.error("❌ Error loading events:", error);
             container.innerHTML = `
                 <div class="empty-state" style="background: #fee2e2; padding: 20px; color: #7f1d1d; border-radius: 8px;">
                     <p>❌ Error loading events</p>
@@ -381,23 +366,30 @@ function loadEvents() {
 }
 
 function editEvent(eventId) {
+    // Clear old data from the modal immediately so it doesn't show old text
+    document.getElementById("editEventTitle").value = "Loading...";
+    document.getElementById("editEventDate").value = "";
+    document.getElementById("editEventTime").value = "";
+    document.getElementById("editEventDesc").value = "Loading...";
+    document.getElementById("editEventModal").classList.add("show");
+
     db.collection("events").doc(eventId).get().then((doc) => {
         if (!doc.exists) {
             alert("Event not found!");
+            closeEditEventModal();
             return;
         }
 
         const event = doc.data();
         currentEditEventId = eventId;
-        document.getElementById("editEventTitle").value = event.title;
-        document.getElementById("editEventDate").value = event.date;
+        document.getElementById("editEventTitle").value = event.title || "";
+        document.getElementById("editEventDate").value = event.date || "";
         document.getElementById("editEventTime").value = event.time || "";
-        document.getElementById("editEventDesc").value = event.description;
-        document.getElementById("editEventModal").classList.add("show");
+        document.getElementById("editEventDesc").value = event.description || "";
 
     }).catch((error) => {
-        console.error("Error editing event:", error);
         alert(`Error: ${error.message}`);
+        closeEditEventModal();
     });
 }
 
@@ -425,7 +417,6 @@ function saveEditEvent() {
         closeEditEventModal();
     })
     .catch((error) => {
-        console.error("Error updating event:", error);
         alert(`❌ Error: ${error.message}`);
     });
 }
@@ -434,11 +425,7 @@ function deleteEvent(eventId) {
     if (!confirm("Are you sure you want to delete this event?")) return;
 
     db.collection("events").doc(eventId).delete()
-    .then(() => {
-        console.log("✅ Event deleted!");
-    })
     .catch((error) => {
-        console.error("Error deleting event:", error);
         alert(`❌ Error: ${error.message}`);
     });
 }
@@ -450,43 +437,44 @@ function closeEditEventModal() {
 
 // ============ MEMBERS FUNCTIONS ============
 
-function loadMembers() {
+async function loadMembers() {
     const container = document.getElementById("members-list");
     container.innerHTML = "🔍 Loading members...";
 
-    db.collection("members").limit(100).onSnapshot((snapshot) => {
-        if (!snapshot.empty) {
-            displayMembers(snapshot, container);
-            return;
-        }
+    try {
+        // We use .get() instead of .onSnapshot() to avoid infinite loading if an error occurs
+        let snapshot = await db.collection("members").limit(100).get();
+        if (!snapshot.empty) return displayMembers(snapshot, container);
 
-        db.collection("users").limit(100).onSnapshot((snapshot2) => {
-            if (!snapshot2.empty) {
-                displayMembers(snapshot2, container);
-                return;
-            }
+        snapshot = await db.collection("users").limit(100).get();
+        if (!snapshot.empty) return displayMembers(snapshot, container);
 
-            db.collection("authUsers").limit(100).onSnapshot((snapshot3) => {
-                if (!snapshot3.empty) {
-                    displayMembers(snapshot3, container);
-                } else {
-                    container.innerHTML = `
-                        <div style="background: #fef3c7; padding: 15px; border-radius: 8px; color: #92400e;">
-                            <p><strong>⚠️ No members found!</strong></p>
-                        </div>
-                    `;
-                }
-            });
-        });
-    });
+        snapshot = await db.collection("authUsers").limit(100).get();
+        if (!snapshot.empty) return displayMembers(snapshot, container);
+
+        // If no errors, but no members were found
+        container.innerHTML = `
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; color: #92400e;">
+                <p><strong>⚠️ No members found!</strong></p>
+                <p style="font-size: 0.9rem;">Your database doesn't have any users yet, or they are in a different collection.</p>
+            </div>
+        `;
+
+    } catch (error) {
+        console.error("Error fetching members:", error);
+        
+        // This will now correctly show you if Firebase Rules are blocking access!
+        container.innerHTML = `
+            <div style="background: #fee2e2; padding: 15px; border-radius: 8px; color: #7f1d1d;">
+                <p><strong>❌ Error Loading Members</strong></p>
+                <p style="font-size: 0.9rem;">${error.message}</p>
+                <p style="font-size: 0.85rem; margin-top: 5px;">*This usually means your Firestore Rules are blocking read access to the admin.*</p>
+            </div>
+        `;
+    }
 }
 
 function displayMembers(snapshot, container) {
-    if (snapshot.empty) {
-        container.innerHTML = "<p>No members found.</p>";
-        return;
-    }
-
     let html = "<div style='overflow-x: auto;'><table style='width:100%; border-collapse: collapse;'>";
     html += "<tr style='background: #f3f4f6;'>";
     html += "<th style='padding:12px; text-align:left; border-bottom: 2px solid #ddd;'>Name</th>";
