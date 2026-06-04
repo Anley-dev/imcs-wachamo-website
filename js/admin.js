@@ -1,7 +1,6 @@
-// IMCS Wachemo - Admin Panel Logic with Better Error Handling
+// IMCS Wachemo - Admin Panel Logic with Deep Error Tracing
 console.log("📦 Loading Firebase SDK...");
 
-// Initialize Firebase safely
 let db, auth;
 
 try {
@@ -14,35 +13,34 @@ try {
             messagingSenderId: "445125483030",
             appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
         });
-        db = firebase.firestore();
-        auth = firebase.auth();
-    } else {
-        db = firebase.firestore();
-        auth = firebase.auth();
     }
-    console.log("✅ Firebase initialized");
+    db = firebase.firestore();
+    auth = firebase.auth();
+    console.log("✅ Firebase systems fully loaded");
 } catch (error) {
     console.error("❌ Firebase initialization error:", error);
+    alert("💥 Firebase failed to initialize: " + error.message);
 }
 
-// Global state
 let currentEditPostId = null;
 let currentEditEventId = null;
 
 // ============ INITIALIZATION ============
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("📄 DOM loaded, initializing admin panel...");
-
     const logoutBtn = document.getElementById("logoutBtn");
+
+    if (!auth) {
+        alert("❌ Auth system is uninitialized. Check your CDN links.");
+        return;
+    }
 
     auth.onAuthStateChanged((user) => {
         if (!user) {
-            console.warn("❌ Not authenticated, redirecting to login");
             window.location.href = "login.html";
         } else {
-            console.log("✅ User authenticated:", user.email);
             loadPosts();
             loadEvents();
+            loadMembers(); // Added to make sure members load automatically on startup
         }
     });
 
@@ -53,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     await auth.signOut();
                     window.location.href = "index.html";
                 } catch (error) {
-                    console.error("Logout error:", error);
+                    alert("Error signing out: " + error.message);
                 }
             }
         });
@@ -61,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ============ POSTS/NEWS FUNCTIONS ============
-
 function publishPost() {
     const title = document.getElementById("post-title").value.trim();
     const content = document.getElementById("post-content").value.trim();
@@ -75,16 +72,8 @@ function publishPost() {
     }
 
     btn.disabled = true;
-    btn.style.opacity = "0.6";
     messageDiv.innerHTML = "📤 Publishing...";
     messageDiv.className = "message show";
-
-    const timeoutId = setTimeout(() => {
-        messageDiv.innerHTML = "❌ Timeout: Firestore connection slow.";
-        messageDiv.className = "message show error";
-        btn.disabled = false;
-        btn.style.opacity = "1";
-    }, 15000); 
 
     db.collection("news").add({
         title: title,
@@ -93,133 +82,75 @@ function publishPost() {
         author: auth.currentUser?.email || "Anonymous"
     })
     .then(() => {
-        clearTimeout(timeoutId);
         messageDiv.innerHTML = "✅ Post published successfully!";
         messageDiv.className = "message show success";
-
         document.getElementById("post-title").value = "";
         document.getElementById("post-content").value = "";
-
-        setTimeout(() => {
-            messageDiv.className = "message";
-        }, 3000);
+        setTimeout(() => { messageDiv.className = "message"; }, 3000);
     })
     .catch((error) => {
-        clearTimeout(timeoutId);
         messageDiv.innerHTML = `❌ Error: ${error.message}`;
         messageDiv.className = "message show error";
+        alert("Database Write Rejected: " + error.message);
     })
-    .finally(() => {
-        btn.disabled = false;
-        btn.style.opacity = "1";
-    });
+    .finally(() => { btn.disabled = false; });
 }
 
 function loadPosts() {
     const container = document.getElementById("posts-container");
-    container.innerHTML = '⏳ Loading posts...';
-
-    const unsubscribe = db.collection("news")
-        .orderBy("createdAt", "desc")
-        .limit(50)
-        .onSnapshot((snapshot) => {
-            if (snapshot.empty) {
-                container.innerHTML = '<div class="empty-state"><p>No posts published yet.</p></div>';
-                return;
-            }
-
-            let html = "";
-            snapshot.forEach((doc) => {
-                const post = doc.data();
-                const date = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : "Recent";
-
-                html += `
-                    <div class="post-item">
-                        <h4 style="margin: 0 0 8px 0;">${escapeHtml(post.title)}</h4>
-                        <small style="color: #6b7280;">📅 ${date}</small>
-                        <p style="margin: 10px 0; color: #374151;">${escapeHtml(post.content)}</p>
-                        <div class="item-actions">
-                            <button class="btn-edit" data-post-id="${doc.id}">✏️ Edit</button>
-                            <button class="btn-delete" data-post-id="${doc.id}">🗑️ Delete</button>
-                        </div>
+    db.collection("news").orderBy("createdAt", "desc").limit(50).onSnapshot((snapshot) => {
+        if (snapshot.empty) {
+            container.innerHTML = '<p>No posts published yet.</p>';
+            return;
+        }
+        let html = "";
+        snapshot.forEach((doc) => {
+            const post = doc.data();
+            const date = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : "Recent";
+            html += `
+                <div class="post-item">
+                    <h4>${escapeHtml(post.title)}</h4>
+                    <small>📅 ${date}</small>
+                    <p>${escapeHtml(post.content)}</p>
+                    <div class="item-actions">
+                        <button class="btn-edit" data-post-id="${doc.id}">✏️ Edit</button>
+                        <button class="btn-delete" data-post-id="${doc.id}">🗑️ Delete</button>
                     </div>
-                `;
-            });
-
-            container.innerHTML = html;
-
-            container.querySelectorAll(".btn-edit").forEach(btn => {
-                btn.addEventListener("click", () => editPost(btn.dataset.postId));
-            });
-
-            container.querySelectorAll(".btn-delete").forEach(btn => {
-                btn.addEventListener("click", () => deletePost(btn.dataset.postId));
-            });
-        }, (error) => {
-            container.innerHTML = `
-                <div class="empty-state" style="background: #fee2e2; padding: 20px; color: #7f1d1d; border-radius: 8px;">
-                    <p>❌ Error loading posts</p>
-                    <p style="font-size: 0.9rem;">${error.message}</p>
-                </div>
-            `;
+                </div>`;
         });
-
-    return unsubscribe;
+        container.innerHTML = html;
+        container.querySelectorAll(".btn-edit").forEach(b => b.addEventListener("click", () => editPost(b.dataset.postId)));
+        container.querySelectorAll(".btn-delete").forEach(b => b.addEventListener("click", () => deletePost(b.dataset.postId)));
+    }, (err) => {
+        container.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+    });
 }
 
 function editPost(postId) {
-    // Clear old data to prevent visual glitches
     document.getElementById("editPostTitle").value = "Loading...";
     document.getElementById("editPostContent").value = "Loading...";
     document.getElementById("editPostModal").classList.add("show");
 
     db.collection("news").doc(postId).get().then((doc) => {
-        if (!doc.exists) {
-            alert("Post not found!");
-            closeEditPostModal();
-            return;
-        }
+        if (!doc.exists) return closeEditPostModal();
         const post = doc.data();
         currentEditPostId = postId;
         document.getElementById("editPostTitle").value = post.title || "";
         document.getElementById("editPostContent").value = post.content || "";
-    }).catch((error) => {
-        alert(`Error: ${error.message}`);
-        closeEditPostModal();
-    });
+    }).catch(err => alert("Fetch error: " + err.message));
 }
 
+// Fixed to handle the window/modal interface elements gracefully
 function saveEditPost() {
     if (!currentEditPostId) return;
-
-    const title = document.getElementById("editPostTitle").value.trim();
-    const content = document.getElementById("editPostContent").value.trim();
-
-    if (!title || !content) {
-        alert("❌ Please fill in all fields");
-        return;
-    }
-
     db.collection("news").doc(currentEditPostId).update({
-        title: title,
-        content: content
-    })
-    .then(() => {
-        alert("✅ Post updated successfully!");
-        closeEditPostModal();
-    })
-    .catch((error) => {
-        alert(`❌ Error: ${error.message}`);
-    });
+        title: document.getElementById("editPostTitle").value.trim(),
+        content: document.getElementById("editPostContent").value.trim()
+    }).then(() => { closeEditPostModal(); }).catch(err => alert("Update failed: " + err.message));
 }
 
 function deletePost(postId) {
-    if (!confirm("Are you sure you want to delete this post?")) return;
-
-    db.collection("news").doc(postId).delete()
-    .catch((error) => {
-        alert(`❌ Error: ${error.message}`);
-    });
+    if (confirm("Delete this post?")) db.collection("news").doc(postId).delete().catch(err => alert(err.message));
 }
 
 function closeEditPostModal() {
@@ -228,181 +159,112 @@ function closeEditPostModal() {
 }
 
 // ============ EVENTS FUNCTIONS ============
-
 function createEvent() {
-    const titleInput = document.getElementById("event-title");
-    const dateInput = document.getElementById("event-date");
-    const timeInput = document.getElementById("event-time");
-    const descInput = document.getElementById("event-desc");
-    const messageDiv = document.getElementById("event-message");
-    const btn = document.getElementById("eventBtn");
+    try {
+        if (!db) { alert("💥 Database is offline!"); return; }
 
-    const title = titleInput ? titleInput.value.trim() : "";
-    const date = dateInput ? dateInput.value : "";
-    const time = timeInput ? timeInput.value : "";
-    const description = descInput ? descInput.value.trim() : "";
+        const title = document.getElementById("event-title").value.trim();
+        const date = document.getElementById("event-date").value;
+        const time = document.getElementById("event-time").value;
+        const description = document.getElementById("event-desc").value.trim();
+        const messageDiv = document.getElementById("event-message");
+        const btn = document.getElementById("eventBtn");
 
-    if (!title || !date || !description) {
-        if (messageDiv) {
-            messageDiv.innerHTML = "❌ Please fill title, date, and description";
-            messageDiv.className = "message show error";
-        } else {
-            alert("❌ Please fill title, date, and description");
+        if (!title || !date || !description) {
+            alert("⚠️ Missing fields! Title, Date, and Description are required.");
+            return;
         }
-        return;
-    }
 
-    if (btn) {
         btn.disabled = true;
-        btn.style.opacity = "0.6";
-    }
-    if (messageDiv) {
-        messageDiv.innerHTML = "📤 Creating event...";
+        messageDiv.innerHTML = "📤 Synchronizing with Firestore...";
         messageDiv.className = "message show";
-    }
 
-    const timeoutId = setTimeout(() => {
-        if (messageDiv) {
-            messageDiv.innerHTML = "❌ Timeout: Connection slow.";
-            messageDiv.className = "message show error";
-        }
-        if (btn) {
-            btn.disabled = false;
-            btn.style.opacity = "1";
-        }
-    }, 15000);
-
-    db.collection("events").add({
-        title: title,
-        date: date,
-        time: time || "",
-        description: description,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        author: auth.currentUser?.email || "Anonymous"
-    })
-    .then(() => {
-        clearTimeout(timeoutId);
-        if (messageDiv) {
+        db.collection("events").add({
+            title: title,
+            date: date,
+            time: time || "",
+            description: description,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            author: auth.currentUser?.email || "Anonymous"
+        })
+        .then(() => {
             messageDiv.innerHTML = "✅ Event created successfully!";
             messageDiv.className = "message show success";
-        }
-
-        if (titleInput) titleInput.value = "";
-        if (dateInput) dateInput.value = "";
-        if (timeInput) timeInput.value = "";
-        if (descInput) descInput.value = "";
-
-        setTimeout(() => {
-            if (messageDiv) messageDiv.className = "message";
-        }, 3000);
-    })
-    .catch((error) => {
-        clearTimeout(timeoutId);
-        if (messageDiv) {
-            messageDiv.innerHTML = `❌ Error: ${error.message}`;
+            document.getElementById("event-title").value = "";
+            document.getElementById("event-date").value = "";
+            document.getElementById("event-time").value = "";
+            document.getElementById("event-desc").value = "";
+            setTimeout(() => { messageDiv.className = "message"; }, 3000);
+        })
+        .catch((error) => {
+            messageDiv.innerHTML = `❌ Write Blocked: ${error.message}`;
             messageDiv.className = "message show error";
-        }
-    })
-    .finally(() => {
-        if (btn) {
-            btn.disabled = false;
-            btn.style.opacity = "1";
-        }
-    });
+            alert("🛑 Firebase Database Error:\n" + error.message + "\n\nVerify your Security Rules allow document writes.");
+        })
+        .finally(() => { btn.disabled = false; });
+
+    } catch (e) {
+        alert("JavaScript Execution Crash: " + e.message);
+    }
 }
 
 function loadEvents() {
     const container = document.getElementById("events-list");
-    container.innerHTML = '⏳ Loading events...';
-
-    const unsubscribe = db.collection("events")
-        .orderBy("createdAt", "desc")
-        .limit(50)
-        .onSnapshot((snapshot) => {
-            if (snapshot.empty) {
-                container.innerHTML = '<div class="empty-state"><p>No events created yet.</p></div>';
-                return;
-            }
-
-            let html = "";
-            snapshot.forEach((doc) => {
-                const event = doc.data();
-                const createdDate = event.createdAt ? new Date(event.createdAt.toDate()).toLocaleString() : "Recent";
-                const displayTime = event.time ? ` at ${event.time}` : "";
-
-                html += `
-                    <div class="event-item">
-                        <h4 style="margin: 0 0 8px 0;">${escapeHtml(event.title)}</h4>
-                        <small style="color: #6b7280;">📅 ${event.date}${displayTime}</small>
-                        <p style="margin: 10px 0; color: #374151;">${escapeHtml(event.description)}</p>
-                        <small style="color: #9ca3af;">Created ${createdDate}</small>
-                        <div class="item-actions">
-                            <button class="btn-edit" data-event-id="${doc.id}">✏️ Edit</button>
-                            <button class="btn-delete" data-event-id="${doc.id}">🗑️ Delete</button>
-                        </div>
+    db.collection("events").orderBy("createdAt", "desc").limit(50).onSnapshot((snapshot) => {
+        if (snapshot.empty) {
+            container.innerHTML = '<p>No events registered.</p>';
+            return;
+        }
+        let html = "";
+        snapshot.forEach((doc) => {
+            const event = doc.data();
+            const createdDate = event.createdAt ? new Date(event.createdAt.toDate()).toLocaleString() : "Recent";
+            const displayTime = event.time ? ` at ${event.time}` : "";
+            html += `
+                <div class="event-item">
+                    <h4>${escapeHtml(event.title)}</h4>
+                    <small>📅 ${event.date}${displayTime}</small>
+                    <p>${escapeHtml(event.description || event.desc)}</p>
+                    <div class="item-actions">
+                        <button class="btn-edit" data-event-id="${doc.id}">✏️ Edit</button>
+                        <button class="btn-delete" data-event-id="${doc.id}">🗑️ Delete</button>
                     </div>
-                `;
-            });
-
-            container.innerHTML = html;
-
-            container.querySelectorAll(".btn-edit").forEach(btn => {
-                btn.addEventListener("click", () => editEvent(btn.dataset.eventId)); 
-            });
-
-            container.querySelectorAll(".btn-delete").forEach(btn => {
-                btn.addEventListener("click", () => deleteEvent(btn.dataset.eventId)); 
-            });
-        }, (error) => {
-            container.innerHTML = `
-                <div class="empty-state" style="background: #fee2e2; padding: 20px; color: #7f1d1d; border-radius: 8px;">
-                    <p>❌ Error loading events</p>
-                    <p style="font-size: 0.9rem;">${error.message}</p>
-                </div>
-            `;
+                </div>`;
         });
-
-    return unsubscribe;
+        container.innerHTML = html;
+        container.querySelectorAll(".btn-edit").forEach(b => b.addEventListener("click", () => editEvent(b.dataset.eventId)));
+        container.querySelectorAll(".btn-delete").forEach(b => b.addEventListener("click", () => deleteEvent(b.dataset.eventId)));
+    }, (err) => {
+        container.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+    });
 }
 
 function editEvent(eventId) {
-    // Clear old data from the modal immediately so it doesn't show old text
     document.getElementById("editEventTitle").value = "Loading...";
-    document.getElementById("editEventDate").value = "";
-    document.getElementById("editEventTime").value = "";
     document.getElementById("editEventDesc").value = "Loading...";
     document.getElementById("editEventModal").classList.add("show");
 
     db.collection("events").doc(eventId).get().then((doc) => {
-        if (!doc.exists) {
-            alert("Event not found!");
-            closeEditEventModal();
-            return;
-        }
-
+        if (!doc.exists) return closeEditEventModal();
         const event = doc.data();
         currentEditEventId = eventId;
         document.getElementById("editEventTitle").value = event.title || "";
         document.getElementById("editEventDate").value = event.date || "";
         document.getElementById("editEventTime").value = event.time || "";
-        document.getElementById("editEventDesc").value = event.description || "";
-
-    }).catch((error) => {
-        alert(`Error: ${error.message}`);
-        closeEditEventModal();
-    });
+        document.getElementById("editEventDesc").value = event.description || event.desc || "";
+    }).catch(err => alert("Fetch error: " + err.message));
 }
 
 function saveEditEvent() {
     if (!currentEditEventId) return;
-
+    
     const title = document.getElementById("editEventTitle").value.trim();
     const date = document.getElementById("editEventDate").value;
     const time = document.getElementById("editEventTime").value;
-    const description = document.getElementById("editEventDesc").value.trim();
+    const description = document.getElementById("editEventDesc").value.trim(); // Fixed: pointing to editEventDesc matches template logic
 
     if (!title || !date || !description) {
-        alert("❌ Please fill in all required fields");
+        alert("⚠️ All fields are required to update this event.");
         return;
     }
 
@@ -412,22 +274,12 @@ function saveEditEvent() {
         time: time || "",
         description: description
     })
-    .then(() => {
-        alert("✅ Event updated successfully!");
-        closeEditEventModal();
-    })
-    .catch((error) => {
-        alert(`❌ Error: ${error.message}`);
-    });
+    .then(() => { closeEditEventModal(); })
+    .catch(err => alert("Update failed: " + err.message));
 }
 
 function deleteEvent(eventId) {
-    if (!confirm("Are you sure you want to delete this event?")) return;
-
-    db.collection("events").doc(eventId).delete()
-    .catch((error) => {
-        alert(`❌ Error: ${error.message}`);
-    });
+    if (confirm("Delete this event permanently?")) db.collection("events").doc(eventId).delete().catch(err => alert(err.message));
 }
 
 function closeEditEventModal() {
@@ -436,92 +288,44 @@ function closeEditEventModal() {
 }
 
 // ============ MEMBERS FUNCTIONS ============
-
 async function loadMembers() {
     const container = document.getElementById("members-list");
-    container.innerHTML = "🔍 Loading members...";
+    if (!container) return; // Prevent crashes if element isn't in current view
+    container.innerHTML = "🔍 Loading member directories...";
 
     try {
-        // We use .get() instead of .onSnapshot() to avoid infinite loading if an error occurs
-        let snapshot = await db.collection("members").limit(100).get();
+        let snapshot = await db.collection("members").limit(50).get();
         if (!snapshot.empty) return displayMembers(snapshot, container);
 
-        snapshot = await db.collection("users").limit(100).get();
+        snapshot = await db.collection("users").limit(50).get();
         if (!snapshot.empty) return displayMembers(snapshot, container);
 
-        snapshot = await db.collection("authUsers").limit(100).get();
+        snapshot = await db.collection("authUsers").limit(50).get();
         if (!snapshot.empty) return displayMembers(snapshot, container);
 
-        // If no errors, but no members were found
-        container.innerHTML = `
-            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; color: #92400e;">
-                <p><strong>⚠️ No members found!</strong></p>
-                <p style="font-size: 0.9rem;">Your database doesn't have any users yet, or they are in a different collection.</p>
-            </div>
-        `;
-
+        container.innerHTML = `<p>⚠️ Directory paths empty. No user profiles detected.</p>`;
     } catch (error) {
-        console.error("Error fetching members:", error);
-        
-        // This will now correctly show you if Firebase Rules are blocking access!
+        console.error(error);
         container.innerHTML = `
             <div style="background: #fee2e2; padding: 15px; border-radius: 8px; color: #7f1d1d;">
-                <p><strong>❌ Error Loading Members</strong></p>
+                <p><strong>❌ Directory Read Access Denied</strong></p>
                 <p style="font-size: 0.9rem;">${error.message}</p>
-                <p style="font-size: 0.85rem; margin-top: 5px;">*This usually means your Firestore Rules are blocking read access to the admin.*</p>
-            </div>
-        `;
+            </div>`;
     }
 }
 
 function displayMembers(snapshot, container) {
-    let html = "<div style='overflow-x: auto;'><table style='width:100%; border-collapse: collapse;'>";
-    html += "<tr style='background: #f3f4f6;'>";
-    html += "<th style='padding:12px; text-align:left; border-bottom: 2px solid #ddd;'>Name</th>";
-    html += "<th style='padding:12px; text-align:left; border-bottom: 2px solid #ddd;'>Email</th>";
-    html += "<th style='padding:12px; text-align:left; border-bottom: 2px solid #ddd;'>Position</th>";
-    html += "</tr>";
-
+    let html = "<table style='width:100%; border-collapse: collapse;'>";
+    html += "<tr style='background: #f3f4f6;'><th style='padding:10px; text-align:left;'>Name</th><th style='padding:10px; text-align:left;'>Email</th></tr>";
     snapshot.forEach((doc) => {
-        const member = doc.data();
-        html += `
-            <tr style='border-bottom: 1px solid #ddd;'>
-                <td style='padding:12px;'>${escapeHtml(member.name || 'N/A')}</td>
-                <td style='padding:12px;'>${escapeHtml(member.email || 'N/A')}</td>
-                <td style='padding:12px;'>${escapeHtml(member.position || 'N/A')}</td>
-            </tr>
-        `;
+        const m = doc.data();
+        html += `<tr style='border-bottom:1px solid #ddd;'><td style='padding:10px;'>${escapeHtml(m.name || m.username || 'N/A')}</td><td style='padding:10px;'>${escapeHtml(m.email || 'N/A')}</td></tr>`;
     });
-    html += "</table></div>";
+    html += "</table>";
     container.innerHTML = html;
 }
 
-// ============ HELPER FUNCTIONS ============
-
 function escapeHtml(unsafe) {
     if (!unsafe) return "";
-    return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
-
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove("show");
-}
-
-window.onclick = function(event) {
-    const postModal = document.getElementById("editPostModal");
-    const eventModal = document.getElementById("editEventModal");
-
-    if (event.target === postModal) {
-        postModal.classList.remove("show");
-    }
-    if (event.target === eventModal) {
-        eventModal.classList.remove("show");
-    }
-};
-
-console.log("✅ Admin.js loaded successfully!");
