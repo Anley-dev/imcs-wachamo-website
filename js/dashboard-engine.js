@@ -1,21 +1,20 @@
 // Syncing perfectly with your Firebase v12.13.0 CDN imports
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
 import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-// Your verified Firebase configuration profile
+// CORRECTED Firebase configuration profile
 const firebaseConfig = {
-    apiKey: "AIzaSyDSlXqHHVNYcx8WTb66RvJazDaMCl3l6B8",
-    authDomain: "imcs-wachemo.firebaseapp.com",
-    projectId: "imcs-wachemo",
-    storageBucket: "imcs-wachemo.firebasestorage.app",
-    messagingSenderId: "437248834008",
-    appId: "1:437248834008:web:cf328836ff7981d927daad",
-    measurementId: "G-DNBVMCHXDN"
+    apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
+    authDomain: "imcs-wachamo.firebaseapp.com",
+    projectId: "imcs-wachamo",
+    storageBucket: "imcs-wachamo.firebasestorage.app",
+    messagingSenderId: "445125483030",
+    appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
 };
 
 // Initialize Core Application Services
-const app = initializeApp(firebaseConfig);
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 
@@ -36,7 +35,7 @@ onAuthStateChanged(auth, (user) => {
     if (user) {
         console.log("Firebase Auth Success: Session valid for account:", user.email);
         cachedUserTokenName = user.displayName || user.email.split('@')[0];
-        
+
         // Populate display names securely
         const nameFieldEn = document.getElementById("user-display-name");
         const nameFieldAm = document.getElementById("user-display-name-am");
@@ -54,7 +53,7 @@ onAuthStateChanged(auth, (user) => {
         if (isFirstHandshakeCheck) {
             isFirstHandshakeCheck = false;
             console.log("Auth handshake pending token verification... waiting for local storage resolve.");
-            
+
             // Wait 1.5 seconds to see if the session registers before enforcing the boot rule
             setTimeout(() => {
                 if (!auth.currentUser && !window.location.pathname.includes("login.html")) {
@@ -84,7 +83,7 @@ if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
         const isAmharic = (document.getElementById('dashLangToggle')?.value === 'am');
         const alertText = isAmharic ? "በእርግጠኝነት መውጣት ይፈልጋሉ?" : "Are you sure you want to log out?";
-        
+
         if (confirm(alertText)) {
             await signOut(auth);
             window.location.href = "index.html";
@@ -110,7 +109,7 @@ const dashLangToggle = document.getElementById('dashLangToggle');
 if (dashLangToggle) {
     dashLangToggle.addEventListener('change', (event) => {
         const targetLang = event.target.value;
-        
+
         document.querySelectorAll('.lang-trans').forEach(node => {
             node.innerHTML = (targetLang === 'am') ? node.getAttribute('data-am') : node.getAttribute('data-en');
         });
