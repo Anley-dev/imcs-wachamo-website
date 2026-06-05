@@ -59,7 +59,7 @@
         }
     </style>
 </head>
-<body>
+<body id="newsBody" class="auth-gate-locked">
 
     <nav class="app-navbar">
         <div class="nav-container">
@@ -85,13 +85,13 @@
 
     <main class="workspace-container">
         <div id="news-container" class="loading">
-            <p>Loading latest news...</p>
+            <p>⏳ Loading latest news...</p>
         </div>
     </main>
 
     <script type="module">
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+        import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -103,54 +103,103 @@
             appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
         };
 
-        const app = initializeApp(firebaseConfig);
+        const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
         const db = getFirestore(app);
-        const auth = getAuth();
+        const auth = getAuth(app);
+        const newsBodyNode = document.getElementById("newsBody");
 
-        // Logout functionality
-        document.getElementById("logoutBtn").addEventListener("click", async () => {
-            if (confirm("Are you sure you want to logout?")) {
-                try {
-                    await signOut(auth);
-                    window.location.href = "index.html";
-                } catch (error) {
-                    console.error("Logout error:", error);
+        // Enable local persistence for better session continuity
+        setPersistence(auth, browserLocalPersistence)
+            .catch((error) => console.error("Persistence Setup Failure:", error));
+
+        let isFirstHandshakeCheck = true;
+        let hasResolvedAuth = false;
+
+        onAuthStateChanged(auth, (user) => {
+            hasResolvedAuth = true;
+
+            if (user) {
+                console.log("Firebase Auth Success: Session valid for account:", user.email);
+                
+                if (newsBodyNode) {
+                    newsBodyNode.classList.remove("auth-gate-locked");
+                    newsBodyNode.classList.add("auth-gate-unlocked");
+                }
+                
+                // Load news only after authentication is confirmed
+                loadNews();
+                isFirstHandshakeCheck = false;
+            } else {
+                if (isFirstHandshakeCheck) {
+                    isFirstHandshakeCheck = false;
+                    console.log("Auth handshake pending token verification... waiting for local storage resolve.");
+
+                    setTimeout(() => {
+                        if (!auth.currentUser && !window.location.pathname.includes("login.html")) {
+                            console.warn("Firebase Auth Guard: Token missing after grace period. Redirecting...");
+                            if (newsBodyNode) newsBodyNode.classList.remove("auth-gate-locked");
+                            window.location.href = "login.html";
+                        }
+                    }, 2000);
+                } else {
+                    console.warn("Firebase Auth Guard: Missing user token payload. Redirecting back to gateway...");
+                    if (newsBodyNode) newsBodyNode.classList.remove("auth-gate-locked");
+                    if (!window.location.pathname.includes("login.html")) {
+                        window.location.href = "login.html";
+                    }
                 }
             }
         });
 
-        // Display news from Firestore
-        onSnapshot(query(collection(db, "news"), orderBy("createdAt", "desc")), (snapshot) => {
-            const container = document.getElementById("news-container");
-            
-            if (snapshot.empty) {
-                container.innerHTML = '<div class="no-news"><p>📭 No news available yet</p></div>';
-                return;
-            }
-
-            let html = "";
-            snapshot.forEach(doc => {
-                const post = doc.data();
-                const date = post.createdAt 
-                    ? new Date(post.createdAt.toDate()).toLocaleString() 
-                    : "Recently";
-                
-                html += `
-                    <div class="news-card">
-                        <h2 class="news-title">${escapeHtml(post.title)}</h2>
-                        <div class="news-date">📅 ${date}</div>
-                        <div class="news-content">${escapeHtml(post.content)}</div>
-                        <div class="news-author">By ${escapeHtml(post.author || 'IMCS Wachemo')}</div>
-                    </div>
-                `;
+        // Logout button handler
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", async () => {
+                if (confirm("Are you sure you want to logout?")) {
+                    try {
+                        await signOut(auth);
+                        window.location.href = "index.html";
+                    } catch (error) {
+                        console.error("Logout error:", error);
+                    }
+                }
             });
-            
-            container.innerHTML = html;
-        }, (error) => {
-            console.error("Error loading news:", error);
-            document.getElementById("news-container").innerHTML = 
-                '<div class="no-news"><p>❌ Error loading news. Please refresh the page.</p></div>';
-        });
+        }
+
+        // Load news function
+        function loadNews() {
+            onSnapshot(query(collection(db, "news"), orderBy("createdAt", "desc")), (snapshot) => {
+                const container = document.getElementById("news-container");
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<div class="no-news"><p>📭 No news available yet</p></div>';
+                    return;
+                }
+
+                let html = "";
+                snapshot.forEach(doc => {
+                    const post = doc.data();
+                    const date = post.createdAt 
+                        ? new Date(post.createdAt.toDate()).toLocaleString() 
+                        : "Recently";
+                    
+                    html += `
+                        <div class="news-card">
+                            <h2 class="news-title">${escapeHtml(post.title)}</h2>
+                            <div class="news-date">📅 ${date}</div>
+                            <div class="news-content">${escapeHtml(post.content)}</div>
+                            <div class="news-author">By ${escapeHtml(post.author || 'IMCS Wachemo')}</div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }, (error) => {
+                console.error("Error loading news:", error);
+                document.getElementById("news-container").innerHTML = 
+                    '<div class="no-news"><p>❌ Error loading news. Please refresh the page.</p></div>';
+            });
+        }
 
         // Helper function to prevent XSS
         function escapeHtml(unsafe) {
