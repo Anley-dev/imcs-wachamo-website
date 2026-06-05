@@ -8,9 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
-    <script type="module" src="js/auth.js"></script>
 </head>
-<body>
+<body id="eventsBody" class="auth-gate-locked">
 
     <nav class="app-navbar">
         <div class="nav-container">
@@ -41,9 +40,9 @@
     </main>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
         import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCxD9h4BBPNbbuepLTEyQIesMj44eEqdNA",
@@ -54,50 +53,103 @@
             appId: "1:445125483030:web:2eaa94ecac7a13ef0fb337"
         };
 
-        const app = initializeApp(firebaseConfig);
+        const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
         const db = getFirestore(app);
-        const auth = getAuth();
+        const auth = getAuth(app);
+        const eventsBodyNode = document.getElementById("eventsBody");
+
+        // Enable local persistence for better session continuity
+        setPersistence(auth, browserLocalPersistence)
+            .catch((error) => console.error("Persistence Setup Failure:", error));
+
+        let isFirstHandshakeCheck = true;
+        let hasResolvedAuth = false;
 
         onAuthStateChanged(auth, (user) => {
-            if (!user) window.location.href = "login.html";
-        });
+            hasResolvedAuth = true;
 
-        // Real-time Events Listener
-        const q = query(collection(db, "events"), orderBy("date", "asc"));
-        onSnapshot(q, (snapshot) => {
-            const container = document.getElementById("events-container");
-            let html = "";
+            if (user) {
+                console.log("Firebase Auth Success: Session valid for account:", user.email);
+                
+                if (eventsBodyNode) {
+                    eventsBodyNode.classList.remove("auth-gate-locked");
+                    eventsBodyNode.classList.add("auth-gate-unlocked");
+                }
+                
+                // Load events only after authentication is confirmed
+                loadEvents();
+                isFirstHandshakeCheck = false;
+            } else {
+                if (isFirstHandshakeCheck) {
+                    isFirstHandshakeCheck = false;
+                    console.log("Auth handshake pending token verification... waiting for local storage resolve.");
 
-            if (snapshot.empty) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #6b7280; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                        <p>No upcoming events. Check back later.</p>
-                    </div>`;
-                return;
+                    setTimeout(() => {
+                        if (!auth.currentUser && !window.location.pathname.includes("login.html")) {
+                            console.warn("Firebase Auth Guard: Token missing after grace period. Redirecting...");
+                            if (eventsBodyNode) eventsBodyNode.classList.remove("auth-gate-locked");
+                            window.location.href = "login.html";
+                        }
+                    }, 2000);
+                } else {
+                    console.warn("Firebase Auth Guard: Missing user token payload. Redirecting back to gateway...");
+                    if (eventsBodyNode) eventsBodyNode.classList.remove("auth-gate-locked");
+                    if (!window.location.pathname.includes("login.html")) {
+                        window.location.href = "login.html";
+                    }
+                }
             }
-
-            snapshot.forEach(doc => {
-                const event = doc.data();
-                
-                // Formats the optional timestamp time if available
-                const timeDisplay = event.time ? ` at ${event.time}` : "";
-                
-                // CRITICAL FIX: Changed event.desc to event.description to align with Firestore keys
-                html += `
-                    <div class="app-card" style="background: white; border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <h2 style="margin-top: 0; color: #1e3a8a;">${escapeHtml(event.title || "Untitled Event")}</h2>
-                        <small style="color: #6b7280; font-weight: 500; display: block; margin-bottom: 12px;">
-                            <i class="fas fa-calendar-alt"></i> 📅 ${event.date}${timeDisplay}
-                        </small>
-                        <p style="margin: 15px 0; color: #374151; line-height: 1.6;">${escapeHtml(event.description || "No description provided.")}</p>
-                        <button onclick="rsvp('${doc.id}')" style="background: #10b981; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;">
-                            RSVP
-                        </button>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
         });
+
+        // Logout button handler
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", async () => {
+                if (confirm("Are you sure you want to log out?")) {
+                    await signOut(auth);
+                    window.location.href = "index.html";
+                }
+            });
+        }
+
+        // Load events function
+        function loadEvents() {
+            const q = query(collection(db, "events"), orderBy("date", "asc"));
+            onSnapshot(q, (snapshot) => {
+                const container = document.getElementById("events-container");
+                let html = "";
+
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #6b7280; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <p>No upcoming events. Check back later.</p>
+                        </div>`;
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const event = doc.data();
+                    
+                    // Formats the optional timestamp time if available
+                    const timeDisplay = event.time ? ` at ${event.time}` : "";
+                    
+                    // CRITICAL FIX: Changed event.desc to event.description to align with Firestore keys
+                    html += `
+                        <div class="app-card" style="background: white; border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <h2 style="margin-top: 0; color: #1e3a8a;">${escapeHtml(event.title || "Untitled Event")}</h2>
+                            <small style="color: #6b7280; font-weight: 500; display: block; margin-bottom: 12px;">
+                                <i class="fas fa-calendar-alt"></i> 📅 ${event.date}${timeDisplay}
+                            </small>
+                            <p style="margin: 15px 0; color: #374151; line-height: 1.6;">${escapeHtml(event.description || "No description provided.")}</p>
+                            <button onclick="rsvp('${doc.id}')" style="background: #10b981; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.3s ease;">
+                                RSVP
+                            </button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
 
         // Expose RSVP function to global window scope so HTML 'onclick' can trigger it
         window.rsvp = function(eventId) {
