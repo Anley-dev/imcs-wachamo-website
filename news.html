@@ -57,6 +57,28 @@
             text-align: center;
             color: #6b7280;
         }
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 10px 16px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #374151;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .back-button:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+        .back-button i {
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body id="newsBody" class="auth-gate-locked">
@@ -67,7 +89,6 @@
                 <i class="fas fa-cross"></i> IMCS <span class="brand-accent">Wachemo</span>
             </a>
             <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
                 <li><a href="dashboard.html">Dashboard</a></li>
                 <li><a href="events.html">Events</a></li>
                 <li><a href="news.html" class="active">News</a></li>
@@ -84,6 +105,9 @@
     </header>
 
     <main class="workspace-container">
+        <button id="backBtn" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </button>
         <div id="news-container" class="loading">
             <p>⏳ Loading latest news...</p>
         </div>
@@ -150,6 +174,14 @@
                 }
             }
         });
+
+        // Back button handler - navigate within authenticated app instead of browser history
+        const backBtn = document.getElementById("backBtn");
+        if (backBtn) {
+            backBtn.addEventListener("click", () => {
+                window.location.href = "dashboard.html";
+            });
+        }
 
         // Logout button handler
         const logoutBtn = document.getElementById("logoutBtn");
